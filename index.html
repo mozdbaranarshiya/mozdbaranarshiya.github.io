@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1220">
+  <meta name="description" content="سامانه فضای شخصی؛ مدیریت فایل و PDF، یادداشت، فضای ذخیره‌سازی، پیام‌رسان، پلن‌ها، سفارش‌ها، تیکت و امکانات مدیریتی.">
+  <link rel="icon" type="image/png" href="/personalspace-icon.png">
+  <title>فضای شخصی | مدیریت امن فایل، یادداشت و سرویس‌ها</title>
+  <style>
+    @font-face{font-family:"Vazirmatn";src:url("/fonts/Vazirmatn-Variable.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
+    :root{
+      --bg:#f4f7fb;--surface:#fff;--surface-2:#f8fafc;--text:#111827;--muted:#64748b;--line:#e2e8f0;
+      --primary:#2563eb;--primary-2:#1d4ed8;--dark:#0b1220;--success:#15803d;--warning:#b45309;
+      --soft-blue:#eff6ff;--soft-green:#ecfdf3;--soft-amber:#fff7ed;--shadow:0 18px 50px rgba(15,23,42,.08);
+      --radius:22px
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:84px}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:"Vazirmatn",Tahoma,Arial,sans-serif;line-height:1.9}
+    a{color:inherit}
+    button,input{font:inherit}
+    .container{width:min(1180px,calc(100% - 30px));margin-inline:auto}
+    .topbar{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.9);backdrop-filter:blur(14px);border-bottom:1px solid rgba(226,232,240,.9)}
+    .nav{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .brand{display:flex;align-items:center;gap:11px;text-decoration:none;font-weight:900}.brand-mark{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#1d4ed8,#60a5fa);color:#fff;box-shadow:0 8px 24px rgba(37,99,235,.25)}
+    .nav-links{display:flex;align-items:center;gap:18px;font-size:13px;color:#475569}.nav-links a{text-decoration:none}.nav-links a:hover{color:var(--primary)}
+    .actions{display:flex;gap:9px;align-items:center}.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:#fff;text-decoration:none;font-weight:800;font-size:13px;cursor:pointer}.btn:hover{transform:translateY(-1px)}.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}.btn.primary:hover{background:var(--primary-2)}.btn.dark{background:var(--dark);border-color:var(--dark);color:#fff}
+    .hero-wrap{padding:28px 0 12px}.hero{position:relative;overflow:hidden;border-radius:30px;background:radial-gradient(circle at 15% 15%,rgba(96,165,250,.42),transparent 28%),radial-gradient(circle at 85% 80%,rgba(14,165,233,.2),transparent 27%),linear-gradient(135deg,#0b1220 0%,#14264c 53%,#1d4ed8 100%);color:#fff;padding:64px 54px;box-shadow:0 28px 80px rgba(15,23,42,.18)}
+    .hero:after{content:"";position:absolute;inset:auto -90px -130px auto;width:360px;height:360px;border:1px solid rgba(255,255,255,.14);border-radius:50%;box-shadow:0 0 0 45px rgba(255,255,255,.03),0 0 0 90px rgba(255,255,255,.025)}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 11px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);font-size:12px;color:#dbeafe;position:relative;z-index:1}.hero h1{font-size:clamp(34px,6vw,64px);line-height:1.3;margin:16px 0 12px;max-width:820px;position:relative;z-index:1}.hero p{max-width:780px;margin:0;color:#dbeafe;font-size:15px;position:relative;z-index:1}.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px;position:relative;z-index:2}.hero-actions .btn{border-color:rgba(255,255,255,.2)}.hero-actions .btn.light{background:#fff;color:#0f172a}.hero-actions .btn.glass{background:rgba(255,255,255,.1);color:#fff}.hero-points{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:34px;position:relative;z-index:1}.hero-point{padding:13px;border-radius:15px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12)}.hero-point b{display:block;font-size:13px}.hero-point span{display:block;color:#bfdbfe;font-size:11px;margin-top:3px}
+    .section{padding:54px 0}.section.compact{padding-top:30px}.section-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:22px}.section-head h2{margin:0;font-size:clamp(24px,4vw,35px);line-height:1.4}.section-head p{margin:7px 0 0;color:var(--muted);font-size:14px;max-width:740px}.mini-link{text-decoration:none;color:var(--primary);font-weight:800;font-size:13px;white-space:nowrap}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:0 8px 30px rgba(15,23,42,.045)}.icon{width:44px;height:44px;display:grid;place-items:center;border-radius:13px;background:var(--soft-blue);font-size:21px;margin-bottom:12px}.card h3{margin:0 0 7px;font-size:17px}.card p{margin:0;color:var(--muted);font-size:13px}.card .link{display:inline-flex;margin-top:13px;text-decoration:none;color:var(--primary);font-size:12px;font-weight:800}
+    .steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.step{position:relative;background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px}.step-number{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:var(--dark);color:#fff;font-weight:900;font-size:13px;margin-bottom:13px}.step h3{font-size:15px;margin:0 0 6px}.step p{font-size:12px;color:var(--muted);margin:0}
+    .security{display:grid;grid-template-columns:.85fr 1.15fr;gap:18px}.security-panel{background:linear-gradient(145deg,#0f172a,#1e293b);color:#fff;border-radius:26px;padding:28px;min-height:100%}.security-panel h2{font-size:29px;margin:0 0 10px}.security-panel p{color:#cbd5e1;font-size:13px;margin:0}.security-list{display:grid;gap:10px}.security-item{display:flex;gap:11px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:15px;padding:14px}.check{width:27px;height:27px;border-radius:8px;background:var(--soft-green);color:var(--success);display:grid;place-items:center;flex:0 0 auto;font-weight:900}.security-item b{display:block;font-size:13px}.security-item span{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+    .messenger{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.messenger-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px}.messenger-card h3{margin:0 0 7px}.messenger-card p{margin:0;color:var(--muted);font-size:13px}.tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}.tag{font-size:11px;font-weight:800;border-radius:999px;padding:5px 9px;background:#f1f5f9;color:#475569}
+    .roadmap{background:linear-gradient(180deg,#fff,#f8fbff);border:1px solid #dbeafe;border-radius:28px;padding:28px}.soon-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.soon-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px}.soon{display:inline-flex;padding:4px 9px;border-radius:999px;background:var(--soft-amber);color:var(--warning);font-size:10px;font-weight:900;margin-bottom:8px}.soon-card h3{margin:0 0 5px;font-size:14px}.soon-card p{margin:0;color:var(--muted);font-size:11px}
+    .plans-shell{background:#fff;border:1px solid var(--line);border-radius:28px;padding:26px;box-shadow:var(--shadow)}.plans-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.plan-card{border:1px solid var(--line);border-radius:18px;padding:18px;background:var(--surface-2);display:flex;flex-direction:column}.plan-card h3{margin:0 0 5px;font-size:16px}.plan-meta{color:var(--muted);font-size:12px}.plan-price{font-size:19px;font-weight:900;margin:13px 0 5px}.price-note{font-size:11px;color:var(--muted);margin-bottom:13px}.plan-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}.state{display:flex;align-items:center;gap:8px;margin:0 0 16px;padding:11px 13px;border-radius:12px;background:#f8fafc;border:1px solid var(--line);color:#475569;font-size:12px}.portal-empty{grid-column:1/-1;padding:18px;border:1px dashed #cbd5e1;border-radius:14px;color:var(--muted);text-align:center;font-size:13px}.plan-group-title{margin:25px 0 12px;font-size:18px}.plan-group-title:first-of-type{margin-top:0}
+    .cta{display:flex;justify-content:space-between;align-items:center;gap:20px;background:#fff;border:1px solid var(--line);border-radius:24px;padding:26px}.cta h2{margin:0 0 5px;font-size:24px}.cta p{margin:0;color:var(--muted);font-size:13px}.cta-actions{display:flex;gap:9px;flex-wrap:wrap}
+    footer{padding:12px 0 36px;color:#64748b;font-size:11px}.footer-row{display:flex;justify-content:space-between;gap:16px;align-items:center;border-top:1px solid var(--line);padding-top:20px}.footer-links{display:flex;gap:14px;flex-wrap:wrap}.footer-links a{text-decoration:none}
+    @media(max-width:980px){.nav-links{display:none}.hero-points,.steps{grid-template-columns:repeat(2,minmax(0,1fr))}.grid,.plans-grid,.soon-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.security{grid-template-columns:1fr}}
+    @media(max-width:650px){.container{width:min(100% - 18px,1180px)}.nav{min-height:64px}.actions .btn:not(.primary){display:none}.hero{padding:38px 20px;border-radius:22px}.hero h1{font-size:36px}.hero-points,.grid,.plans-grid,.steps,.soon-grid,.messenger{grid-template-columns:1fr}.section{padding:38px 0}.section-head{align-items:flex-start;flex-direction:column}.roadmap,.plans-shell{padding:18px;border-radius:20px}.cta{align-items:flex-start;flex-direction:column}.cta-actions{width:100%}.cta-actions .btn{flex:1}.footer-row{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <div class="container nav">
+    <a class="brand" href="/index.html" aria-label="فضای شخصی">
+      <span class="brand-mark">ف</span>
+      <span>فضای شخصی</span>
+    </a>
+    <nav class="nav-links" aria-label="منوی اصلی">
+      <a href="#features">امکانات</a>
+      <a href="#security">امنیت</a>
+      <a href="#plans">پلن‌ها</a>
+      <a href="#roadmap">به‌زودی</a>
+      <a href="/information.html">راهنمای کامل</a>
+    </nav>
+    <div class="actions">
+      <a class="btn" href="/SignUp.html">ثبت‌نام</a>
+      <a class="btn primary" href="/Login.html">ورود به حساب</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container hero-wrap">
+    <section class="hero" aria-labelledby="hero-title">
+      <span class="eyebrow">● سامانه یکپارچه فضای شخصی</span>
+      <h1 id="hero-title">فایل‌ها، یادداشت‌ها، سفارش‌ها و ارتباطات شما در یک فضای شخصی</h1>
+      <p>سامانه «فضای شخصی» برای مدیریت فایل و PDF، یادداشت، فضای ذخیره‌سازی، پیام‌های شخصی، تیکت پشتیبانی، سفارش سرویس و مدیریت حساب طراحی شده است. تأیید شماره موبایل از طریق بله یا سروش+ انجام می‌شود و فایل‌های جدید در Object Storage آروان نگهداری می‌شوند.</p>
+      <div class="hero-actions">
+        <a class="btn light" href="/SignUp.html">ساخت حساب جدید</a>
+        <a class="btn glass" href="/Login.html">ورود به پنل</a>
+        <a class="btn glass" href="/information.html">بیشتر بدانیم</a>
+      </div>
+      <div class="hero-points">
+        <div class="hero-point"><b>مدیریت فایل و PDF</b><span>آپلود، جست‌وجو، دانلود، Trash و بازیابی</span></div>
+        <div class="hero-point"><b>یادداشت شخصی</b><span>ایجاد، ویرایش، جست‌وجو، سنجاق و آرشیو</span></div>
+        <div class="hero-point"><b>بله و سروش+</b><span>تأیید شماره، OTP و اعلان‌های حساب</span></div>
+        <div class="hero-point"><b>پشتیبانی و سفارش</b><span>تیکت، اعلان، پلن ذخیره‌سازی و سرویس‌ها</span></div>
+      </div>
+    </section>
+  </div>
+
+  <section id="features" class="section">
+    <div class="container">
+      <div class="section-head">
+        <div><h2>امکانات اصلی سامانه</h2><p>امکاناتی که اکنون در ساختار سامانه و پنل‌های کاربری و مدیریتی وجود دارند.</p></div>
+        <a class="mini-link" href="/information.html">مشاهده راهنمای کامل ←</a>
+      </div>
+      <div class="grid">
+        <article class="card"><div class="icon">📁</div><h3>فایل و فضای ذخیره‌سازی</h3><p>آپلود PDF، مدیریت فراداده، مشاهده سهمیه، جست‌وجوی فایل، انتقال به سطل زباله، بازیابی و حذف دائمی.</p><a class="link" href="/Login.html">ورود به فایل‌ها</a></article>
+        <article class="card"><div class="icon">📝</div><h3>یادداشت‌های شخصی</h3><p>ایجاد و ویرایش یادداشت، جست‌وجو، سنجاق‌کردن، آرشیو و مدیریت یادداشت‌های شخصی.</p><a class="link" href="/Login.html">ورود به پنل</a></article>
+        <article class="card"><div class="icon">💬</div><h3>پیام‌رسان و اعلان</h3><p>اتصال حساب به بله یا سروش+ برای تأیید شماره، کدهای امنیتی و پیام‌های مرتبط با حساب و سفارش.</p><a class="link" href="/information.html#messengers">جزئیات پیام‌رسان‌ها</a></article>
+        <article class="card"><div class="icon">🎫</div><h3>تیکت پشتیبانی</h3><p>ثبت درخواست پشتیبانی، مشاهده پاسخ مدیر و پیگیری تیکت‌های مربوط به حساب یا سفارش سرویس.</p><a class="link" href="/Login.html">ورود و ثبت تیکت</a></article>
+        <article class="card"><div class="icon">💳</div><h3>پلن، تخفیف و سفارش</h3><p>مشاهده پلن‌های فضای ذخیره‌سازی و سرویس‌ها، اعمال کد تخفیف، ثبت سفارش و پیگیری وضعیت.</p><a class="link" href="#plans">مشاهده پلن‌ها</a></article>
+        <article class="card"><div class="icon">🧰</div><h3>مرکز مدیریت</h3><p>مدیریت کاربران، فایل‌ها، Storage، سرویس‌ها، پرداخت‌ها، تخفیف‌ها، تیکت‌ها، اعلان‌ها، گزارش‌ها و سلامت سامانه.</p><a class="link" href="/information.html#admin">امکانات مدیر</a></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section compact">
+    <div class="container">
+      <div class="section-head"><div><h2>شروع استفاده در چهار مرحله</h2><p>ثبت‌نام و فعال‌سازی حساب با روند مشخص و قابل پیگیری انجام می‌شود.</p></div></div>
+      <div class="steps">
+        <article class="step"><div class="step-number">۱</div><h3>ساخت حساب</h3><p>اطلاعات هویتی و شماره موبایل خود را در صفحه ثبت‌نام وارد کنید.</p></article>
+        <article class="step"><div class="step-number">۲</div><h3>تأیید پیام‌رسان</h3><p>بله یا سروش+ را انتخاب و شماره موبایل خود را از طریق Contact رسمی تأیید کنید.</p></article>
+        <article class="step"><div class="step-number">۳</div><h3>ورود امن</h3><p>پس از فعال‌شدن حساب وارد پنل شوید و از امکانات حساب شخصی استفاده کنید.</p></article>
+        <article class="step"><div class="step-number">۴</div><h3>مدیریت و توسعه فضا</h3><p>فایل و یادداشت مدیریت کنید، تیکت بسازید و در صورت نیاز پلن یا سرویس تهیه کنید.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="security" class="section">
+    <div class="container security">
+      <div class="security-panel">
+        <span class="eyebrow">امنیت حساب</span>
+        <h2>کنترل‌های امنیتی فقط ظاهری نیستند</h2>
+        <p>بخش‌های حساس سامانه در Backend کنترل می‌شوند؛ از جمله نشست کاربر، دسترسی مدیر، محدودیت درخواست‌های OTP و عملیات حساس.</p>
+      </div>
+      <div class="security-list">
+        <div class="security-item"><span class="check">✓</span><div><b>Session و کنترل دسترسی سمت سرور</b><span>صفحات مدیر فقط برای حساب دارای نقش manager و Session معتبر ارائه می‌شوند.</span></div></div>
+        <div class="security-item"><span class="check">✓</span><div><b>CSRF و محدودسازی تلاش‌ها</b><span>درخواست‌های حساس و تلاش‌های ورود/OTP در Backend کنترل می‌شوند.</span></div></div>
+        <div class="security-item"><span class="check">✓</span><div><b>لینک موقت برای فایل‌های خصوصی</b><span>دانلود فایل‌های Object Storage از مسیرهای کنترل‌شده و URLهای موقت انجام می‌شود.</span></div></div>
+        <div class="security-item"><span class="check">✓</span><div><b>Trash با امکان بازیابی</b><span>حذف معمولی فایل فوراً آن را نابود نمی‌کند و امکان بازیابی پیش از حذف دائمی وجود دارد.</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section compact">
+    <div class="container">
+      <div class="section-head"><div><h2>ارتباط از طریق پیام‌رسان</h2><p>بله و سروش+ در بخش‌های مختلف احراز شماره، اعلان و بازیابی حساب به کار می‌روند.</p></div></div>
+      <div class="messenger">
+        <article class="messenger-card"><h3>بله</h3><p>تأیید شماره موبایل، اعلان‌های شخصی و امنیتی، کدهای بازیابی و مسیر پرداخت سفارش‌های غیررایگان.</p><div class="tags"><span class="tag">تأیید شماره</span><span class="tag">OTP</span><span class="tag">پرداخت</span><span class="tag">اعلان</span></div></article>
+        <article class="messenger-card"><h3>سروش+</h3><p>تأیید شماره، اعلان ورود و رویدادهای حساب، OTP و پیام‌های وضعیت سفارش و سرویس.</p><div class="tags"><span class="tag">تأیید شماره</span><span class="tag">OTP</span><span class="tag">Polling / Webhook</span><span class="tag">اعلان</span></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="roadmap" class="section">
+    <div class="container roadmap">
+      <div class="section-head">
+        <div><h2>قابلیت‌های در حال توسعه</h2><p>موارد زیر بخشی از نقشه توسعه سامانه هستند و تا زمان تکمیل، با برچسب «به‌زودی» نمایش داده می‌شوند.</p></div>
+      </div>
+      <div class="soon-grid">
+        <article class="soon-card"><span class="soon">به‌زودی</span><h3>رمز مستقل برای فایل‌ها</h3><p>امکان تعیین رمز برای فایل و درخواست رمز پیش از مشاهده یا دانلود فایل محافظت‌شده.</p></article>
+        <article class="soon-card"><span class="soon">به‌زودی</span><h3>ایمیل تأییدشده و ورود با Google</h3><p>ثبت و تأیید ایمیل با Google یا سرویس ایمیل و الزام تأیید برای دسترسی کامل به حساب.</p></article>
+        <article class="soon-card"><span class="soon">به‌زودی</span><h3>بازیابی و تغییر ایمیل</h3><p>بازیابی رمز از طریق ایمیل و امکان تغییر ایمیل با حفظ ایمیل قبلی تا زمان تأیید ایمیل جدید.</p></article>
+        <article class="soon-card"><span class="soon">به‌زودی</span><h3>گذرواژه دومرحله‌ای اختیاری</h3><p>تعریف گذرواژه دوم، تکرار آن و راهنما برای افزایش امنیت حساب به انتخاب کاربر.</p></article>
+        <article class="soon-card"><span class="soon">به‌زودی</span><h3>مرکز امنیت در زیر‌دامنه</h3><p>ورود با شماره موبایل و کد پیام‌رسان برای مدیریت امنیت، ورود مستقیم و حذف کامل حساب.</p></article>
+        <article class="soon-card"><span class="soon">به‌زودی</span><h3>مهلت ۳۰ روزه تأیید ایمیل</h3><p>نمایش روزهای باقی‌مانده و محدودیت حساب تا تأیید ایمیل؛ حساب تأییدنشده پس از پایان مهلت مشمول حذف خواهد شد.</p></article>
+        <article class="soon-card"><span class="soon">به‌زودی</span><h3>داشبورد سهمیه ایمیل Resend</h3><p>نمایش مصرف و باقی‌مانده سهمیه ارسال ایمیل و امکان تعریف سهمیه داخلی توسط مدیر.</p></article>
+        <article class="soon-card"><span class="soon">به‌زودی</span><h3>اعلان تیکت به مدیران در همه پیام‌رسان‌ها</h3><p>اطلاع‌رسانی ثبت تیکت به مسیرهای پیام‌رسان فعال مدیر بدون وابستگی ثبت تیکت به موفقیت ارسال.</p></article>
+        <article class="soon-card"><span class="soon">به‌زودی</span><h3>انتقال پایگاه داده به زیرساخت آروان</h3><p>انتقال داده‌های ساختاریافته سامانه به دیتابیس مقصد آروان و به‌روزرسانی اتصال Backend پایتون.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="plans" class="section">
+    <div class="container plans-shell">
+      <div class="section-head">
+        <div><h2>پلن‌ها و سرویس‌های فعال</h2><p>این بخش مستقیماً از Backend خوانده می‌شود. برای خرید یا مدیریت سفارش باید وارد حساب شوید.</p></div>
+        <a class="mini-link" href="/Login.html">ورود برای خرید ←</a>
+      </div>
+      <div id="status" class="state">در حال دریافت پلن‌های فعال…</div>
+      <h3 class="plan-group-title">فضای ذخیره‌سازی</h3>
+      <div id="storagePlans" class="plans-grid"></div>
+      <h3 class="plan-group-title">سرویس‌ها</h3>
+      <div id="servicePlans" class="plans-grid"></div>
+    </div>
+  </section>
+
+  <section class="section compact">
+    <div class="container cta">
+      <div><h2>آماده‌اید فضای شخصی خودتان را بسازید؟</h2><p>ثبت‌نام کنید، شماره خود را تأیید کنید و سپس از پنل شخصی استفاده کنید.</p></div>
+      <div class="cta-actions"><a class="btn primary" href="/SignUp.html">ثبت‌نام</a><a class="btn" href="/Login.html">ورود</a><a class="btn" href="/information.html">راهنمای کامل</a></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container footer-row">
+    <div>فضای شخصی — مدیریت یکپارچه فایل، یادداشت، پیام و سرویس</div>
+    <div class="footer-links"><a href="/information.html">راهنما</a><a href="/LearnMore.html">بیشتر بدانیم</a><a href="/Login.html">ورود</a><a href="/SignUp.html">ثبت‌نام</a></div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  const API="/api/public/plans";
+  const faDigits=value=>String(value??"").replace(/\d/g,d=>"۰۱۲۳۴۵۶۷۸۹"[d]);
+  const esc=value=>String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch]));
+  const money=value=>faDigits(Number(value||0).toLocaleString("en-US"))+" ریال";
+  function bytes(value){
+    let n=Number(value||0); if(!Number.isFinite(n)||n<=0) return "";
+    const units=["بایت","کیلوبایت","مگابایت","گیگابایت","ترابایت"]; let i=0;
+    while(n>=1024&&i<units.length-1){n/=1024;i++;}
+    const shown=i===0?Math.round(n):Math.round(n*10)/10;
+    return faDigits(shown.toLocaleString("en-US"))+" "+units[i];
+  }
+  function storageCard(plan){
+    const title=plan?.name||"پلن ذخیره‌سازی";
+    const quota=bytes(plan?.storageBytes);
+    return `<article class="plan-card"><h3>${esc(title)}</h3><div class="plan-meta">${quota?`فضای اضافه: ${esc(quota)}`:"افزایش سهمیه فضای شخصی"}</div><div class="plan-price">${money(plan?.priceIrr)}</div><div class="price-note">قیمت ثبت‌شده در سامانه</div><div class="plan-actions"><a class="btn primary" href="/Login.html">خرید در پنل</a><a class="btn" href="/information.html#plans">جزئیات</a></div></article>`;
+  }
+  function serviceCard(plan){
+    const title=plan?.name||plan?.productLabel||"سرویس";
+    const labels=[plan?.productLabel,plan?.purchaseTypeLabel,plan?.accountTierLabel].filter(Boolean);
+    const prices=Array.isArray(plan?.prices)?plan.prices:[];
+    let priceText="برای مشاهده قیمت وارد پنل شوید";
+    let priceNote="قیمت بر اساس مدت انتخابی";
+    if(prices.length){
+      const sorted=[...prices].sort((a,b)=>Number(a.priceIrr||0)-Number(b.priceIrr||0));
+      const first=sorted[0]; priceText=money(first.priceIrr);
+      priceNote=`از ${faDigits(first.months||0)} ماه`;
+    }
+    return `<article class="plan-card"><h3>${esc(title)}</h3><div class="plan-meta">${esc(labels.join(" · ")||plan?.description||"سرویس قابل سفارش")}</div><div class="plan-price">${esc(priceText)}</div><div class="price-note">${esc(priceNote)}</div><div class="plan-actions"><a class="btn primary" href="/Login.html">ادامه در پنل</a><a class="btn" href="/information.html#plans">جزئیات</a></div></article>`;
+  }
+  async function loadPlans(){
+    const status=document.getElementById("status");
+    try{
+      const response=await fetch(API,{headers:{Accept:"application/json"},cache:"no-store"});
+      const data=await response.json().catch(()=>({}));
+      if(!response.ok||data.ok===false) throw new Error(data.message||"دریافت اطلاعات ناموفق بود");
+      const storage=Array.isArray(data.storagePlans)?data.storagePlans:[];
+      const services=Array.isArray(data.servicePlans)?data.servicePlans:[];
+      document.getElementById("storagePlans").innerHTML=storage.length?storage.map(storageCard).join(""):'<div class="portal-empty">در حال حاضر پلن ذخیره‌سازی فعالی ثبت نشده است.</div>';
+      document.getElementById("servicePlans").innerHTML=services.length?services.map(serviceCard).join(""):'<div class="portal-empty">در حال حاضر سرویس فعالی ثبت نشده است.</div>';
+      status.textContent=faDigits(storage.length+services.length)+" مورد فعال از Backend دریافت شد.";
+    }catch(error){
+      status.textContent="دریافت پلن‌ها انجام نشد: "+String(error?.message||"خطای نامشخص");
+      document.getElementById("storagePlans").innerHTML='<div class="portal-empty">اطلاعات پلن‌ها فعلاً در دسترس نیست.</div>';
+      document.getElementById("servicePlans").innerHTML='<div class="portal-empty">اطلاعات سرویس‌ها فعلاً در دسترس نیست.</div>';
+    }
+  }
+  loadPlans();
+})();
+</script>
+</body>
+</html>

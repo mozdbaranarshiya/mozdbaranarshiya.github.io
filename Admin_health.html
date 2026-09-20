@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>سلامت سیستم</title><link rel="stylesheet" href="/admin.css"><link rel="stylesheet" href="/portal.css"></head>
+<body>
+<div class="admin-page">
+ <div class="admin-page-header"><div><h1 class="admin-page-title">سلامت سیستم</h1><p class="admin-page-subtitle">بررسی عمیق پایگاه‌داده، Storage، بله، Routeها، فایل‌های Python/HTML، تنظیمات امنیتی و Workerها. هیچ Secret در خروجی نمایش داده نمی‌شود.</p></div><button id="refresh" class="admin-btn primary">بررسی کامل</button></div>
+ <div id="status" class="admin-status"></div>
+ <section id="overall" class="admin-card admin-card-pad" style="margin-bottom:14px"><div class="admin-loading">در حال بررسی...</div></section>
+ <div id="cards" class="admin-grid two"></div>
+ <section class="admin-card admin-card-pad" style="margin-top:14px"><h2 class="admin-section-title">خطاهای سورس / Route</h2><div id="errors" class="admin-empty">در حال بررسی...</div></section>
+</div>
+<script src="/admin.js"></script>
+<script>
+(function(){"use strict";
+function badge(ok){return `<span class="admin-badge ${ok?'green':'red'}">${ok?'سالم':'نیاز به بررسی'}</span>`}
+function row(k,v){return `<div>${AdminAPI.esc(k)}</div><div>${AdminAPI.esc(v==null?'-':v)}</div>`}
+function card(title,x,extra=''){return `<section class="admin-card admin-card-pad"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><h2 class="admin-section-title" style="margin:0">${AdminAPI.esc(title)}</h2>${badge(!!x.ok)}</div><p class="admin-section-note">${AdminAPI.esc(x.message||'-')}</p>${extra}</section>`}
+async function load(){
+ AdminAPI.status('status','بررسی عمیق ممکن است چند ثانیه طول بکشد...','info');
+ try{await AdminAPI.init();const d=await AdminAPI.request('/api/admin/health?deep=1');
+  const o=d.overall||{};document.getElementById('overall').innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><div><h2 class="admin-section-title" style="margin:0 0 5px">نتیجه کلی</h2><div class="admin-section-note">${AdminAPI.esc(o.message||'-')} — زمان بررسی: ${AdminAPI.fa(o.durationMs||0)} ms</div></div>${badge(!!o.ok)}</div>`;
+  const db=d.database||{},st=d.storage||{},ba=d.bale||{},co=d.code||{},ro=d.routes||{},cf=d.config||{},wo=d.workers||{},se=d.security||{},tr=d.trash||{};
+  const env=(cf.checks||[]).map(x=>`<div>${AdminAPI.esc(x.name)}</div><div><span class="admin-badge ${x.configured?'green':'red'}">${x.configured?'تنظیم شده':'تنظیم نشده'}</span></div>`).join('');
+  document.getElementById('cards').innerHTML=
+   card('PostgreSQL / Schema',db,`<div class="admin-kv">${row('تعداد جدول',db.tableCount||0)}${row('جدول‌های ناقص',(db.missingTables||[]).join(', ')||'ندارد')}${row('ستون‌های ناقص users',(db.missingUserColumns||[]).join(', ')||'ندارد')}</div>`)+
+   card('Arvan Object Storage',st,`<div class="admin-kv">${row('Bucket',st.bucket||'-')}${row('نمونه اشیا',st.sampleObjects||0)}</div>`)+
+   card('پیام‌رسان بله',ba,`<div class="admin-kv">${row('Bot Token',ba.botConfigured?'تنظیم شده':'تنظیم نشده')}${row('Payment Token',ba.paymentConfigured?'تنظیم شده':'تنظیم نشده')}${row('نام بازو',ba.botName||'-')}${row('Webhook',ba.webhook?(ba.webhook.configured?'فعال':'غیرفعال'):'-')}</div>`)+
+   card('سورس برنامه',co,`<div class="admin-kv">${row('Python',co.pythonFiles||0)}${row('HTML',co.htmlFiles||0)}${row('خطا',(co.errors||[]).length)}</div>`)+
+   card('Routeها',ro,`<div class="admin-kv">${row('Route ثبت‌شده',ro.count||0)}${row('Route تکراری',(ro.duplicates||[]).length)}</div>`)+
+   card('متغیرهای محیطی',cf,`<div class="admin-kv">${env}</div>`)+
+   card('Workerها',wo,`<div class="admin-kv">${row('Bale polling',wo.balePolling?'در حال اجرا':'غیرفعال/حالت دیگر')}${row('Trash cleanup',wo.trashCleanup?'در حال اجرا':'هنوز اجرا نشده')}</div>`)+
+   card('امنیت و محدودیت‌ها',se,`<div class="admin-kv">${row('حداکثر Request',AdminAPI.formatBytes(se.maxRequestBytes||0))}${row('حفاظت صفحات مدیریت',se.adminPagesServerProtected?'فعال':'نامشخص')}${row('نمایش Secret',se.secretValuesExposed?'هشدار':'خیر')}</div>`)+
+   card('Trash',tr,`<div class="admin-kv">${row('نگهداری',AdminAPI.fa(tr.retentionDays||0)+' روز')}</div>`);
+  const errs=[...(co.errors||[]),...(ro.duplicates||[]).map(x=>({file:x.method+' '+x.path,message:(x.endpoints||[]).join(', ')}))];
+  document.getElementById('errors').innerHTML=errs.length?`<div class="portal-table-wrap"><table class="portal-table"><thead><tr><th>فایل/مسیر</th><th>نوع</th><th>پیام</th></tr></thead><tbody>${errs.map(e=>`<tr><td class="admin-code">${AdminAPI.esc(e.file||e.path||'-')}</td><td>${AdminAPI.esc(e.type||'route')}</td><td class="wrap">${AdminAPI.esc(e.message||'-')}</td></tr>`).join('')}</tbody></table></div>`:'<div class="admin-empty">خطای ساختاری یا Route تکراری پیدا نشد.</div>';
+  AdminAPI.status('status',o.ok?'بررسی کامل شد؛ بخش‌های اصلی سالم هستند.':'بررسی کامل شد؛ موارد قرمز را بررسی کنید.',o.ok?'success':'error');
+ }catch(e){AdminAPI.status('status',e.message,'error')}
+}
+document.getElementById('refresh').onclick=load;load();
+})();
+</script></body></html>

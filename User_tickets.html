@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>پشتیبانی و تیکت</title><link rel="stylesheet" href="/portal.css"><style>.demo-lock{display:none;padding:13px 15px;border:1px solid #fed7aa;background:#fff7ed;color:#9a3412;border-radius:12px;line-height:1.9;margin-bottom:12px}.demo-lock.show{display:block}[disabled]{opacity:.55;cursor:not-allowed}</style>    <script src="/persian-digits.js"></script>
+</head>
+<body>
+<div class="portal-page">
+  <div class="portal-head"><div><h1>پشتیبانی و تیکت</h1><p>درخواست‌های پشتیبانی و پیام‌های قبلی خود را مشاهده کنید.</p></div></div>
+  <div id="status" class="portal-status"></div>
+  <div id="demoLock" class="demo-lock"><b>حساب آزمایشی:</b> امکان ثبت تیکت یا ارسال پیام پشتیبانی برای این حساب غیرفعال است. مشاهده بخش پشتیبانی همچنان امکان‌پذیر است.</div>
+  <section class="portal-card" id="createCard"><h2>ثبت تیکت جدید</h2><div class="portal-form"><input id="subject" class="portal-input" placeholder="عنوان درخواست" maxlength="160"><textarea id="body" class="portal-textarea" placeholder="متن درخواست"></textarea><button id="create" class="portal-btn primary">ثبت تیکت</button></div></section>
+  <div class="portal-grid" style="grid-template-columns:minmax(260px,1fr) minmax(360px,2fr)"><section class="portal-card"><h2>تیکت‌های من</h2><div id="list"></div></section><section class="portal-card"><div id="detail" class="portal-empty">یک تیکت را انتخاب کنید.</div></section></div>
+</div>
+<script src="/portal.js"></script>
+<script>
+(function(){
+"use strict";
+let current=null,isDemo=false;
+const list=document.getElementById('list'),detail=document.getElementById('detail'),subject=document.getElementById('subject'),body=document.getElementById('body'),create=document.getElementById('create');
+const badge=s=>`<span class="portal-badge ${s}">${s==='open'?'باز':'بسته'}</span>`;
+function applyDemo(){if(!isDemo)return;document.getElementById('demoLock').classList.add('show');[subject,body,create].forEach(el=>el.disabled=true);subject.placeholder='ثبت تیکت برای حساب آزمایشی غیرفعال است';body.placeholder='حساب آزمایشی امکان ارسال درخواست پشتیبانی ندارد';}
+async function load(){try{const d=await PortalAPI.request('/api/portal/tickets');isDemo=isDemo||!!d.isDemo;applyDemo();const a=d.tickets||[];list.innerHTML=a.length?a.map(t=>`<button class="portal-card ticket-open" data-ticket-id="${t.id}" style="width:100%;text-align:right;cursor:pointer"><b>${PortalAPI.esc(t.subject)}</b><div>${PortalAPI.esc(t.ticketCode)}</div>${badge(t.status)}</button>`).join(''):'<div class="portal-empty">تیکتی ثبت نشده است.</div>'}catch(e){PortalAPI.status('status',e.message,'error')}}
+async function showTicket(id){try{const d=await PortalAPI.request('/api/portal/tickets/'+id);current=d.ticket;render()}catch(e){PortalAPI.status('status',e.message,'error')}}
+function render(){const t=current;if(!t)return;detail.innerHTML=`<h2>${PortalAPI.esc(t.subject)}</h2><div class="portal-muted">${PortalAPI.esc(t.ticketCode)} | ${badge(t.status)}</div><div style="margin:14px 0">${t.messages.map(m=>`<div class="portal-message ${m.senderRole==='manager'?'manager':''}"><div class="meta">${m.senderRole==='manager'?'پاسخ مدیر':'پیام شما'} - ${PortalAPI.esc(m.createdAt)}</div><div>${PortalAPI.esc(m.body).replace(/\n/g,'<br>')}</div></div>`).join('')}</div>${t.status==='open'&&!isDemo?`<textarea id="reply" class="portal-textarea" placeholder="پیام جدید"></textarea><button id="replyBtn" class="portal-btn primary" style="margin-top:8px">ارسال پیام</button>`:isDemo?'<div class="portal-muted">ارسال پیام برای حساب آزمایشی غیرفعال است.</div>':'<div class="portal-muted">این تیکت بسته شده است.</div>'}`;const rb=document.getElementById('replyBtn');if(rb)rb.addEventListener('click',sendMessage)}
+async function sendMessage(){if(isDemo){PortalAPI.status('status','حساب آزمایشی امکان ارسال پیام پشتیبانی ندارد.','error');return;}try{await PortalAPI.request('/api/portal/tickets/'+current.id+'/messages',{method:'POST',body:{body:document.getElementById('reply').value}});PortalAPI.status('status','پیام ارسال شد.','success');await showTicket(current.id);await load()}catch(e){PortalAPI.status('status',e.message,'error')}}
+create.addEventListener('click',async()=>{if(isDemo){PortalAPI.status('status','حساب آزمایشی امکان ثبت تیکت پشتیبانی ندارد.','error');return;}try{const d=await PortalAPI.request('/api/portal/tickets',{method:'POST',body:{subject:subject.value,body:body.value}});PortalAPI.status('status',d.message+' کد تیکت: '+d.ticketCode,'success');subject.value='';body.value='';await load()}catch(e){PortalAPI.status('status',e.message,'error')}});
+list.addEventListener('click',e=>{const b=e.target.closest('[data-ticket-id]');if(b)showTicket(Number(b.dataset.ticketId))});
+(async()=>{try{const session=await PortalAPI.init();isDemo=!!session.isDemo;applyDemo();await load();const id=Number(new URLSearchParams(location.search).get('ticketId')||0);if(id>0)await showTicket(id)}catch(e){PortalAPI.status('status',e.message,'error')}})();
+})();
+</script>
+</body></html>

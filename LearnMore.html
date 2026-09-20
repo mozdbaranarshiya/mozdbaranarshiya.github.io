@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>مرکز آموزش و اطلاع‌رسانی</title>
+  <link rel="stylesheet" href="/portal.css">
+  <style>
+    .learn-wrap{max-width:1000px;margin:0 auto;padding:20px}
+    .filters{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+    .item{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px;margin:12px 0}
+    .item h2{margin:0 0 8px;font-size:18px}
+    .meta{color:#64748b;font-size:13px}
+    .body{white-space:pre-wrap;line-height:2;margin-top:10px}
+    .video{display:inline-block;margin-top:10px}
+  </style>
+</head>
+<body>
+<main class="learn-wrap">
+  <div class="portal-head">
+    <div>
+      <h1>مرکز آموزش و اطلاع‌رسانی</h1>
+      <p>آموزش‌ها، تغییرات سامانه و راهنمای فعال‌سازی سرویس‌ها.</p>
+    </div>
+    <a class="portal-btn" href="/Login.html">ورود به سامانه</a>
+  </div>
+
+  <div class="filters">
+    <button class="portal-btn primary" data-cat="">همه</button>
+    <button class="portal-btn" data-cat="learn_more">آموزش عمومی</button>
+    <button class="portal-btn" data-cat="system_update">به‌روزرسانی سامانه</button>
+    <button class="portal-btn" data-cat="activation_windows">فعال‌سازی ویندوز</button>
+    <button class="portal-btn" data-cat="activation_android">فعال‌سازی اندروید</button>
+  </div>
+
+  <div id="status" class="portal-note">در حال دریافت محتوا…</div>
+  <div id="items"></div>
+</main>
+
+<script>
+const API='/api/public/learn-more';
+function esc(v){
+  return String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+const labels={
+  learn_more:'آموزش عمومی',
+  system_update:'به‌روزرسانی سامانه',
+  activation_windows:'فعال‌سازی ویندوز',
+  activation_android:'فعال‌سازی اندروید'
+};
+async function load(category=''){
+  const status=document.getElementById('status');
+  status.textContent='در حال دریافت محتوا…';
+  try{
+    const url=API+(category?'?category='+encodeURIComponent(category):'');
+    const r=await fetch(url,{headers:{'Accept':'application/json'}});
+    const d=await r.json();
+    if(!r.ok || d.ok===false) throw new Error(d.message||'خطا در دریافت محتوا');
+    const items=Array.isArray(d.items)?d.items:[];
+    document.getElementById('items').innerHTML=items.length?items.map(x=>`
+      <article class="item">
+        <div class="meta">${esc(labels[x.category]||x.category||'')}</div>
+        <h2>${esc(x.title)}</h2>
+        ${x.summary?`<div>${esc(x.summary)}</div>`:''}
+        ${x.body?`<div class="body">${esc(x.body)}</div>`:''}
+        ${x.aiVideoNote?`<div class="portal-note">${esc(x.aiVideoNote)}</div>`:''}
+        ${x.videoUrl?`<a class="portal-btn video" href="${esc(x.videoUrl)}" target="_blank" rel="noopener noreferrer">مشاهده ویدئو</a>`:''}
+      </article>`).join('')
+      :'<div class="portal-empty">محتوایی برای نمایش وجود ندارد.</div>';
+    status.textContent=items.length+' مورد';
+  }catch(e){
+    status.textContent='خطا: '+e.message;
+  }
+}
+document.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('[data-cat]').forEach(x=>x.classList.remove('primary'));
+  b.classList.add('primary');
+  load(b.dataset.cat||'');
+}));
+load();
+</script>
+</body>
+</html>

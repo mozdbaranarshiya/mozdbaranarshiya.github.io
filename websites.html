@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>وبسایت های من</title>
+  <link rel="icon" type="image/png" href="/personalspace-icon.png">
+  <link rel="stylesheet" href="app.css">
+  
+</head>
+<body>
+<script>
+async function checkLogin() {
+    try {
+        const response = await fetch("/api/session", {
+            credentials: "same-origin",
+            cache: "no-store"
+        });
+
+        if (!response.ok) {
+            window.location.replace("/Login.html");
+            return;
+        }
+
+        const result = await response.json();
+
+        if (!result.loggedIn) {
+            window.location.replace("/Login.html");
+        }
+        window.csrfToken = result.csrfToken || "";
+    } catch (error) {
+        window.location.replace("/Login.html");
+    }
+}
+
+checkLogin();
+</script>
+<script>
+    function Website_ChatGPT() {
+        window.location.href = "https://chatgpt.com/"
+    }
+    function Website_Eitaa() {
+        window.location.href = "https://web.eitaa.com/"
+    }
+    function Website_gptyar() {
+        window.location.href = "https://gptyar.com/"
+    }
+    function Bazgasht() {
+        window.location.href = "panel.html"
+    }
+    async function Khoroj() {
+        try {
+            const response = await fetch("/api/logout", {
+                method: "DELETE",
+                credentials: "same-origin",
+                headers: {
+                    "X-CSRF-Token": window.csrfToken || ""
+                }
+            });
+
+            if (!response.ok) {
+                alert("خروج از حساب انجام نشد.");
+                return;
+            }
+
+            localStorage.removeItem("isLoggedIn");
+            localStorage.removeItem("userRole");
+            localStorage.removeItem("username");
+
+            window.location.replace("/Login.html");
+
+        } catch (error) {
+            alert("خطا در ارتباط با سامانه.");
+        }
+    }
+</script>
+<button type="button" onclick="Website_ChatGPT()">ورود به چت جی پی تی</button>
+<button type="button" onclick="Website_Eitaa()">ورود به ایتا</button>
+<button type="button" onclick="Website_gptyar()">ورود به جی پی تی یار</button>
+
+<button type="button" onclick="Khoroj()">خروج</button>
+</body>
+</html>

@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>پلن‌ها و سرویس‌ها</title>
+<link rel="stylesheet" href="/portal.css">
+<style>
+.demo-notice{display:none;margin-bottom:12px;padding:12px 14px;border-radius:12px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;line-height:1.9}.demo-notice.show{display:block}.service-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.service-filter{border:1px solid #dbe3ee;background:#fff;padding:8px 13px;border-radius:999px;cursor:pointer;font:inherit;color:#334155}.service-filter.active{background:#2563eb;color:#fff;border-color:#2563eb}.service-card .service-meta{display:grid;gap:5px;margin:10px 0;color:#475569;font-size:13px}.service-card .service-buy{display:grid;gap:9px;margin-top:12px}.renew-note{padding:9px 10px;border-radius:10px;background:#fff7ed;color:#9a3412;font-size:12px;line-height:1.8}.safe-note{margin:12px 0;padding:11px 13px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;border-radius:12px;line-height:1.9;font-size:12px}.price-now{font-size:20px;font-weight:850;color:#0f172a}.plan-kind{display:inline-flex;padding:4px 9px;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:11px;width:max-content}.order-detail{font-size:11px;color:#64748b;line-height:1.8}.service-token{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;border:1px dashed #cbd5e1;background:#f8fafc;border-radius:11px;padding:10px;margin-top:10px}.service-token code{direction:ltr;text-align:left;overflow:auto;white-space:nowrap;font-family:Consolas,monospace;font-size:11px}.section-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:10px}.payment-note{margin:0 0 12px;padding:10px 12px;border-radius:11px;background:#f8fafc;border:1px solid #e2e8f0;color:#475569;font-size:12px;line-height:1.9}@media(max-width:560px){.service-token{grid-template-columns:1fr}.service-token button{width:100%}.section-actions{justify-content:stretch}.section-actions .portal-btn{width:100%;text-align:center}}
+</style>
+<script src="/persian-digits.js"></script>
+</head>
+<body>
+<div class="portal-page compact-page">
+  <div class="portal-head">
+    <div>
+      <h1>پلن‌ها و سرویس‌ها</h1>
+      <p>فضای اضافه یا سرویس ChatGPT را انتخاب کنید. پرداخت سفارش‌های غیررایگان فقط از طریق بله انجام می‌شود.</p>
+    </div>
+    <a class="portal-btn" href="/User_orders.html">سفارش‌های من</a>
+  </div>
+
+  <div id="status" class="portal-status"></div>
+  <div id="demoNotice" class="demo-notice"><b>حساب آزمایشی:</b> همه گزینه‌ها قابل مشاهده هستند، اما خرید برای این حساب غیرفعال است.</div>
+
+  <div class="portal-tabs" role="tablist" aria-label="نوع پلن">
+    <button class="portal-tab active" type="button" data-tab="storage" aria-selected="true">فضای اضافه</button>
+    <button class="portal-tab" type="button" data-tab="chatgpt" aria-selected="false">ChatGPT</button>
+  </div>
+
+  <section id="storageTab" class="tab-panel active">
+    <div class="payment-note">پس از ثبت سفارش، اگر مبلغ قابل پرداخت بیشتر از صفر باشد، درخواست پرداخت به حساب بله متصل‌شده شما ارسال می‌شود.</div>
+
+    <div id="storagePlans" class="portal-grid compact">
+      <div class="portal-empty">در حال دریافت پلن‌ها...</div>
+    </div>
+
+    <section class="portal-card compact-card">
+      <h2>خریدهای فضای ذخیره‌سازی</h2>
+
+      <div id="storageOrders">
+        <div class="portal-empty">در حال دریافت...</div>
+      </div>
+
+      <div class="section-actions">
+        <a class="portal-btn" href="/User_orders.html">مشاهده همه سفارش‌ها</a>
+      </div>
+    </section>
+  </section>
+
+  <section id="chatgptTab" class="tab-panel">
+
+    <div class="safe-note">
+      <b>نکته امنیتی:</b>
+      برای تمدید فقط ایمیل حساب در سامانه ثبت می‌شود.
+      Session، Cookie، رمز عبور یا اطلاعات ورود ChatGPT را در این سامانه وارد نکنید.
+      پس از آماده‌سازی سرویس، توکن توسط مدیر در حساب شما قرار می‌گیرد.
+    </div>
+
+    <div class="payment-note">
+      پیام‌رسان اصلی حساب می‌تواند بله یا سروش+ باشد؛
+      با این حال پرداخت سفارش‌های غیررایگان فقط از طریق بله انجام می‌شود.
+    </div>
+
+    <div class="service-filters" aria-label="فیلتر سرویس">
+      <button class="service-filter active" type="button" data-product="all">همه</button>
+      <button class="service-filter" type="button" data-product="chatgpt_go">ChatGPT Go</button>
+      <button class="service-filter" type="button" data-product="chatgpt_plus">ChatGPT Plus</button>
+      <button class="service-filter" type="button" data-product="chatgpt_pro">ChatGPT Pro</button>
+    </div>
+
+    <div id="servicePlans" class="portal-grid compact">
+      <div class="portal-empty">در حال دریافت سرویس‌ها...</div>
+    </div>
+
+    <section class="portal-card compact-card">
+      <h2>سرویس‌های من</h2>
+
+      <div id="serviceAccess">
+        <div class="portal-empty">در حال دریافت...</div>
+      </div>
+
+      <div class="section-actions">
+        <a class="portal-btn" href="/User_orders.html">جزئیات سفارش و توکن‌ها</a>
+      </div>
+    </section>
+
+    <section class="portal-card compact-card">
+      <h2>سفارش‌های ChatGPT</h2>
+
+      <div id="serviceOrders">
+        <div class="portal-empty">در حال دریافت...</div>
+      </div>
+
+      <div class="section-actions">
+        <a class="portal-btn" href="/User_orders.html">مشاهده همه سفارش‌ها</a>
+      </div>
+    </section>
+
+  </section>
+</div>
+
+<script src="/portal.js"></script>
+
+<script>
+(function(){
+"use strict";
+
+const statusLabels={
+  pending:'در انتظار پرداخت',
+  paid:'پرداخت‌شده',
+  failed:'ناموفق',
+  cancelled:'لغوشده'
+};
+
+const fulfillmentLabels={
+  pending_payment:'در انتظار پرداخت',
+  awaiting_token:'در انتظار ثبت توکن',
+  active:'فعال',
+  expired:'منقضی',
+  revoked:'لغوشده'
+};
+
+let serviceEntitlements=[];
+let servicePlansCache=[];
+let isDemo=false;
+let currentProduct='all';
+
+
+function setTab(name){
+  document.querySelectorAll('.portal-tab').forEach(button=>{
+    const selected=button.dataset.tab===name;
+
+    button.classList.toggle('active',selected);
+    button.setAttribute(
+      'aria-selected',
+      selected?'true':'false'
+    );
+  });
+
+  document.querySelectorAll('.tab-panel').forEach(panel=>{
+    panel.classList.remove('active');
+  });
+
+  document
+    .getElementById(
+      name==='storage'
+        ? 'storageTab'
+        : 'chatgptTab'
+    )
+    .classList.add('active');
+}
+
+
+document.querySelectorAll('.portal-tab').forEach(button=>{
+  button.addEventListener('click',()=>{
+    setTab(button.dataset.tab);
+  });
+});
+
+
+document.querySelectorAll('.service-filter').forEach(button=>{
+  button.addEventListener('click',()=>{
+
+    currentProduct=button.dataset.product;
+
+    document
+      .querySelectorAll('.service-filter')
+      .forEach(item=>{
+        item.classList.toggle(
+          'active',
+          item===button
+        );
+      });
+
+    renderServicePlans();
+  });
+});
+
+
+function remainingText(seconds){
+
+  let value=Math.max(
+    0,
+    Number(seconds||0)
+  );
+
+  const days=Math.floor(
+    value/86400
+  );
+
+  value-=days*86400;
+
+  const hours=Math.floor(
+    value/3600
+  );
+
+  value-=hours*3600;
+
+  const minutes=Math.floor(
+    value/60
+  );
+
+  if(days>0){
+    return `${PortalAPI.fa(days)} روز و ${PortalAPI.fa(hours)} ساعت`;
+  }
+
+  if(hours>0){
+    return `${PortalAPI.fa(hours)} ساعت و ${PortalAPI.fa(minutes)} دقیقه`;
+  }
+
+  return `${PortalAPI.fa(minutes)} دقیقه`;
+}
+
+
+function demoMessage(){
+  PortalAPI.status(
+    'status',
+    'این کاربر آزمایشی است و امکان خرید ندارد.',
+    'error'
+  );
+}
+
+
+async function copyText(
+  value,
+  successMessage
+){
+
+  try{
+
+    await navigator.clipboard.writeText(
+      value
+    );
+
+  }catch(_){
+
+    const textarea=
+      document.createElement(
+        'textarea'
+      );
+
+    textarea.value=value;
+
+    textarea.setAttribute(
+      'readonly',
+      ''
+    );
+
+    textarea.style.position='fixed';
+    textarea.style.opacity='0';
+
+    document.body.appendChild(
+      textarea
+    );
+
+    textarea.select();
+
+    const copied=
+      document.execCommand(
+        'copy'
+      );
+
+    textarea.remove();
+
+    if(!copied){
+      throw new Error(
+        'copy failed'
+      );
+    }
+  }
+
+  PortalAPI.status(
+    'status',
+    successMessage,
+    'success'
+  );
+}
+
+
+async function buyStorage(id){
+
+  if(isDemo){
+    demoMessage();
+    return;
+  }
+
+  const input=
+    document.getElementById(
+      'discount-'+id
+    );
+
+  try{
+
+    PortalAPI.status(
+      'status',
+      'در حال ثبت سفارش...',
+      ''
+    );
+
+    const data=
+      await PortalAPI.request(
+        '/api/portal/purchase',
+        {
+          method:'POST',
+
+          body:{
+            planId:id,
+            discountCode:
+              (input?.value||'').trim()
+          }
+        }
+      );
+
+    PortalAPI.status(
+      'status',
+      data.message+
+      (
+        data.orderCode
+          ? ' کد سفارش: '+data.orderCode
+          : ''
+      ),
+      'success'
+    );
+
+    await loadStorage();
+
+  }catch(error){
+
+    PortalAPI.status(
+      'status',
+      error.message,
+      'error'
+    );
+  }
+}
+
+
+async function buyService(id){
+
+  if(isDemo){
+    demoMessage();
+    return;
+  }
+
+  const plan=
+    servicePlansCache.find(
+      item=>item.id===id
+    );
+
+  if(!plan){
+    return;
+  }
+
+  const duration=
+    document.getElementById(
+      'duration-'+id
+    );
+
+  const discount=
+    document.getElementById(
+      'service-discount-'+id
+    );
+
+  const email=
+    document.getElementById(
+      'service-email-'+id
+    );
+
+  const durationMonths=
+    Number(
+      duration?.value||0
+    );
+
+  if(!durationMonths){
+
+    PortalAPI.status(
+      'status',
+      'برای این سرویس مدت قابل خریدی تعریف نشده است.',
+      'error'
+    );
+
+    return;
+  }
+
+  try{
+
+    PortalAPI.status(
+      'status',
+      'در حال ثبت سفارش ChatGPT...',
+      ''
+    );
+
+    const data=
+      await PortalAPI.request(
+        '/api/portal/service-purchase',
+        {
+          method:'POST',
+
+          body:{
+            planId:id,
+            durationMonths,
+            discountCode:
+              (discount?.value||'').trim(),
+            email:
+              (email?.value||'').trim()
+          }
+        }
+      );
+
+    PortalAPI.status(
+      'status',
+      data.message+
+      (
+        data.orderCode
+          ? ' کد سفارش: '+data.orderCode
+          : ''
+      ),
+      'success'
+    );
+
+    await loadServices();
+
+  }catch(error){
+
+    PortalAPI.status(
+      'status',
+      error.message,
+      'error'
+    );
+  }
+}
+
+
+document.addEventListener(
+  'change',
+  event=>{
+
+    const select=
+      event.target.closest(
+        'select[data-duration]'
+      );
+
+    if(!select){
+      return;
+    }
+
+    const plan=
+      servicePlansCache.find(
+        item=>
+          item.id===
+          Number(
+            select.dataset.duration
+          )
+      );
+
+    if(!plan){
+      return;
+    }
+
+    const option=
+      (plan.prices||[])
+      .find(
+        item=>
+          item.months===
+          Number(select.value)
+      );
+
+    const price=
+      document.getElementById(
+        'service-price-'+plan.id
+      );
+
+    if(price && option){
+      price.textContent=
+        PortalAPI.money(
+          option.priceIrr
+        );
+    }
+  }
+);
+
+
+document.addEventListener(
+  'click',
+  event=>{
+
+    const button=
+      event.target.closest(
+        'button[data-buy-storage],button[data-buy-service],button[data-copy-token]'
+      );
+
+    if(!button){
+      return;
+    }
+
+    if(button.dataset.buyStorage){
+
+      buyStorage(
+        Number(
+          button.dataset.buyStorage
+        )
+      );
+
+      return;
+    }
+
+    if(button.dataset.buyService){
+
+      buyService(
+        Number(
+          button.dataset.buyService
+        )
+      );
+
+      return;
+    }
+
+    if(button.dataset.copyToken){
+
+      const code=
+        document.getElementById(
+          'service-token-'+
+          button.dataset.copyToken
+        );
+
+      if(code){
+
+        copyText(
+          code.textContent||'',
+          'توکن سرویس کپی شد.'
+        )
+        .catch(()=>{
+          PortalAPI.status(
+            'status',
+            'امکان کپی خودکار توکن وجود ندارد.',
+            'error'
+          );
+        });
+
+      }
+    }
+  }
+);
+
+
+async function loadStorage(){
+
+  const data=
+    await PortalAPI.request(
+      '/api/portal/plans'
+    );
+
+  isDemo=
+    isDemo||
+    !!data.isDemo;
+
+  const plans=
+    data.plans||[];
+
+  const orders=
+    data.orders||[];
+
+
+  document
+    .getElementById(
+      'storagePlans'
+    )
+    .innerHTML=
+
+    plans.length
+
+    ? plans.map(plan=>`
+
+      <article class="portal-card portal-plan compact-plan">
+
+        <h3>
+          ${PortalAPI.esc(plan.name)}
+        </h3>
+
+        <div class="price">
+          ${PortalAPI.money(plan.priceIrr)}
+        </div>
+
+        <div class="portal-muted">
+          فضای افزوده‌شونده:
+          <b>
+            ${PortalAPI.bytes(plan.storageBytes)}
+          </b>
+        </div>
+
+        <input
+          id="discount-${plan.id}"
+          class="portal-input compact-input"
+          placeholder="کد تخفیف (اختیاری)"
+          ${isDemo?'disabled':''}
+        >
+
+        <button
+          class="portal-btn primary"
+          type="button"
+          data-buy-storage="${plan.id}"
+          ${isDemo?'disabled':''}
+        >
+          ${
+            isDemo
+              ? 'خرید (حساب آزمایشی)'
+              : 'ثبت سفارش / پرداخت در بله'
+          }
+        </button>
+
+      </article>
+
+    `).join('')
+
+    : '<div class="portal-empty">پلن فضای فعالی وجود ندارد.</div>';
+
+
+  document
+    .getElementById(
+      'storageOrders'
+    )
+    .innerHTML=
+
+    orders.length
+
+    ? `
+
+      <div class="portal-table-wrap">
+
+        <table class="portal-table">
+
+          <thead>
+            <tr>
+              <th>پلن</th>
+              <th>کد سفارش</th>
+              <th>مبلغ</th>
+              <th>وضعیت</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            ${
+              orders.map(order=>`
+
+                <tr>
+
+                  <td>
+                    ${PortalAPI.esc(order.planName)}
+                  </td>
+
+                  <td>
+                    ${PortalAPI.esc(order.orderCode)}
+                  </td>
+
+                  <td>
+                    ${PortalAPI.money(order.payableAmountIrr)}
+                  </td>
+
+                  <td>
+
+                    <span class="portal-badge ${order.status}">
+                      ${
+                        PortalAPI.esc(
+                          statusLabels[order.status]
+                          ||
+                          order.status
+                        )
+                      }
+                    </span>
+
+                  </td>
+
+                </tr>
+
+              `).join('')
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    `
+
+    : '<div class="portal-empty">هنوز خرید فضای اضافه ندارید.</div>';
+}
+
+
+function renderServicePlans(){
+
+  const plans=
+    servicePlansCache.filter(
+      plan=>
+        currentProduct==='all'
+        ||
+        plan.productKey===currentProduct
+    );
+
+  const box=
+    document.getElementById(
+      'servicePlans'
+    );
+
+  box.innerHTML=
+
+    plans.length
+
+    ? plans.map(plan=>{
+
+      const prices=
+        plan.prices||[];
+
+      const first=
+        prices[0]||null;
+
+      const renewal=
+        plan.purchaseType===
+        'dedicated_renewal';
+
+      const unavailable=
+        !first;
+
+      return `
+
+        <article class="portal-card portal-plan compact-plan service-card">
+
+          <span class="plan-kind">
+            ${PortalAPI.esc(plan.productLabel)}
+          </span>
+
+          <h3>
+            ${PortalAPI.esc(plan.purchaseTypeLabel)}
+          </h3>
+
+          ${
+            plan.accountTierLabel
+
+            ? `
+              <div class="portal-muted">
+                نوع حساب:
+                <b>
+                  ${PortalAPI.esc(plan.accountTierLabel)}
+                </b>
+              </div>
+            `
+
+            : ''
+          }
+
+          ${
+            plan.description
+
+            ? `
+              <div class="portal-muted">
+                ${PortalAPI.esc(plan.description)}
+              </div>
+            `
+
+            : ''
+          }
+
+          <div class="service-meta">
+
+            <span>
+              مدت را انتخاب کنید:
+            </span>
+
+            <select
+              id="duration-${plan.id}"
+              class="portal-select"
+              data-duration="${plan.id}"
+              ${unavailable||isDemo?'disabled':''}
+            >
+
+              ${
+                prices.map(item=>`
+
+                  <option value="${item.months}">
+
+                    ${PortalAPI.fa(item.months)}
+                    ماهه —
+                    ${PortalAPI.money(item.priceIrr)}
+
+                  </option>
+
+                `).join('')
+              }
+
+            </select>
+
+          </div>
+
+          <div
+            id="service-price-${plan.id}"
+            class="price-now"
+          >
+            ${
+              first
+              ? PortalAPI.money(first.priceIrr)
+              : 'قیمت تعریف نشده'
+            }
+          </div>
+
+          <div class="service-buy">
+
+            ${
+              renewal
+
+              ? `
+
+                <div class="renew-note">
+                  برای تمدید فقط ایمیل حساب را وارد کنید.
+                  Session، Cookie یا رمز عبور را وارد نکنید.
+                </div>
+
+                <input
+                  id="service-email-${plan.id}"
+                  class="portal-input"
+                  type="email"
+                  autocomplete="email"
+                  placeholder="ایمیل حساب برای تمدید"
+                  ${isDemo?'disabled':''}
+                >
+
+              `
+
+              : ''
+            }
+
+            <input
+              id="service-discount-${plan.id}"
+              class="portal-input"
+              placeholder="کد تخفیف (اختیاری)"
+              ${isDemo?'disabled':''}
+            >
+
+            <button
+              class="portal-btn primary"
+              type="button"
+              data-buy-service="${plan.id}"
+              ${unavailable||isDemo?'disabled':''}
+            >
+              ${
+                isDemo
+                  ? 'خرید (حساب آزمایشی)'
+                  : 'ثبت سفارش / پرداخت در بله'
+              }
+            </button>
+
+          </div>
+
+        </article>
+
+      `;
+
+    }).join('')
+
+    : '<div class="portal-empty">گزینه فعالی برای این پلن وجود ندارد.</div>';
+}
+
+
+function renderEntitlements(){
+
+  const box=
+    document.getElementById(
+      'serviceAccess'
+    );
+
+  box.innerHTML=
+
+    serviceEntitlements.length
+
+    ? serviceEntitlements.map(item=>{
+
+      const active=
+        item.status==='active';
+
+      const awaiting=
+        item.status==='awaiting_token';
+
+      const token=
+        item.serviceToken
+        ||
+        item.activationCode
+        ||
+        '';
+
+      const months=
+        item.durationMonths
+        ||
+        Math.max(
+          1,
+          Math.round(
+            (item.durationDays||30)/30
+          )
+        );
+
+      return `
+
+        <article class="service-access-card ${PortalAPI.esc(item.status)}">
+
+          <div class="service-access-head">
+
+            <div>
+
+              <h3>
+                ${PortalAPI.esc(item.planName)}
+              </h3>
+
+              <span
+                class="portal-badge ${
+                  active
+                    ? 'paid'
+                    : awaiting
+                      ? 'pending'
+                      : 'failed'
+                }"
+              >
+                ${
+                  PortalAPI.esc(
+                    fulfillmentLabels[item.status]
+                    ||
+                    item.status
+                  )
+                }
+              </span>
+
+            </div>
+
+            <strong>
+              ${PortalAPI.fa(months)} ماه
+            </strong>
+
+          </div>
+
+          <div class="service-kv">
+
+            <span>فعال‌شده</span>
+
+            <b>
+              ${PortalAPI.date(item.activatedAt)}
+            </b>
+
+            <span>تاریخ انقضا</span>
+
+            <b>
+              ${PortalAPI.date(item.expiresAt)}
+            </b>
+
+            <span>زمان باقی‌مانده</span>
+
+            <b
+              class="remaining"
+              data-id="${item.id}"
+            >
+              ${
+                active
+                  ? remainingText(item.remainingSeconds)
+                  : '-'
+              }
+            </b>
+
+          </div>
+
+          ${
+            awaiting
+
+            ? `
+              <div class="portal-note">
+                سفارش پرداخت شده و در انتظار ثبت توکن توسط مدیر است.
+              </div>
+            `
+
+            : ''
+          }
+
+          ${
+            token
+
+            ? `
+
+              <div class="service-token">
+
+                <span>
+                  توکن سرویس
+                </span>
+
+                <code id="service-token-${item.id}">${PortalAPI.esc(token)}</code>
+
+                <button
+                  class="portal-btn primary"
+                  type="button"
+                  data-copy-token="${item.id}"
+                >
+                  کپی
+                </button>
+
+              </div>
+
+            `
+
+            : ''
+          }
+
+          ${
+            item.deliveryNote
+
+            ? `
+              <div class="portal-note">
+                ${PortalAPI.esc(item.deliveryNote)}
+              </div>
+            `
+
+            : ''
+          }
+
+        </article>
+
+      `;
+
+    }).join('')
+
+    : '<div class="portal-empty">هنوز سرویس فعالی ندارید.</div>';
+}
+
+
+async function loadServices(){
+
+  const data=
+    await PortalAPI.request(
+      '/api/portal/services'
+    );
+
+  isDemo=
+    isDemo||
+    !!data.isDemo;
+
+  servicePlansCache=
+    data.plans||[];
+
+  serviceEntitlements=
+    data.entitlements||[];
+
+  renderServicePlans();
+
+  renderEntitlements();
+
+
+  const orders=
+    data.orders||[];
+
+
+  document
+    .getElementById(
+      'serviceOrders'
+    )
+    .innerHTML=
+
+    orders.length
+
+    ? `
+
+      <div class="portal-table-wrap">
+
+        <table class="portal-table">
+
+          <thead>
+
+            <tr>
+              <th>پلن</th>
+              <th>جزئیات</th>
+              <th>کد سفارش</th>
+              <th>مبلغ</th>
+              <th>پرداخت</th>
+              <th>تحویل</th>
+              <th>تیکت</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            ${
+              orders.map(order=>`
+
+                <tr>
+
+                  <td>
+                    ${
+                      PortalAPI.esc(
+                        order.productLabel
+                        ||
+                        order.planName
+                      )
+                    }
+                  </td>
+
+                  <td class="order-detail">
+
+                    ${
+                      PortalAPI.esc(
+                        order.purchaseTypeLabel
+                        ||
+                        ''
+                      )
+                    }
+
+                    ${
+                      order.accountTierLabel
+
+                      ? '<br>'+
+                        PortalAPI.esc(
+                          order.accountTierLabel
+                        )
+
+                      : ''
+                    }
+
+                    <br>
+
+                    ${
+                      PortalAPI.fa(
+                        order.durationMonths||0
+                      )
+                    }
+                    ماه
+
+                    ${
+                      order.customerEmail
+
+                      ? '<br>'+
+                        PortalAPI.esc(
+                          order.customerEmail
+                        )
+
+                      : ''
+                    }
+
+                  </td>
+
+                  <td>
+                    ${PortalAPI.esc(order.orderCode)}
+                  </td>
+
+                  <td>
+                    ${PortalAPI.money(order.payableAmountIrr)}
+                  </td>
+
+                  <td>
+                    ${
+                      PortalAPI.esc(
+                        statusLabels[order.status]
+                        ||
+                        order.status
+                      )
+                    }
+                  </td>
+
+                  <td>
+                    ${
+                      PortalAPI.esc(
+                        fulfillmentLabels[
+                          order.fulfillmentStatus
+                        ]
+                        ||
+                        order.fulfillmentStatus
+                      )
+                    }
+                  </td>
+
+                  <td>
+
+                    ${
+                      order.ticketId
+
+                      ? `
+                        <a
+                          class="portal-btn"
+                          href="/User_tickets.html?ticketId=${order.ticketId}"
+                        >
+                          مشاهده تیکت
+                        </a>
+                      `
+
+                      : '-'
+                    }
+
+                  </td>
+
+                </tr>
+
+              `).join('')
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    `
+
+    : '<div class="portal-empty">هنوز سفارش ChatGPT ندارید.</div>';
+}
+
+
+setInterval(()=>{
+
+  serviceEntitlements.forEach(item=>{
+
+    if(
+      item.status==='active'
+      &&
+      item.remainingSeconds>0
+    ){
+
+      item.remainingSeconds=
+        Math.max(
+          0,
+          item.remainingSeconds-1
+        );
+    }
+  });
+
+
+  document
+    .querySelectorAll('.remaining')
+    .forEach(element=>{
+
+      const item=
+        serviceEntitlements.find(
+          row=>
+            String(row.id)===
+            element.dataset.id
+        );
+
+      if(item){
+
+        element.textContent=
+          item.status==='active'
+
+          ? remainingText(
+              item.remainingSeconds
+            )
+
+          : '-';
+      }
+    });
+
+},1000);
+
+
+(async function(){
+
+  try{
+
+    const session=
+      await PortalAPI.init();
+
+    isDemo=
+      !!session.isDemo;
+
+    if(isDemo){
+
+      document
+        .getElementById(
+          'demoNotice'
+        )
+        .classList.add(
+          'show'
+        );
+    }
+
+    await Promise.all([
+      loadStorage(),
+      loadServices()
+    ]);
+
+  }catch(error){
+
+    PortalAPI.status(
+      'status',
+      error.message,
+      'error'
+    );
+  }
+
+})();
+
+
+})();
+</script>
+
+</body>
+</html>

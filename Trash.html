@@ -1,0 +1,2768 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>سطل زباله</title>
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="/personalspace-icon.png"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/app.css"
+    >
+    <script src="./site-config.js"></script>
+    <script src="./api-bridge.js"></script>
+    <style>
+        @font-face {
+            font-family: "Vazirmatn";
+            src: url("/fonts/Vazirmatn-Variable.woff2")
+                format("woff2");
+            font-weight: 100 900;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        :root {
+            --trash-primary: #2563eb;
+            --trash-primary-hover: #1d4ed8;
+
+            --trash-success: #16a34a;
+            --trash-success-hover: #15803d;
+
+            --trash-danger: #dc2626;
+            --trash-danger-hover: #b91c1c;
+
+            --trash-warning: #d97706;
+
+            --trash-text: #172033;
+            --trash-muted: #64748b;
+
+            --trash-border: rgba(148, 163, 184, 0.28);
+
+            --trash-surface: rgba(255, 255, 255, 0.91);
+            --trash-surface-soft: rgba(248, 250, 252, 0.88);
+
+            --trash-radius: 18px;
+
+            --trash-shadow:
+                0 12px 35px rgba(15, 23, 42, 0.09);
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: "Vazirmatn", Tahoma, sans-serif;
+        }
+
+        html {
+            width: 100%;
+            height: 100%;
+
+            direction: ltr;
+
+            overflow: hidden;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+
+            margin: 0;
+
+            direction: rtl;
+
+            overflow-y: auto;
+            overflow-x: hidden;
+
+            color: var(--trash-text);
+
+            padding: 38px 28px 50px;
+
+            scrollbar-gutter: stable;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        .trash-page {
+            width: min(1050px, 100%);
+            margin: 0 auto;
+        }
+
+        /* ========================================
+           Header
+        ======================================== */
+
+        .trash-header {
+            width: 100%;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 20px;
+
+            margin-bottom: 18px;
+        }
+
+        .trash-header-text {
+            min-width: 0;
+        }
+
+        .trash-title {
+            margin: 0;
+
+            color: var(--trash-text);
+
+            font-size: 28px;
+            font-weight: 850;
+        }
+
+        .trash-subtitle {
+            margin: 7px 0 0;
+
+            color: var(--trash-muted);
+
+            font-size: 13px;
+            line-height: 1.9;
+        }
+
+        .refresh-btn {
+            min-width: 115px;
+            height: 42px;
+
+            padding: 0 17px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 7px;
+
+            flex-shrink: 0;
+
+            border: 1px solid #dbeafe;
+            border-radius: 12px;
+
+            background: #eff6ff;
+            color: var(--trash-primary);
+
+            font-size: 12px;
+            font-weight: 750;
+
+            cursor: pointer;
+
+            transition:
+                background-color 0.18s ease,
+                color 0.18s ease,
+                transform 0.18s ease,
+                box-shadow 0.18s ease;
+        }
+
+        .refresh-btn:hover {
+            background: var(--trash-primary);
+            color: #ffffff;
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 8px 18px
+                rgba(37, 99, 235, 0.18);
+        }
+
+        .refresh-btn:disabled {
+            opacity: 0.55;
+            cursor: wait;
+
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* ========================================
+           Notice
+        ======================================== */
+
+        .trash-notice {
+            width: 100%;
+
+            display: flex;
+            align-items: flex-start;
+
+            gap: 12px;
+
+            margin-bottom: 18px;
+            padding: 15px 18px;
+
+            border: 1px solid #fde68a;
+            border-radius: 15px;
+
+            background:
+                rgba(255, 251, 235, 0.92);
+
+            color: #92400e;
+
+            font-size: 13px;
+            line-height: 1.9;
+        }
+
+        .trash-notice-icon {
+            font-size: 20px;
+            line-height: 1.5;
+
+            flex-shrink: 0;
+        }
+
+        .trash-notice strong {
+            font-weight: 850;
+        }
+
+        /* ========================================
+           Storage quota
+        ======================================== */
+
+        .quota-panel {
+            width: 100%;
+
+            margin-bottom: 22px;
+            padding: 18px 20px;
+
+            border: 1px solid var(--trash-border);
+            border-radius: var(--trash-radius);
+
+            background: var(--trash-surface);
+
+            box-shadow:
+                0 8px 25px
+                rgba(15, 23, 42, 0.05);
+
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .quota-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 16px;
+
+            margin-bottom: 13px;
+        }
+
+        .quota-title {
+            color: var(--trash-text);
+
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .quota-percent {
+            color: var(--trash-muted);
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .quota-progress {
+            width: 100%;
+            height: 9px;
+
+            overflow: hidden;
+
+            border-radius: 999px;
+
+            background: #e8eef6;
+
+            margin-bottom: 15px;
+        }
+
+        .quota-progress-bar {
+            width: 0%;
+            height: 100%;
+
+            border-radius: inherit;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #2563eb,
+                    #38bdf8
+                );
+
+            transition: width 0.3s ease;
+        }
+
+        .quota-details {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 12px;
+        }
+
+        .quota-item {
+            min-width: 0;
+
+            padding: 11px 13px;
+
+            border-radius: 12px;
+
+            background:
+                rgba(248, 250, 252, 0.90);
+
+            border:
+                1px solid
+                rgba(226, 232, 240, 0.85);
+        }
+
+        .quota-item-label {
+            display: block;
+
+            margin-bottom: 4px;
+
+            color: var(--trash-muted);
+
+            font-size: 11px;
+        }
+
+        .quota-item-value {
+            color: var(--trash-text);
+
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        /* ========================================
+           Status message
+        ======================================== */
+
+        .trash-message {
+            display: none;
+
+            width: 100%;
+
+            margin-bottom: 16px;
+            padding: 13px 16px;
+
+            border-radius: 13px;
+
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .trash-message.show {
+            display: block;
+        }
+
+        .trash-message.success {
+            color: #166534;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+        }
+
+        .trash-message.error {
+            color: #991b1b;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+
+        .trash-message.info {
+            color: #1e40af;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+        }
+
+        /* ========================================
+           Trash list
+        ======================================== */
+
+        .trash-list {
+            width: 100%;
+
+            display: flex;
+            flex-direction: column;
+
+            gap: 13px;
+        }
+
+        .trash-card {
+            width: 100%;
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1fr)
+                auto;
+
+            align-items: center;
+
+            gap: 22px;
+
+            padding: 18px 20px;
+
+            border: 1px solid var(--trash-border);
+            border-radius: var(--trash-radius);
+
+            background: var(--trash-surface);
+
+            box-shadow:
+                0 8px 24px
+                rgba(15, 23, 42, 0.06);
+
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+
+            transition:
+                transform 0.18s ease,
+                box-shadow 0.18s ease,
+                border-color 0.18s ease;
+        }
+
+        .trash-card:hover {
+            transform: translateY(-2px);
+
+            border-color:
+                rgba(37, 99, 235, 0.24);
+
+            box-shadow: var(--trash-shadow);
+        }
+
+        .trash-file {
+            min-width: 0;
+        }
+
+        .trash-file-top {
+            display: flex;
+            align-items: center;
+
+            gap: 11px;
+
+            margin-bottom: 11px;
+        }
+
+        .file-icon {
+            width: 43px;
+            height: 43px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            flex: 0 0 43px;
+
+            border-radius: 12px;
+
+            background: #eff6ff;
+
+            font-size: 21px;
+        }
+
+        .trash-file-title-box {
+            min-width: 0;
+        }
+
+        .trash-file-name {
+            max-width: 100%;
+
+            color: var(--trash-text);
+
+            font-size: 14px;
+            font-weight: 800;
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .trash-file-kind {
+            margin-top: 3px;
+
+            color: var(--trash-muted);
+
+            font-size: 11px;
+        }
+
+        .trash-meta {
+            display: flex;
+            flex-wrap: wrap;
+
+            gap: 7px 18px;
+        }
+
+        .meta-item {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 5px;
+
+            color: var(--trash-muted);
+
+            font-size: 11.5px;
+            line-height: 1.8;
+        }
+
+        .meta-item strong {
+            color: #475569;
+            font-weight: 750;
+        }
+
+        /* ========================================
+           Remaining time
+        ======================================== */
+
+        .remaining-box {
+            margin-top: 12px;
+
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+
+            gap: 8px;
+        }
+
+        .remaining-time {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 6px;
+
+            padding: 7px 11px;
+
+            border-radius: 10px;
+
+            background: #eff6ff;
+            color: #1d4ed8;
+
+            font-size: 11.5px;
+            font-weight: 750;
+        }
+
+        .remaining-time.warning {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
+        .remaining-time.danger {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .space-warning {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 6px;
+
+            padding: 7px 11px;
+
+            border-radius: 10px;
+
+            background: #fef2f2;
+            color: #b91c1c;
+
+            font-size: 11.5px;
+            font-weight: 750;
+        }
+
+        /* ========================================
+           Buttons
+        ======================================== */
+
+        .trash-actions {
+            display: flex;
+            align-items: center;
+
+            gap: 9px;
+
+            flex-shrink: 0;
+        }
+
+        .trash-action-btn {
+            min-width: 112px;
+            height: 41px;
+
+            padding: 0 15px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 6px;
+
+            border: none;
+            border-radius: 11px;
+
+            font-size: 11.5px;
+            font-weight: 800;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.18s ease,
+                box-shadow 0.18s ease,
+                background-color 0.18s ease,
+                color 0.18s ease;
+        }
+
+        .restore-btn {
+            background: #dcfce7;
+            color: var(--trash-success-hover);
+        }
+
+        .restore-btn:hover {
+            background: var(--trash-success);
+            color: #ffffff;
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 8px 18px
+                rgba(22, 163, 74, 0.20);
+        }
+
+        .restore-btn.no-space {
+            background: #f1f5f9;
+            color: #94a3b8;
+
+            cursor: not-allowed;
+
+            box-shadow: none;
+        }
+
+        .restore-btn.no-space:hover {
+            background: #f1f5f9;
+            color: #94a3b8;
+
+            transform: none;
+            box-shadow: none;
+        }
+
+        .delete-forever-btn {
+            background: #fee2e2;
+            color: var(--trash-danger);
+        }
+
+        .delete-forever-btn:hover {
+            background: var(--trash-danger);
+            color: #ffffff;
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 8px 18px
+                rgba(220, 38, 38, 0.20);
+        }
+
+        .trash-action-btn:disabled {
+            opacity: 0.58;
+
+            cursor: wait;
+
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* ========================================
+           Empty / Loading
+        ======================================== */
+
+        .trash-empty,
+        .trash-loading {
+            width: 100%;
+
+            padding: 45px 20px;
+
+            text-align: center;
+
+            border: 1px dashed
+                rgba(148, 163, 184, 0.45);
+
+            border-radius: var(--trash-radius);
+
+            background:
+                rgba(255, 255, 255, 0.78);
+
+            color: var(--trash-muted);
+        }
+
+        .empty-icon {
+            display: block;
+
+            margin-bottom: 10px;
+
+            font-size: 34px;
+        }
+
+        .empty-title {
+            margin-bottom: 5px;
+
+            color: var(--trash-text);
+
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .empty-text {
+            font-size: 12px;
+            line-height: 1.9;
+        }
+
+        /* ========================================
+           Modal
+        ======================================== */
+
+        .modal-overlay {
+            position: fixed;
+
+            inset: 0;
+
+            display: none;
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+
+            background:
+                rgba(15, 23, 42, 0.44);
+
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+
+            z-index: 9999;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-box {
+            width: min(430px, 100%);
+
+            padding: 24px;
+
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.60);
+
+            border-radius: 20px;
+
+            background: #ffffff;
+
+            box-shadow:
+                0 25px 70px
+                rgba(15, 23, 42, 0.22);
+        }
+
+        .modal-icon {
+            width: 48px;
+            height: 48px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 15px;
+
+            border-radius: 14px;
+
+            background: #fef2f2;
+
+            font-size: 23px;
+        }
+
+        .modal-title {
+            margin: 0 0 9px;
+
+            color: var(--trash-text);
+
+            font-size: 18px;
+            font-weight: 850;
+        }
+
+        .modal-text {
+            margin: 0;
+
+            color: var(--trash-muted);
+
+            font-size: 12.5px;
+            line-height: 2;
+        }
+
+        .modal-file-name {
+            margin-top: 12px;
+            padding: 10px 12px;
+
+            border-radius: 10px;
+
+            background: #f8fafc;
+
+            color: var(--trash-text);
+
+            font-size: 12px;
+            font-weight: 750;
+
+            word-break: break-word;
+        }
+
+        .modal-actions {
+            display: flex;
+
+            gap: 9px;
+
+            margin-top: 20px;
+        }
+
+        .modal-btn {
+            flex: 1;
+
+            height: 42px;
+
+            border: none;
+            border-radius: 11px;
+
+            font-size: 12px;
+            font-weight: 800;
+
+            cursor: pointer;
+        }
+
+        .modal-cancel {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .modal-delete {
+            background: var(--trash-danger);
+            color: #ffffff;
+        }
+
+        .modal-delete:hover {
+            background: var(--trash-danger-hover);
+        }
+
+        /* ========================================
+           Responsive
+        ======================================== */
+
+        @media (max-width: 800px) {
+            body {
+                padding: 25px 15px 40px;
+            }
+
+            .trash-header {
+                align-items: flex-start;
+            }
+
+            .trash-title {
+                font-size: 23px;
+            }
+
+            .quota-details {
+                grid-template-columns: 1fr;
+            }
+
+            .trash-card {
+                grid-template-columns: 1fr;
+
+                gap: 16px;
+            }
+
+            .trash-actions {
+                width: 100%;
+            }
+
+            .trash-action-btn {
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .trash-header {
+                flex-direction: column;
+            }
+
+            .refresh-btn {
+                width: 100%;
+            }
+
+            .trash-actions {
+                flex-direction: column;
+            }
+
+            .trash-action-btn {
+                width: 100%;
+            }
+
+            .trash-notice {
+                padding: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="trash-page">
+
+        <header class="trash-header">
+
+            <div class="trash-header-text">
+
+                <h1 class="trash-title">
+                    سطل زباله
+                </h1>
+
+                <p class="trash-subtitle">
+                    فایل‌های حذف‌شده را بازیابی یا برای همیشه حذف کنید.
+                </p>
+
+            </div>
+
+            <button
+                id="refreshButton"
+                class="refresh-btn"
+                type="button"
+            >
+                ↻ بروزرسانی
+            </button>
+
+        </header>
+
+
+        <section class="trash-notice">
+
+            <div class="trash-notice-icon">
+                ⏳
+            </div>
+
+            <div>
+                فایل‌های حذف‌شده به مدت
+                <strong>۳۰ روز</strong>
+                در سطل زباله نگهداری می‌شوند.
+
+                پس از پایان این مهلت، فایل به‌صورت
+                <strong>دائمی</strong>
+                حذف می‌شود و دیگر امکان بازیابی آن وجود ندارد.
+            </div>
+
+        </section>
+
+
+        <section
+            id="quotaPanel"
+            class="quota-panel"
+        >
+
+            <div class="quota-top">
+
+                <div class="quota-title">
+                    وضعیت فضای ذخیره‌سازی
+                </div>
+
+                <div
+                    id="quotaPercent"
+                    class="quota-percent"
+                >
+                    -
+                </div>
+
+            </div>
+
+            <div class="quota-progress">
+
+                <div
+                    id="quotaProgressBar"
+                    class="quota-progress-bar"
+                ></div>
+
+            </div>
+
+            <div class="quota-details">
+
+                <div class="quota-item">
+
+                    <span class="quota-item-label">
+                        فضای کل
+                    </span>
+
+                    <strong
+                        id="quotaTotal"
+                        class="quota-item-value"
+                    >
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="quota-item">
+
+                    <span class="quota-item-label">
+                        استفاده‌شده
+                    </span>
+
+                    <strong
+                        id="quotaUsed"
+                        class="quota-item-value"
+                    >
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="quota-item">
+
+                    <span class="quota-item-label">
+                        فضای باقی‌مانده
+                    </span>
+
+                    <strong
+                        id="quotaRemaining"
+                        class="quota-item-value"
+                    >
+                        -
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <div
+            id="trashMessage"
+            class="trash-message"
+        ></div>
+
+
+        <section
+            id="trashList"
+            class="trash-list"
+        >
+
+            <div class="trash-loading">
+                در حال دریافت فایل‌های حذف‌شده...
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Modal حذف دائمی -->
+
+    <div
+        id="deleteModal"
+        class="modal-overlay"
+        aria-hidden="true"
+    >
+
+        <div
+            class="modal-box"
+            role="dialog"
+            aria-modal="true"
+        >
+
+            <div class="modal-icon">
+                🗑
+            </div>
+
+            <h2 class="modal-title">
+                حذف دائمی فایل
+            </h2>
+
+            <p class="modal-text">
+                این فایل از فضای ذخیره‌سازی نیز حذف می‌شود
+                و پس از انجام این عملیات امکان بازیابی آن
+                وجود نخواهد داشت.
+            </p>
+
+            <div
+                id="modalFileName"
+                class="modal-file-name"
+            ></div>
+
+            <div class="modal-actions">
+
+                <button
+                    id="cancelDeleteButton"
+                    class="modal-btn modal-cancel"
+                    type="button"
+                >
+                    انصراف
+                </button>
+
+                <button
+                    id="confirmDeleteButton"
+                    class="modal-btn modal-delete"
+                    type="button"
+                >
+                    حذف دائمی
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+        "use strict";
+
+        let csrfToken = "";
+
+        let isDemoAccount = false;
+
+        let currentTrashFiles = [];
+
+        let deleteTargetFile = null;
+
+        let countdownTimer = null;
+
+
+        /* ========================================
+           ابزارهای عمومی
+        ======================================== */
+
+        function toPersianDigits(value) {
+            return String(value).replace(
+                /\d/g,
+                function (digit) {
+                    return "۰۱۲۳۴۵۶۷۸۹"[Number(digit)];
+                }
+            );
+        }
+
+
+        function formatBytes(bytes) {
+            const value = Number(bytes || 0);
+
+            if (!Number.isFinite(value) || value <= 0) {
+                return "۰ بایت";
+            }
+
+            const units = [
+                "بایت",
+                "KB",
+                "MB",
+                "GB",
+                "TB"
+            ];
+
+            const index = Math.min(
+                Math.floor(
+                    Math.log(value) /
+                    Math.log(1024)
+                ),
+                units.length - 1
+            );
+
+            const converted =
+                value /
+                Math.pow(1024, index);
+
+            let text;
+
+            if (index === 0) {
+                text = Math.round(converted).toString();
+            } else if (converted >= 100) {
+                text = converted.toFixed(0);
+            } else if (converted >= 10) {
+                text = converted.toFixed(1);
+            } else {
+                text = converted.toFixed(2);
+            }
+
+            return (
+                toPersianDigits(text) +
+                " " +
+                units[index]
+            );
+        }
+
+
+        function formatDate(value) {
+            if (!value) {
+                return "-";
+            }
+
+            const date = new Date(value);
+
+            if (Number.isNaN(date.getTime())) {
+                return "-";
+            }
+
+            try {
+                return date.toLocaleString(
+                    "fa-IR",
+                    {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    }
+                );
+            } catch (error) {
+                return value;
+            }
+        }
+
+
+        function fileIcon(file) {
+            const kind =
+                String(file.fileKind || "")
+                    .toLowerCase();
+
+            const mime =
+                String(file.mimeType || "")
+                    .toLowerCase();
+
+            if (
+                kind === "pdf" ||
+                mime.includes("pdf")
+            ) {
+                return "📕";
+            }
+
+            if (
+                kind === "docx" ||
+                mime.includes("word")
+            ) {
+                return "📘";
+            }
+
+            if (mime.startsWith("image/")) {
+                return "🖼";
+            }
+
+            if (mime.startsWith("video/")) {
+                return "🎬";
+            }
+
+            if (mime.startsWith("audio/")) {
+                return "🎵";
+            }
+
+            return "📄";
+        }
+
+
+        function fileTypeLabel(file) {
+            const kind =
+                String(file.fileKind || "")
+                    .toLowerCase();
+
+            if (kind === "pdf") {
+                return "فایل PDF";
+            }
+
+            if (kind === "docx") {
+                return "فایل Word";
+            }
+
+            return "فایل";
+        }
+
+
+        function showMessage(text, type) {
+            const box =
+                document.getElementById(
+                    "trashMessage"
+                );
+
+            box.textContent = text || "";
+
+            box.className =
+                "trash-message";
+
+            if (!text) {
+                return;
+            }
+
+            box.classList.add(
+                "show",
+                type || "info"
+            );
+        }
+
+
+        function clearMessage() {
+            showMessage("", "");
+        }
+
+
+        /* ========================================
+           زمان باقی‌مانده
+        ======================================== */
+
+        function getRemainingSeconds(file) {
+
+            if (file.expiresAt) {
+                const expires =
+                    new Date(
+                        file.expiresAt
+                    ).getTime();
+
+                if (
+                    Number.isFinite(expires)
+                ) {
+                    return Math.max(
+                        0,
+                        Math.floor(
+                            (expires - Date.now()) /
+                            1000
+                        )
+                    );
+                }
+            }
+
+            return Math.max(
+                0,
+                Number(
+                    file.remainingSeconds || 0
+                )
+            );
+        }
+
+
+        function formatRemainingTime(seconds) {
+            seconds =
+                Math.max(
+                    0,
+                    Math.floor(
+                        Number(seconds || 0)
+                    )
+                );
+
+            if (seconds <= 0) {
+                return "مهلت بازیابی پایان یافته";
+            }
+
+            const days =
+                Math.floor(
+                    seconds / 86400
+                );
+
+            const hours =
+                Math.floor(
+                    (seconds % 86400) /
+                    3600
+                );
+
+            const minutes =
+                Math.floor(
+                    (seconds % 3600) /
+                    60
+                );
+
+            const secondsLeft =
+                seconds % 60;
+
+            if (days > 0) {
+                return (
+                    toPersianDigits(days) +
+                    " روز و " +
+                    toPersianDigits(hours) +
+                    " ساعت"
+                );
+            }
+
+            if (hours > 0) {
+                return (
+                    toPersianDigits(hours) +
+                    " ساعت و " +
+                    toPersianDigits(minutes) +
+                    " دقیقه"
+                );
+            }
+
+            if (minutes > 0) {
+                return (
+                    toPersianDigits(minutes) +
+                    " دقیقه و " +
+                    toPersianDigits(secondsLeft) +
+                    " ثانیه"
+                );
+            }
+
+            return (
+                toPersianDigits(secondsLeft) +
+                " ثانیه"
+            );
+        }
+
+
+        function countdownClass(seconds) {
+            const days =
+                seconds / 86400;
+
+            if (days <= 2) {
+                return "danger";
+            }
+
+            if (days <= 7) {
+                return "warning";
+            }
+
+            return "";
+        }
+
+
+        function updateCountdowns() {
+            const elements =
+                document.querySelectorAll(
+                    "[data-trash-expiry]"
+                );
+
+            let foundExpired = false;
+
+            elements.forEach(
+                function (element) {
+
+                    const expiresAt =
+                        element.getAttribute(
+                            "data-trash-expiry"
+                        );
+
+                    const expires =
+                        new Date(
+                            expiresAt
+                        ).getTime();
+
+                    if (
+                        !Number.isFinite(expires)
+                    ) {
+                        return;
+                    }
+
+                    const seconds =
+                        Math.max(
+                            0,
+                            Math.floor(
+                                (
+                                    expires -
+                                    Date.now()
+                                ) / 1000
+                            )
+                        );
+
+                    element.className =
+                        "remaining-time " +
+                        countdownClass(
+                            seconds
+                        );
+
+                    element.textContent =
+                        "⏱ مهلت بازیابی: " +
+                        formatRemainingTime(
+                            seconds
+                        );
+
+                    if (seconds <= 0) {
+                        foundExpired = true;
+                    }
+                }
+            );
+
+            if (foundExpired) {
+                /*
+                    Backend هنگام GET /api/trash
+                    فایل‌های منقضی را پاکسازی می‌کند.
+                */
+            }
+        }
+
+
+        function startCountdownTimer() {
+            if (countdownTimer) {
+                clearInterval(
+                    countdownTimer
+                );
+            }
+
+            countdownTimer =
+                setInterval(
+                    updateCountdowns,
+                    1000
+                );
+        }
+
+
+        /* ========================================
+           سهمیه
+        ======================================== */
+
+        function renderQuota(quota) {
+            quota = quota || {};
+
+            const total =
+                Math.max(
+                    0,
+                    Number(
+                        quota.quotaBytes || 0
+                    )
+                );
+
+            const used =
+                Math.max(
+                    0,
+                    Number(
+                        quota.usedBytes || 0
+                    )
+                );
+
+            const remaining =
+                Math.max(
+                    0,
+                    Number(
+                        quota.remainingBytes || 0
+                    )
+                );
+
+            document.getElementById(
+                "quotaTotal"
+            ).textContent =
+                formatBytes(total);
+
+            document.getElementById(
+                "quotaUsed"
+            ).textContent =
+                formatBytes(used);
+
+            document.getElementById(
+                "quotaRemaining"
+            ).textContent =
+                formatBytes(remaining);
+
+            let percent = 0;
+
+            if (total > 0) {
+                percent =
+                    Math.min(
+                        100,
+                        Math.max(
+                            0,
+                            used / total * 100
+                        )
+                    );
+            }
+
+            document.getElementById(
+                "quotaPercent"
+            ).textContent =
+                toPersianDigits(
+                    percent.toFixed(1)
+                ) +
+                "٪ استفاده شده";
+
+            document.getElementById(
+                "quotaProgressBar"
+            ).style.width =
+                percent + "%";
+        }
+
+
+        /* ========================================
+           ساخت کارت فایل
+        ======================================== */
+
+        function createTrashCard(file) {
+
+            const card =
+                document.createElement(
+                    "article"
+                );
+
+            card.className =
+                "trash-card";
+
+
+            /* ---------- اطلاعات فایل ---------- */
+
+            const fileBox =
+                document.createElement(
+                    "div"
+                );
+
+            fileBox.className =
+                "trash-file";
+
+
+            const fileTop =
+                document.createElement(
+                    "div"
+                );
+
+            fileTop.className =
+                "trash-file-top";
+
+
+            const icon =
+                document.createElement(
+                    "div"
+                );
+
+            icon.className =
+                "file-icon";
+
+            icon.textContent =
+                fileIcon(file);
+
+
+            const titleBox =
+                document.createElement(
+                    "div"
+                );
+
+            titleBox.className =
+                "trash-file-title-box";
+
+
+            const name =
+                document.createElement(
+                    "div"
+                );
+
+            name.className =
+                "trash-file-name";
+
+            name.textContent =
+                file.originalName ||
+                file.title ||
+                "فایل بدون نام";
+
+            name.title =
+                name.textContent;
+
+
+            const kind =
+                document.createElement(
+                    "div"
+                );
+
+            kind.className =
+                "trash-file-kind";
+
+            kind.textContent =
+                fileTypeLabel(file);
+
+
+            titleBox.appendChild(
+                name
+            );
+
+            titleBox.appendChild(
+                kind
+            );
+
+            fileTop.appendChild(
+                icon
+            );
+
+            fileTop.appendChild(
+                titleBox
+            );
+
+
+            /* ---------- Meta ---------- */
+
+            const meta =
+                document.createElement(
+                    "div"
+                );
+
+            meta.className =
+                "trash-meta";
+
+
+            const deletedMeta =
+                document.createElement(
+                    "span"
+                );
+
+            deletedMeta.className =
+                "meta-item";
+
+            deletedMeta.textContent =
+                "🗓 تاریخ حذف: ";
+
+            const deletedValue =
+                document.createElement(
+                    "strong"
+                );
+
+            deletedValue.textContent =
+                formatDate(
+                    file.deletedAt
+                );
+
+            deletedMeta.appendChild(
+                deletedValue
+            );
+
+
+            const sizeMeta =
+                document.createElement(
+                    "span"
+                );
+
+            sizeMeta.className =
+                "meta-item";
+
+            sizeMeta.textContent =
+                "💾 حجم فایل: ";
+
+            const sizeValue =
+                document.createElement(
+                    "strong"
+                );
+
+            sizeValue.textContent =
+                formatBytes(
+                    file.sizeBytes
+                );
+
+            sizeMeta.appendChild(
+                sizeValue
+            );
+
+
+            const expiresMeta =
+                document.createElement(
+                    "span"
+                );
+
+            expiresMeta.className =
+                "meta-item";
+
+            expiresMeta.textContent =
+                "⌛ حذف دائمی: ";
+
+            const expiresValue =
+                document.createElement(
+                    "strong"
+                );
+
+            expiresValue.textContent =
+                formatDate(
+                    file.expiresAt
+                );
+
+            expiresMeta.appendChild(
+                expiresValue
+            );
+
+
+            meta.appendChild(
+                deletedMeta
+            );
+
+            meta.appendChild(
+                sizeMeta
+            );
+
+            meta.appendChild(
+                expiresMeta
+            );
+
+
+            /* ---------- زمان باقی مانده ---------- */
+
+            const remainingBox =
+                document.createElement(
+                    "div"
+                );
+
+            remainingBox.className =
+                "remaining-box";
+
+
+            const remaining =
+                document.createElement(
+                    "div"
+                );
+
+            const seconds =
+                getRemainingSeconds(file);
+
+            remaining.className =
+                "remaining-time " +
+                countdownClass(
+                    seconds
+                );
+
+            remaining.setAttribute(
+                "data-trash-expiry",
+                file.expiresAt || ""
+            );
+
+            remaining.textContent =
+                "⏱ مهلت بازیابی: " +
+                formatRemainingTime(
+                    seconds
+                );
+
+            remainingBox.appendChild(
+                remaining
+            );
+
+
+            const requiredAdditional =
+                Math.max(
+                    0,
+                    Number(
+                        file.requiredAdditionalBytes ||
+                        0
+                    )
+                );
+
+            if (requiredAdditional > 0) {
+                const warning =
+                    document.createElement(
+                        "div"
+                    );
+
+                warning.className =
+                    "space-warning";
+
+                warning.textContent =
+                    "⚠ کمبود فضا: " +
+                    formatBytes(
+                        requiredAdditional
+                    );
+
+                remainingBox.appendChild(
+                    warning
+                );
+            }
+
+
+            fileBox.appendChild(
+                fileTop
+            );
+
+            fileBox.appendChild(
+                meta
+            );
+
+            fileBox.appendChild(
+                remainingBox
+            );
+
+
+            /* ---------- Actions ---------- */
+
+            const actions =
+                document.createElement(
+                    "div"
+                );
+
+            actions.className =
+                "trash-actions";
+
+
+            const restoreButton =
+                document.createElement(
+                    "button"
+                );
+
+            restoreButton.type =
+                "button";
+
+            restoreButton.className =
+                "trash-action-btn restore-btn";
+
+            restoreButton.textContent =
+                "♻ بازیابی";
+
+
+            if (isDemoAccount) {
+                restoreButton.disabled = true;
+                restoreButton.title = "حساب آزمایشی فقط برای مشاهده است";
+            } else if (!file.canRestore) {
+                restoreButton.classList.add(
+                    "no-space"
+                );
+
+                restoreButton.title =
+                    "فضای کافی برای بازیابی وجود ندارد";
+
+                restoreButton.addEventListener(
+                    "click",
+                    function () {
+
+                        const required =
+                            formatBytes(
+                                file.requiredAdditionalBytes
+                            );
+
+                        showMessage(
+                            "برای بازیابی «" +
+                            (
+                                file.originalName ||
+                                file.title ||
+                                "این فایل"
+                            ) +
+                            "» به " +
+                            required +
+                            " فضای بیشتر نیاز دارید. " +
+                            "ابتدا فضای حساب را افزایش دهید یا بخشی از فایل‌های فعال را حذف کنید.",
+                            "error"
+                        );
+
+                        window.scrollTo({
+                            top: 0,
+                            behavior: "smooth"
+                        });
+                    }
+                );
+
+            } else {
+
+                restoreButton.addEventListener(
+                    "click",
+                    function () {
+                        restoreFile(
+                            file,
+                            restoreButton
+                        );
+                    }
+                );
+            }
+
+
+            const deleteButton =
+                document.createElement(
+                    "button"
+                );
+
+            deleteButton.type =
+                "button";
+
+            deleteButton.className =
+                "trash-action-btn delete-forever-btn";
+
+            deleteButton.textContent =
+                "🗑 حذف دائمی";
+
+            if (isDemoAccount) {
+                deleteButton.disabled = true;
+                deleteButton.title = "حساب آزمایشی فقط برای مشاهده است";
+            } else {
+                deleteButton.addEventListener(
+                    "click",
+                    function () {
+                        openDeleteModal(
+                            file
+                        );
+                    }
+                );
+            }
+
+
+            actions.appendChild(
+                restoreButton
+            );
+
+            actions.appendChild(
+                deleteButton
+            );
+
+
+            card.appendChild(
+                fileBox
+            );
+
+            card.appendChild(
+                actions
+            );
+
+            return card;
+        }
+
+
+        /* ========================================
+           نمایش لیست
+        ======================================== */
+
+        function renderTrashFiles(files) {
+
+            const list =
+                document.getElementById(
+                    "trashList"
+                );
+
+            list.innerHTML = "";
+
+            currentTrashFiles =
+                Array.isArray(files)
+                    ? files
+                    : [];
+
+            if (
+                currentTrashFiles.length === 0
+            ) {
+                const empty =
+                    document.createElement(
+                        "div"
+                    );
+
+                empty.className =
+                    "trash-empty";
+
+                const icon =
+                    document.createElement(
+                        "span"
+                    );
+
+                icon.className =
+                    "empty-icon";
+
+                icon.textContent =
+                    "🗑";
+
+
+                const title =
+                    document.createElement(
+                        "div"
+                    );
+
+                title.className =
+                    "empty-title";
+
+                title.textContent =
+                    "سطل زباله خالی است";
+
+
+                const text =
+                    document.createElement(
+                        "div"
+                    );
+
+                text.className =
+                    "empty-text";
+
+                text.textContent =
+                    "در حال حاضر فایل حذف‌شده‌ای برای بازیابی وجود ندارد.";
+
+
+                empty.appendChild(
+                    icon
+                );
+
+                empty.appendChild(
+                    title
+                );
+
+                empty.appendChild(
+                    text
+                );
+
+                list.appendChild(
+                    empty
+                );
+
+                return;
+            }
+
+
+            currentTrashFiles.forEach(
+                function (file) {
+
+                    list.appendChild(
+                        createTrashCard(
+                            file
+                        )
+                    );
+
+                }
+            );
+
+            updateCountdowns();
+        }
+
+
+        /* ========================================
+           گرفتن Session
+        ======================================== */
+
+        async function checkSession() {
+
+            const response =
+                await fetch(
+                    "/api/session",
+                    {
+                        method: "GET",
+                        credentials:
+                            "same-origin",
+                        cache: "no-store"
+                    }
+                );
+
+            if (!response.ok) {
+                window.location.replace(
+                    "/Login.html"
+                );
+
+                return false;
+            }
+
+            const result =
+                await response.json();
+
+            if (!result.loggedIn) {
+                window.location.replace(
+                    "/Login.html"
+                );
+
+                return false;
+            }
+
+            csrfToken =
+                result.csrfToken || "";
+
+            isDemoAccount = Boolean(result.isDemo);
+            if (isDemoAccount) {
+                showMessage(
+                    "حساب آزمایشی فقط برای مشاهده است؛ بازیابی و حذف دائمی فایل غیرفعال است.",
+                    "info"
+                );
+            }
+
+            return true;
+        }
+
+
+        /* ========================================
+           بارگذاری Trash
+        ======================================== */
+
+        async function loadTrash(
+            showLoading = true
+        ) {
+
+            const list =
+                document.getElementById(
+                    "trashList"
+                );
+
+            const refreshButton =
+                document.getElementById(
+                    "refreshButton"
+                );
+
+            refreshButton.disabled =
+                true;
+
+            if (showLoading) {
+                list.innerHTML = `
+                    <div class="trash-loading">
+                        در حال دریافت فایل‌های حذف‌شده...
+                    </div>
+                `;
+            }
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/trash",
+                        {
+                            method: "GET",
+                            credentials:
+                                "same-origin",
+                            cache: "no-store"
+                        }
+                    );
+
+
+                if (response.status === 401) {
+                    window.location.replace(
+                        "/Login.html"
+                    );
+
+                    return;
+                }
+
+
+                const result =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !result.ok
+                ) {
+                    throw new Error(
+                        result.message ||
+                        "دریافت سطل زباله انجام نشد."
+                    );
+                }
+
+
+                renderQuota(
+                    result.quota
+                );
+
+                renderTrashFiles(
+                    result.files
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "TRASH LOAD ERROR:",
+                    error
+                );
+
+                list.innerHTML = `
+                    <div class="trash-empty">
+                        <span class="empty-icon">⚠</span>
+                        <div class="empty-title">
+                            دریافت اطلاعات انجام نشد
+                        </div>
+                        <div class="empty-text">
+                            ارتباط با سرور را بررسی کنید و دوباره تلاش کنید.
+                        </div>
+                    </div>
+                `;
+
+                showMessage(
+                    error.message ||
+                    "ارتباط با سرور برقرار نشد.",
+                    "error"
+                );
+
+            } finally {
+
+                refreshButton.disabled =
+                    false;
+            }
+        }
+
+
+        /* ========================================
+           بازیابی فایل
+        ======================================== */
+
+        async function restoreFile(
+            file,
+            button
+        ) {
+
+            clearMessage();
+
+            if (!csrfToken) {
+                showMessage(
+                    "نشست کاربری معتبر نیست. صفحه را دوباره بارگذاری کنید.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            const filename =
+                file.originalName ||
+                file.title ||
+                "فایل";
+
+
+            const confirmed =
+                window.confirm(
+                    "آیا می‌خواهید فایل زیر بازیابی شود؟\n\n" +
+                    filename
+                );
+
+
+            if (!confirmed) {
+                return;
+            }
+
+
+            const oldText =
+                button.textContent;
+
+            button.disabled =
+                true;
+
+            button.textContent =
+                "در حال بررسی...";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/trash/" +
+                        encodeURIComponent(
+                            file.id
+                        ) +
+                        "/restore",
+                        {
+                            method: "POST",
+
+                            credentials:
+                                "same-origin",
+
+                            headers: {
+                                "X-CSRF-Token":
+                                    csrfToken
+                            }
+                        }
+                    );
+
+
+                if (response.status === 401) {
+                    window.location.replace(
+                        "/Login.html"
+                    );
+
+                    return;
+                }
+
+
+                const result =
+                    await response.json();
+
+
+                if (
+                    response.status === 413 &&
+                    result.code ===
+                    "INSUFFICIENT_STORAGE_FOR_RESTORE"
+                ) {
+
+                    const needed =
+                        formatBytes(
+                            result.requiredAdditionalBytes
+                        );
+
+                    const remaining =
+                        formatBytes(
+                            result.remainingBytes
+                        );
+
+                    const fileSize =
+                        formatBytes(
+                            result.fileSizeBytes
+                        );
+
+                    showMessage(
+                        "بازیابی انجام نشد. حجم فایل " +
+                        fileSize +
+                        " است اما فقط " +
+                        remaining +
+                        " فضای خالی دارید. " +
+                        "حداقل " +
+                        needed +
+                        " فضای بیشتر نیاز دارید. " +
+                        "فضای حساب را افزایش دهید یا بخشی از فایل‌های فعال را حذف کنید.",
+                        "error"
+                    );
+
+                    await loadTrash(
+                        false
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    response.status === 410 ||
+                    result.expired
+                ) {
+
+                    showMessage(
+                        "مهلت ۳۰ روزه بازیابی این فایل به پایان رسیده است.",
+                        "error"
+                    );
+
+                    await loadTrash(
+                        false
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    !response.ok ||
+                    !result.ok
+                ) {
+                    throw new Error(
+                        result.message ||
+                        "بازیابی فایل انجام نشد."
+                    );
+                }
+
+
+                showMessage(
+                    "فایل «" +
+                    filename +
+                    "» با موفقیت بازیابی شد.",
+                    "success"
+                );
+
+
+                await loadTrash(
+                    false
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "TRASH RESTORE ERROR:",
+                    error
+                );
+
+                showMessage(
+                    error.message ||
+                    "بازیابی فایل انجام نشد.",
+                    "error"
+                );
+
+
+                button.disabled =
+                    false;
+
+                button.textContent =
+                    oldText;
+            }
+        }
+
+
+        /* ========================================
+           Modal حذف دائمی
+        ======================================== */
+
+        function openDeleteModal(file) {
+
+            deleteTargetFile =
+                file;
+
+            document.getElementById(
+                "modalFileName"
+            ).textContent =
+                file.originalName ||
+                file.title ||
+                "فایل بدون نام";
+
+
+            const modal =
+                document.getElementById(
+                    "deleteModal"
+                );
+
+            modal.classList.add(
+                "show"
+            );
+
+            modal.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+        }
+
+
+        function closeDeleteModal() {
+
+            deleteTargetFile =
+                null;
+
+            const modal =
+                document.getElementById(
+                    "deleteModal"
+                );
+
+            modal.classList.remove(
+                "show"
+            );
+
+            modal.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+        }
+
+
+        /* ========================================
+           حذف دائمی
+        ======================================== */
+
+        async function permanentDelete() {
+
+            if (!deleteTargetFile) {
+                return;
+            }
+
+
+            if (!csrfToken) {
+                closeDeleteModal();
+
+                showMessage(
+                    "نشست کاربری معتبر نیست.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            const file =
+                deleteTargetFile;
+
+            const filename =
+                file.originalName ||
+                file.title ||
+                "فایل";
+
+
+            const confirmButton =
+                document.getElementById(
+                    "confirmDeleteButton"
+                );
+
+
+            const cancelButton =
+                document.getElementById(
+                    "cancelDeleteButton"
+                );
+
+
+            confirmButton.disabled =
+                true;
+
+            cancelButton.disabled =
+                true;
+
+            confirmButton.textContent =
+                "در حال حذف...";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/trash/" +
+                        encodeURIComponent(
+                            file.id
+                        ),
+                        {
+                            method: "DELETE",
+
+                            credentials:
+                                "same-origin",
+
+                            headers: {
+                                "X-CSRF-Token":
+                                    csrfToken
+                            }
+                        }
+                    );
+
+
+                if (response.status === 401) {
+                    window.location.replace(
+                        "/Login.html"
+                    );
+
+                    return;
+                }
+
+
+                const result =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !result.ok
+                ) {
+                    throw new Error(
+                        result.message ||
+                        "حذف دائمی فایل انجام نشد."
+                    );
+                }
+
+
+                closeDeleteModal();
+
+
+                showMessage(
+                    "فایل «" +
+                    filename +
+                    "» برای همیشه حذف شد.",
+                    "success"
+                );
+
+
+                await loadTrash(
+                    false
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "TRASH PERMANENT DELETE ERROR:",
+                    error
+                );
+
+
+                closeDeleteModal();
+
+
+                showMessage(
+                    error.message ||
+                    "حذف دائمی فایل انجام نشد.",
+                    "error"
+                );
+
+            } finally {
+
+                confirmButton.disabled =
+                    false;
+
+                cancelButton.disabled =
+                    false;
+
+                confirmButton.textContent =
+                    "حذف دائمی";
+            }
+        }
+
+
+        /* ========================================
+           Events
+        ======================================== */
+
+        document.getElementById(
+            "refreshButton"
+        ).addEventListener(
+            "click",
+            function () {
+                clearMessage();
+                loadTrash();
+            }
+        );
+
+
+        document.getElementById(
+            "cancelDeleteButton"
+        ).addEventListener(
+            "click",
+            closeDeleteModal
+        );
+
+
+        document.getElementById(
+            "confirmDeleteButton"
+        ).addEventListener(
+            "click",
+            permanentDelete
+        );
+
+
+        document.getElementById(
+            "deleteModal"
+        ).addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target ===
+                    this
+                ) {
+                    closeDeleteModal();
+                }
+            }
+        );
+
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Escape"
+                ) {
+                    closeDeleteModal();
+                }
+            }
+        );
+
+
+        /* ========================================
+           Start
+        ======================================== */
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            async function () {
+
+                try {
+
+                    const loggedIn =
+                        await checkSession();
+
+                    if (!loggedIn) {
+                        return;
+                    }
+
+                    await loadTrash();
+
+                    startCountdownTimer();
+
+
+                    /*
+                        هر یک دقیقه وضعیت سهمیه و
+                        فایل‌های منقضی دوباره از Backend
+                        بررسی می‌شوند.
+                    */
+                    setInterval(
+                        function () {
+                            loadTrash(
+                                false
+                            );
+                        },
+                        60000
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "TRASH INIT ERROR:",
+                        error
+                    );
+
+                    showMessage(
+                        "راه‌اندازی صفحه سطل زباله انجام نشد.",
+                        "error"
+                    );
+                }
+            }
+        );
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پنل کاربری</title>
+    <link rel="icon" type="image/png" href="/personalspace-icon.png">
+    <link rel="stylesheet" href="/app.css">
+    <style>.demo-account-badge{display:none;margin:8px 0;padding:7px 10px;border-radius:10px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;font-size:12px;font-weight:700}.demo-account-badge.show{display:block}</style>
+    <script src="./site-config.js"></script>
+    <script src="./api-bridge.js"></script>
+</head>
+<body>
+<script src="persian-digits.js"></script>
+<div class="dashboard">
+    <section class="content-area">
+        <iframe id="pageFrame" src="/User_dashboard.html" title="محتوای پنل" frameborder="0"></iframe>
+    </section>
+
+    <aside class="right-menu" id="userMenu">
+        <div class="user-name" id="welcomeMessage">در حال بررسی حساب...</div>
+        <div class="demo-account-badge" id="demoAccountBadge">حساب آزمایشی · فقط مشاهده · فضای ۰</div>
+
+        <button type="button" data-page="/User_dashboard.html">داشبورد</button>
+        <button type="button" data-page="/Sabt_PDF.html">ثبت فایل PDF</button>
+        <button type="button" data-page="/PDF.html">مشاهده فایل‌های PDF</button>
+        <button type="button" data-page="/Note_Kar.html">یادداشت‌ها</button>
+        <button type="button" data-page="/Search_files.html">جست‌وجوی فایل‌ها</button>
+        <button type="button" data-page="/Trash.html">سطل زباله</button>
+        <button type="button" data-page="/User_plans.html">پلن‌ها و سرویس‌ها</button>
+        <button type="button" data-page="/User_orders.html">سفارش‌های من</button>
+        <button type="button" data-page="/User_tickets.html">تیکت و پشتیبانی</button>
+        <button type="button" data-page="/User_notifications.html">اعلانات</button>
+        <button type="button" data-page="/information.html">بیشتر بدانیم و آموزش‌ها</button>
+        <button type="button" data-page="/User_profile.html">پروفایل</button>
+        <button type="button" id="adminReturnBtn">بازگشت به پنل مدیریت</button>
+        <button type="button" id="logoutBtn">خروج</button>
+
+        <div class="sidebar-storage-card">
+            <div class="sidebar-user-name">
+                <span class="sidebar-user-label">حساب کاربری</span>
+                <strong id="sidebarUserName">...</strong>
+            </div>
+            <div class="sidebar-storage-head">
+                <span>فضای ذخیره‌سازی</span>
+                <strong id="sidebarStoragePercent">۰٪</strong>
+            </div>
+            <div class="sidebar-storage-progress">
+                <div id="sidebarStorageProgressBar" class="sidebar-storage-progress-bar"></div>
+            </div>
+            <div class="sidebar-storage-stats">
+                <div class="sidebar-storage-stat">
+                    <span>استفاده‌شده</span>
+                    <strong id="sidebarStorageUsed">۰ MB</strong>
+                </div>
+                <div class="sidebar-storage-stat">
+                    <span>باقی‌مانده</span>
+                    <strong id="sidebarStorageRemaining">۰ MB</strong>
+                </div>
+            </div>
+            <div class="sidebar-storage-total">فضای کل: <strong id="sidebarStorageTotal">۰ MB</strong></div>
+        </div>
+    </aside>
+</div>
+
+<script>
+(function () {
+    "use strict";
+
+    const BUILD = "2026-08-28-v2";
+    const frame = document.getElementById("pageFrame");
+    const menu = document.getElementById("userMenu");
+    let csrfToken = "";
+    let currentRole = "";
+
+    function fa(value) {
+        return String(value).replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[Number(d)]);
+    }
+
+    function formatStorage(bytes) {
+        let value = Number(bytes || 0);
+        if (!Number.isFinite(value) || value <= 0) return "۰ MB";
+        const units = ["B", "KB", "MB", "GB", "TB"];
+        let index = 0;
+        while (value >= 1024 && index < units.length - 1) {
+            value /= 1024;
+            index += 1;
+        }
+        const digits = value >= 100 ? 0 : value >= 10 ? 1 : 2;
+        return fa(value.toFixed(digits)) + " " + units[index];
+    }
+
+    function activateButton(button) {
+        menu.querySelectorAll("button[data-page]").forEach(item => item.classList.remove("active"));
+        if (button && button.dataset.page) button.classList.add("active");
+    }
+
+    function openPage(path, button) {
+        if (!path || !frame) return;
+        frame.src = path;
+        activateButton(button);
+    }
+
+    async function readSession() {
+        const response = await fetch("/api/session", {
+            credentials: "same-origin",
+            cache: "no-store"
+        });
+        if (!response.ok) throw new Error("AUTH_REQUIRED");
+        const result = await response.json();
+        if (!result.loggedIn) throw new Error("AUTH_REQUIRED");
+        csrfToken = result.csrfToken || "";
+        currentRole = String(result.role || "").toLowerCase();
+        return result;
+    }
+
+    function renderIdentity(result) {
+        const fullName = String(result.fullName || result.personnelCode || "کاربر").trim();
+        const title = result.gender === "man" ? "آقای" : result.gender === "woman" ? "خانم" : "";
+        document.getElementById("welcomeMessage").textContent =
+            (title ? title + " " : "") + fullName + " عزیز، خوش آمدید.";
+        document.getElementById("sidebarUserName").textContent = fullName;
+        const demoBadge = document.getElementById("demoAccountBadge");
+        if (result.isDemo) demoBadge.classList.add("show");
+        else demoBadge.classList.remove("show");
+    }
+
+    async function loadStorage() {
+        try {
+            const response = await fetch("/api/trash", {
+                credentials: "same-origin",
+                cache: "no-store"
+            });
+            if (!response.ok) return;
+            const result = await response.json();
+            if (!result.ok || !result.quota) return;
+            const quota = result.quota;
+            const total = Number(quota.quotaBytes || 0);
+            const used = Number(quota.usedBytes || 0);
+            const remaining = Number(quota.remainingBytes || 0);
+            const percent = total > 0 ? Math.min(100, Math.max(0, used * 100 / total)) : 0;
+            document.getElementById("sidebarStorageTotal").textContent = formatStorage(total);
+            document.getElementById("sidebarStorageUsed").textContent = formatStorage(used);
+            document.getElementById("sidebarStorageRemaining").textContent = formatStorage(remaining);
+            document.getElementById("sidebarStoragePercent").textContent = fa(percent.toFixed(1)) + "٪";
+            const bar = document.getElementById("sidebarStorageProgressBar");
+            bar.style.width = percent + "%";
+        } catch (error) {
+            console.error("STORAGE_STATUS_ERROR", error);
+        }
+    }
+
+    async function returnToAdmin() {
+        try {
+            const session = await readSession();
+            if (String(session.role || "").toLowerCase() !== "manager") {
+                alert("شما اجازه دسترسی به این صفحه را ندارید.");
+                return;
+            }
+            window.location.href = "/Admin_panel.html";
+        } catch (_) {
+            window.location.replace("/Login.html");
+        }
+    }
+
+    async function logout() {
+        try {
+            const response = await fetch("/api/logout", {
+                method: "DELETE",
+                credentials: "same-origin",
+                headers: {"X-CSRF-Token": csrfToken}
+            });
+            if (!response.ok) throw new Error("LOGOUT_FAILED");
+        } catch (error) {
+            console.error("LOGOUT_ERROR", error);
+        } finally {
+            window.location.replace("/Login.html");
+        }
+    }
+
+    menu.querySelectorAll("button[data-page]").forEach(button => {
+        button.addEventListener("click", () => openPage(button.dataset.page, button));
+    });
+    document.getElementById("adminReturnBtn").addEventListener("click", returnToAdmin);
+    document.getElementById("logoutBtn").addEventListener("click", logout);
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        try {
+            const session = await readSession();
+            renderIdentity(session);
+            const first = menu.querySelector("button[data-page]");
+            activateButton(first);
+            await loadStorage();
+            window.setInterval(loadStorage, 60000);
+            console.info("PANEL_BUILD", BUILD, "role=", currentRole);
+        } catch (error) {
+            console.error("SESSION_ERROR", error);
+            window.location.replace("/Login.html");
+        }
+    });
+})();
+</script>
+</body>
+</html>

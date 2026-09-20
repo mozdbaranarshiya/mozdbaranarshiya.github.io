@@ -1,0 +1,1460 @@
+@font-face {
+    font-family: "Vazirmatn";
+    src: url("/fonts/Vazirmatn-Variable.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --font-main: "Vazirmatn", Tahoma, Arial, sans-serif;
+
+    --primary-50: #eff6ff;
+    --primary-100: #dbeafe;
+    --primary-200: #bfdbfe;
+    --primary-500: #3b82f6;
+    --primary-600: #2563eb;
+    --primary-700: #1d4ed8;
+    --primary-800: #1e40af;
+
+    --accent-500: #06b6d4;
+    --accent-600: #0891b2;
+    --success-500: #22c55e;
+    --success-600: #16a34a;
+    --danger-50: #fef2f2;
+    --danger-500: #ef4444;
+    --danger-600: #dc2626;
+    --danger-700: #b91c1c;
+    --warning-500: #f59e0b;
+
+    --text-strong: #0f172a;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --text-soft: #94a3b8;
+
+    --surface: #ffffff;
+    --surface-soft: rgba(255, 255, 255, 0.86);
+    --surface-glass: rgba(255, 255, 255, 0.72);
+    --surface-muted: #f8fafc;
+    --border: rgba(148, 163, 184, 0.28);
+    --border-strong: rgba(100, 116, 139, 0.34);
+
+    --radius-xs: 8px;
+    --radius-sm: 12px;
+    --radius-md: 16px;
+    --radius-lg: 22px;
+    --radius-xl: 28px;
+    --radius-pill: 999px;
+
+    --shadow-xs: 0 2px 8px rgba(15, 23, 42, 0.05);
+    --shadow-sm: 0 8px 24px rgba(15, 23, 42, 0.08);
+    --shadow-md: 0 18px 45px rgba(15, 23, 42, 0.12);
+    --shadow-lg: 0 28px 70px rgba(15, 23, 42, 0.16);
+    --focus-ring: 0 0 0 4px rgba(37, 99, 235, 0.14);
+
+    --field-normal-color: #cbd5e1;
+    --field-focus-color: var(--primary-600);
+
+    /* Calendar */
+    --calendar-font: var(--font-main);
+    --calendar-width: 310px;
+    --calendar-padding: 12px;
+    --calendar-radius: 18px;
+    --calendar-background: rgba(255, 255, 255, 0.97);
+    --calendar-border: rgba(148, 163, 184, 0.24);
+    --calendar-text: var(--text-main);
+    --calendar-shadow: rgba(15, 23, 42, 0.16);
+    --calendar-header-background: #f8fafc;
+    --calendar-header-text: var(--text-strong);
+    --calendar-header-font-size: 13px;
+    --calendar-header-height: 40px;
+    --calendar-header-radius: 10px;
+    --calendar-weekday-background: transparent;
+    --calendar-weekday-text: var(--text-muted);
+    --calendar-weekday-font-size: 11px;
+    --calendar-day-background: transparent;
+    --calendar-day-text: var(--text-main);
+    --calendar-day-font-size: 11px;
+    --calendar-day-size: 34px;
+    --calendar-day-radius: 10px;
+    --calendar-hover-background: var(--primary-100);
+    --calendar-hover-text: var(--primary-800);
+    --calendar-selected-background: var(--primary-600);
+    --calendar-selected-text: #ffffff;
+    --calendar-selected-radius: 11px;
+    --calendar-today-background: #e0f2fe;
+    --calendar-today-text: #075985;
+    --calendar-today-radius: 10px;
+    --calendar-other-month-text: #cbd5e1;
+    --calendar-disabled-background: #f8fafc;
+    --calendar-disabled-text: #cbd5e1;
+    --calendar-item-background: #ffffff;
+    --calendar-item-text: var(--text-main);
+    --calendar-item-font-size: 12px;
+    --calendar-item-radius: 10px;
+    --calendar-button-background: #f1f5f9;
+    --calendar-button-text: var(--text-main);
+    --calendar-button-radius: 10px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    direction: ltr;
+    min-height: 100%;
+    background: #f4f8ff;
+}
+
+body,
+input,
+button,
+select,
+textarea {
+    font-family: var(--font-main);
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    direction: rtl;
+    color: var(--text-main);
+    background-color: #f4f8ff;
+    background-image:
+        linear-gradient(135deg, rgba(248, 250, 252, 0.96), rgba(239, 246, 255, 0.90) 48%, rgba(236, 254, 255, 0.84)),
+        radial-gradient(circle at 12% 12%, rgba(59, 130, 246, 0.13), transparent 30%),
+        radial-gradient(circle at 88% 18%, rgba(6, 182, 212, 0.12), transparent 28%),
+        url("image.png");
+    background-size: cover, auto, auto, cover;
+    background-position: center, center, center, center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+::selection {
+    color: #ffffff;
+    background: var(--primary-600);
+}
+
+button,
+input,
+select,
+textarea {
+    font-size: 14px;
+}
+
+button {
+    min-width: 170px;
+    min-height: 44px;
+    padding: 0 20px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+    color: #ffffff;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.20);
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        background 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, var(--primary-700), var(--primary-800));
+    box-shadow: 0 12px 26px rgba(37, 99, 235, 0.26);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 5px 14px rgba(37, 99, 235, 0.18);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.58;
+    transform: none;
+    box-shadow: none;
+}
+
+input,
+select,
+textarea {
+    color: var(--text-main);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--text-soft);
+}
+
+#username,
+#password,
+#date,
+.field input,
+.field select,
+#pdfTitle,
+#pdfFile {
+    width: min(400px, 100%);
+}
+
+#username,
+#password,
+#date,
+.field input,
+#pdfTitle {
+    min-height: 48px;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    outline: none;
+    background: rgba(255, 255, 255, 0.76);
+    direction: rtl;
+    text-align: right;
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        background-color 0.18s ease;
+}
+
+#username:hover,
+#password:hover,
+#date:hover,
+.field input:hover,
+#pdfTitle:hover {
+    border-color: var(--border-strong);
+    background: rgba(255, 255, 255, 0.92);
+}
+
+#username:focus,
+#password:focus,
+#date:focus,
+.field input:focus,
+#pdfTitle:focus {
+    border-color: var(--field-focus-color);
+    background: #ffffff;
+    box-shadow: var(--focus-ring);
+}
+
+#date,
+#date::placeholder {
+    text-align: center;
+}
+
+.field {
+    width: 100%;
+}
+
+.field select {
+    min-height: 48px;
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.86);
+    color: var(--text-main);
+    direction: rtl;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.field select:hover {
+    border-color: var(--border-strong);
+}
+
+.field select:focus {
+    border-color: var(--primary-600);
+    box-shadow: var(--focus-ring);
+}
+
+#supportButton {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 128px;
+    min-width: 128px;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.88);
+    color: var(--primary-700);
+    border-color: rgba(37, 99, 235, 0.22);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(14px);
+}
+
+#supportButton:hover {
+    background: #ffffff;
+    color: var(--primary-800);
+}
+
+#message {
+    min-height: 26px;
+    margin: 0;
+    text-align: right;
+    direction: rtl;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.top-title {
+    margin: 0 0 24px;
+    color: var(--text-strong);
+    text-align: center;
+    font-size: clamp(24px, 3vw, 34px);
+    font-weight: 850;
+    letter-spacing: -0.03em;
+}
+
+.password-box {
+    position: relative;
+    width: min(400px, 100%);
+}
+
+.password-box input {
+    width: 100%;
+    padding-left: 48px;
+}
+
+.show-password {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 19px;
+    color: var(--text-muted);
+    user-select: none;
+    transition: color 0.18s ease, transform 0.18s ease;
+}
+
+.show-password:hover {
+    color: var(--primary-600);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.sendcode {
+    width: 156px;
+    min-width: 156px;
+    min-height: 42px;
+    background: linear-gradient(135deg, #0f172a, #334155);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.16);
+}
+
+.sendcode:hover {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.22);
+}
+
+.buttonPDF {
+    width: 150px;
+    min-width: 150px;
+    min-height: 44px;
+}
+
+/* Persian datepicker */
+.datepicker-plot-area,
+.datepicker-plot-area * {
+    font-family: var(--calendar-font) !important;
+}
+
+.datepicker-plot-area {
+    width: var(--calendar-width) !important;
+    padding: var(--calendar-padding) !important;
+    background: var(--calendar-background) !important;
+    color: var(--calendar-text) !important;
+    border: 1px solid var(--calendar-border) !important;
+    border-radius: var(--calendar-radius) !important;
+    box-shadow: 0 18px 42px var(--calendar-shadow) !important;
+    overflow: hidden;
+    backdrop-filter: blur(16px);
+}
+
+.datepicker-plot-area .datepicker-navigator {
+    min-height: var(--calendar-header-height) !important;
+}
+
+.datepicker-plot-area .datepicker-navigator .pwt-btn-next,
+.datepicker-plot-area .datepicker-navigator .pwt-btn-switch,
+.datepicker-plot-area .datepicker-navigator .pwt-btn-prev {
+    min-height: var(--calendar-header-height) !important;
+    background: var(--calendar-header-background) !important;
+    color: var(--calendar-header-text) !important;
+    font-size: var(--calendar-header-font-size) !important;
+    border-radius: var(--calendar-header-radius) !important;
+    transition: background-color 0.18s ease, color 0.18s ease !important;
+}
+
+.datepicker-plot-area .datepicker-navigator .pwt-btn-next:hover,
+.datepicker-plot-area .datepicker-navigator .pwt-btn-switch:hover,
+.datepicker-plot-area .datepicker-navigator .pwt-btn-prev:hover {
+    background: var(--primary-50) !important;
+    color: var(--primary-700) !important;
+}
+
+.datepicker-plot-area .datepicker-day-view .month-grid-box .header .header-row-cell {
+    background: var(--calendar-weekday-background) !important;
+    color: var(--calendar-weekday-text) !important;
+    font-size: var(--calendar-weekday-font-size) !important;
+    font-weight: 700 !important;
+}
+
+.datepicker-plot-area .datepicker-day-view .table-days td span {
+    width: var(--calendar-day-size) !important;
+    height: var(--calendar-day-size) !important;
+    line-height: var(--calendar-day-size) !important;
+    background: var(--calendar-day-background) !important;
+    color: var(--calendar-day-text) !important;
+    font-size: var(--calendar-day-font-size) !important;
+    border-radius: var(--calendar-day-radius) !important;
+    transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease !important;
+}
+
+.datepicker-plot-area .datepicker-day-view .table-days td:not(.disabled) span:hover {
+    background: var(--calendar-hover-background) !important;
+    color: var(--calendar-hover-text) !important;
+    transform: scale(1.04);
+}
+
+.datepicker-plot-area .datepicker-day-view .table-days td.selected span,
+.datepicker-plot-area .datepicker-day-view .table-days td.today.selected span {
+    background: var(--calendar-selected-background) !important;
+    color: var(--calendar-selected-text) !important;
+    border-radius: var(--calendar-selected-radius) !important;
+    box-shadow: 0 5px 12px rgba(37, 99, 235, 0.24);
+}
+
+.datepicker-plot-area .datepicker-day-view .table-days td.today span {
+    background: var(--calendar-today-background) !important;
+    color: var(--calendar-today-text) !important;
+    border-radius: var(--calendar-today-radius) !important;
+    font-weight: 800 !important;
+}
+
+.datepicker-plot-area .datepicker-day-view .table-days td span.other-month {
+    color: var(--calendar-other-month-text) !important;
+}
+
+.datepicker-plot-area .datepicker-day-view .table-days td.disabled span {
+    background: var(--calendar-disabled-background) !important;
+    color: var(--calendar-disabled-text) !important;
+}
+
+.datepicker-plot-area .datepicker-month-view .month-item,
+.datepicker-plot-area .datepicker-year-view .year-item {
+    background: var(--calendar-item-background) !important;
+    color: var(--calendar-item-text) !important;
+    font-size: var(--calendar-item-font-size) !important;
+    border-radius: var(--calendar-item-radius) !important;
+    transition: background-color 0.18s ease, color 0.18s ease !important;
+}
+
+.datepicker-plot-area .datepicker-month-view .month-item:hover,
+.datepicker-plot-area .datepicker-year-view .year-item:hover {
+    background: var(--calendar-hover-background) !important;
+    color: var(--calendar-hover-text) !important;
+}
+
+.datepicker-plot-area .datepicker-month-view .month-item.selected,
+.datepicker-plot-area .datepicker-year-view .year-item.selected {
+    background: var(--calendar-selected-background) !important;
+    color: var(--calendar-selected-text) !important;
+    border-radius: var(--calendar-selected-radius) !important;
+}
+
+.datepicker-plot-area .datepicker-year-view .year-item-disable,
+.datepicker-plot-area .datepicker-month-view .month-item-disable {
+    background: var(--calendar-disabled-background) !important;
+    color: var(--calendar-disabled-text) !important;
+}
+
+.datepicker-plot-area .toolbox .pwt-btn-today,
+.datepicker-plot-area .toolbox .pwt-btn-calendar {
+    background: var(--calendar-button-background) !important;
+    color: var(--calendar-button-text) !important;
+    border-radius: var(--calendar-button-radius) !important;
+}
+
+/* PDF upload and library */
+#pdfForm {
+    width: min(560px, 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    direction: rtl;
+    padding: clamp(22px, 4vw, 34px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface-soft);
+    box-shadow: var(--shadow-md);
+    backdrop-filter: blur(18px);
+}
+
+.pdf-field {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pdf-field label {
+    font-size: 13px;
+    font-weight: 750;
+    text-align: right;
+    color: var(--text-main);
+}
+
+#pdfTitle {
+    width: 100%;
+}
+
+#pdfFile {
+    width: 100%;
+    min-height: 52px;
+    padding: 7px;
+    direction: rtl;
+    border: 1px dashed rgba(37, 99, 235, 0.34);
+    border-radius: var(--radius-sm);
+    background: rgba(239, 246, 255, 0.62);
+    color: var(--text-muted);
+    outline: none;
+    transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+#pdfFile:hover {
+    border-color: rgba(37, 99, 235, 0.62);
+    background: rgba(239, 246, 255, 0.92);
+}
+
+#pdfFile:focus {
+    border-color: var(--primary-600);
+    box-shadow: var(--focus-ring);
+}
+
+#pdfFile::file-selector-button {
+    min-height: 36px;
+    margin-left: 12px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 10px;
+    background: #ffffff;
+    color: var(--primary-700);
+    font-family: var(--font-main);
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: var(--shadow-xs);
+    transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+#pdfFile::file-selector-button:hover {
+    background: var(--primary-600);
+    color: #ffffff;
+}
+
+#pdfList {
+    width: min(760px, 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pdf-item {
+    width: 100%;
+    min-height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 14px 12px 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: var(--shadow-xs);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+}
+
+.pdf-item:hover {
+    transform: translateY(-2px);
+    border-color: rgba(37, 99, 235, 0.22);
+    background: #ffffff;
+    box-shadow: var(--shadow-sm);
+}
+
+.pdf-item-title {
+    min-width: 0;
+    flex: 1;
+    font-size: 14px;
+    font-weight: 750;
+    color: var(--text-main);
+    direction: rtl;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pdf-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.file-btn,
+.delete-btn {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
+    padding: 0;
+    border-radius: 11px;
+    font-size: 18px;
+    box-shadow: none;
+}
+
+.file-btn {
+    background: var(--primary-50);
+    color: var(--primary-700);
+    border-color: var(--primary-100);
+}
+
+.file-btn:hover {
+    background: var(--primary-600);
+    color: #ffffff;
+    border-color: var(--primary-600);
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+}
+
+.delete-btn {
+    background: var(--danger-50);
+    color: var(--danger-600);
+    border-color: rgba(239, 68, 68, 0.18);
+}
+
+.delete-btn:hover {
+    background: var(--danger-600);
+    color: #ffffff;
+    border-color: var(--danger-600);
+    box-shadow: 0 8px 18px rgba(220, 38, 38, 0.20);
+}
+
+.nav-btn {
+    width: 160px;
+    min-width: 160px;
+    min-height: 42px;
+    background: rgba(255, 255, 255, 0.90);
+    color: var(--primary-700);
+    border-color: rgba(37, 99, 235, 0.22);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(14px);
+}
+
+.nav-btn:hover {
+    background: var(--primary-600);
+    color: #ffffff;
+    border-color: var(--primary-600);
+}
+
+/* Main panel */
+.panel-container,
+.dashboard {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    direction: rtl;
+    background: rgba(248, 250, 252, 0.28);
+}
+
+.panel-container {
+    flex-direction: row-reverse;
+}
+
+.sidebar,
+.right-menu {
+    width: 280px;
+    min-width: 280px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    padding: 24px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.82);
+    border-left: 1px solid var(--border);
+    box-shadow: -10px 0 34px rgba(15, 23, 42, 0.06);
+    backdrop-filter: blur(20px);
+    z-index: 20;
+}
+
+.profile-box,
+.user-name {
+    margin: 0 0 14px;
+    padding: 14px 14px 18px;
+    text-align: right;
+    border-bottom: 1px solid var(--border);
+}
+
+#welcomeMessage,
+.user-name {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-strong);
+}
+
+.sidebar button,
+.right-menu button {
+    width: 100%;
+    min-width: 0;
+    min-height: 46px;
+    justify-content: flex-start;
+    padding: 0 14px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--text-main);
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: none;
+}
+
+.sidebar button:hover,
+.right-menu button:hover {
+    transform: translateX(-2px);
+    background: rgba(37, 99, 235, 0.08);
+    color: var(--primary-700);
+    border-color: rgba(37, 99, 235, 0.08);
+    box-shadow: none;
+}
+
+.sidebar button.active,
+.right-menu button.active {
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.22);
+}
+
+.panel-content,
+.content-area {
+    flex: 1;
+    min-width: 0;
+    min-height: 100vh;
+    padding: clamp(18px, 3vw, 36px);
+    text-align: right;
+    overflow: auto;
+}
+
+#pageFrame {
+    width: 100%;
+    min-height: calc(100vh - 72px);
+    height: 100%;
+    border: 0;
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.42);
+}
+
+/* Generic inner pages */
+.inner-page {
+    margin: 0;
+    min-height: 100vh;
+    padding: clamp(20px, 4vw, 42px);
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 18px;
+}
+
+.inner-page h1,
+.inner-page h2,
+.inner-page h3 {
+    width: min(760px, 100%);
+    margin: 0;
+    text-align: right;
+    color: var(--text-strong);
+    letter-spacing: -0.02em;
+}
+
+.inner-page h2 {
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 850;
+}
+
+.inner-page > p {
+    width: min(760px, 100%);
+}
+
+/* Login / signup containers */
+.login-page,
+.page-container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(22px, 5vw, 54px) 20px;
+}
+
+.login-container {
+    width: min(470px, 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: clamp(26px, 5vw, 42px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: var(--surface-soft);
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(22px);
+}
+
+.login-container h1 {
+    width: 100%;
+    margin: 0 0 6px;
+    text-align: center;
+    color: var(--text-strong);
+    font-size: clamp(27px, 4vw, 36px);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+}
+
+.login-buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.warning-text {
+    color: var(--danger-600);
+    font-size: 16px;
+    font-weight: 800;
+    text-align: center;
+    animation: warningPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes warningPulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.62;
+        transform: scale(0.99);
+    }
+}
+
+/* Utility cards for future pages */
+.app-card {
+    width: min(760px, 100%);
+    padding: clamp(20px, 3vw, 30px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface-soft);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(18px);
+}
+
+.muted-text {
+    color: var(--text-muted);
+}
+
+/* Scrollbar */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+*::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+    background-clip: padding-box;
+}
+
+@media (max-width: 900px) {
+    .sidebar,
+    .right-menu {
+        width: 230px;
+        min-width: 230px;
+        padding: 18px 12px;
+    }
+
+    .panel-content,
+    .content-area {
+        padding: 18px;
+    }
+
+    #pdfList {
+        width: 100%;
+    }
+}
+
+@media (max-width: 720px) {
+    body {
+        background-attachment: scroll;
+    }
+
+    .panel-container,
+    .dashboard {
+        display: block;
+        min-height: 100vh;
+    }
+
+    .sidebar,
+    .right-menu {
+        width: 100%;
+        min-width: 0;
+        height: auto;
+        position: relative;
+        padding: 12px;
+        border-left: 0;
+        border-bottom: 1px solid var(--border);
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 8px;
+    }
+
+    .profile-box,
+    .user-name {
+        display: none;
+    }
+
+    .sidebar button,
+    .right-menu button {
+        width: auto;
+        min-width: max-content;
+        padding: 0 14px;
+        justify-content: center;
+    }
+
+    .panel-content,
+    .content-area {
+        min-height: calc(100vh - 74px);
+        padding: 14px;
+    }
+
+    #pageFrame {
+        min-height: calc(100vh - 110px);
+        border-radius: var(--radius-md);
+    }
+
+    .inner-page {
+        padding: 18px 14px;
+    }
+
+    #pdfForm {
+        padding: 20px 16px;
+    }
+
+    .pdf-item {
+        align-items: flex-start;
+        padding: 12px;
+    }
+
+    .pdf-item-title {
+        white-space: normal;
+        line-height: 1.8;
+    }
+
+    #supportButton {
+        position: static;
+        margin: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    button {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .buttonPDF,
+    .nav-btn,
+    .sendcode {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .pdf-actions {
+        gap: 6px;
+    }
+
+    .file-btn,
+    .delete-btn {
+        width: 38px;
+        min-width: 38px;
+        height: 38px;
+        min-height: 38px;
+    }
+
+    .login-container {
+        padding: 24px 18px;
+        border-radius: var(--radius-lg);
+    }
+}
+/* =========================================================
+   کنترل نهایی اسکرول برنامه
+   فقط یک Scrollbar و در سمت راست
+   ========================================================= */
+
+html {
+    width: 100%;
+    height: 100%;
+
+    /* محل Scrollbar در سمت راست */
+    direction: ltr;
+
+    overflow: hidden;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    /* محتوای فارسی همچنان RTL */
+    direction: rtl;
+
+    overflow: hidden;
+}
+
+
+/* صفحه اصلی پنل */
+.dashboard {
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+    direction: rtl;
+
+    overflow: hidden;
+}
+
+
+/* منوی سمت راست */
+.right-menu {
+    flex: 0 0 280px;
+
+    width: 280px;
+    height: 100vh;
+
+    overflow: hidden;
+}
+
+
+/* ناحیه‌ای که iframe داخل آن قرار دارد */
+.content-area {
+    flex: 1;
+
+    min-width: 0;
+    height: 100vh;
+
+    padding: 0;
+
+    overflow: hidden;
+}
+
+
+/* iframe */
+#pageFrame {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    border: none;
+
+    overflow: hidden;
+}
+/* =========================================================
+   چیدمان نهایی پنل
+   منو سمت راست - محتوا سمت چپ
+   ========================================================= */
+
+.dashboard {
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: row;
+
+    /* بسیار مهم */
+    direction: ltr;
+
+    overflow: hidden;
+}
+
+
+/* منوی اصلی - سمت راست */
+.right-menu {
+    order: 2;
+
+    width: 280px;
+    height: 100vh;
+    flex: 0 0 280px;
+
+    direction: rtl;
+
+    overflow: hidden;
+}
+
+
+/* محتوای اصلی - سمت چپ */
+.content-area {
+    order: 1;
+
+    flex: 1;
+    min-width: 0;
+    height: 100vh;
+
+    direction: rtl;
+
+    overflow: hidden;
+}
+
+
+/* iframe */
+#pageFrame {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    border: none;
+}
+.sidebar-storage-card {
+    width: 100%;
+
+    padding: 13px;
+
+    margin: 2px 0 8px;
+
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.98),
+            rgba(248, 250, 252, 0.95)
+        );
+
+    box-shadow:
+        0 6px 18px rgba(15, 23, 42, 0.06);
+
+    direction: rtl;
+}
+
+
+/* نام کاربر */
+
+.sidebar-user-name {
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+
+    border-bottom: 1px solid #eef2f7;
+}
+
+.sidebar-user-label {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #94a3b8;
+
+    font-size: 9px;
+    font-weight: 600;
+}
+
+.sidebar-user-name strong {
+    display: block;
+
+    color: #172033;
+
+    font-size: 12px;
+    font-weight: 850;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* عنوان فضای ذخیره‌سازی */
+
+.sidebar-storage-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 8px;
+
+    margin-bottom: 7px;
+
+    color: #475569;
+
+    font-size: 9.5px;
+    font-weight: 750;
+}
+
+.sidebar-storage-head strong {
+    color: #2563eb;
+
+    font-size: 9.5px;
+    font-weight: 850;
+}
+
+
+/* Progress */
+
+.sidebar-storage-progress {
+    width: 100%;
+    height: 6px;
+
+    margin-bottom: 10px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+
+    background: #e8eef6;
+}
+
+.sidebar-storage-progress-bar {
+    width: 0%;
+    height: 100%;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            90deg,
+            #2563eb,
+            #38bdf8
+        );
+
+    transition:
+        width 0.35s ease,
+        background 0.25s ease;
+}
+
+
+/* آمار */
+
+.sidebar-storage-stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 7px;
+}
+
+.sidebar-storage-stat {
+    min-width: 0;
+
+    padding: 7px 8px;
+
+    border: 1px solid #edf1f6;
+    border-radius: 9px;
+
+    background: #f8fafc;
+}
+
+.sidebar-storage-stat span {
+    display: block;
+
+    margin-bottom: 2px;
+
+    color: #94a3b8;
+
+    font-size: 8px;
+    font-weight: 600;
+}
+
+.sidebar-storage-stat strong {
+    display: block;
+
+    color: #334155;
+
+    font-size: 9.5px;
+    font-weight: 850;
+
+    white-space: nowrap;
+}
+
+
+/* فضای کل */
+
+.sidebar-storage-total {
+    margin-top: 8px;
+
+    color: #94a3b8;
+
+    font-size: 8.5px;
+
+    text-align: right;
+}
+
+.sidebar-storage-total strong {
+    color: #475569;
+
+    font-size: 9px;
+    font-weight: 800;
+}
+/* =========================================================
+   Scroll نوار کاربری panel.html
+   ========================================================= */
+
+.right-menu {
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    overscroll-behavior: contain;
+
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+
+/* Scrollbar در Chrome / Edge */
+
+.right-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.right-menu::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.right-menu::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
+}
+
+.right-menu::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+
+/* کارت فضای ذخیره‌سازی همچنان بعد از دکمه‌ها */
+
+.sidebar-storage-card {
+    margin-top: 14px;
+    flex-shrink: 0;
+}
+
+/* =========================================================
+   Login page scroll override
+   اجازه اسکرول در Login.html بدون تغییر اسکرول پنل اصلی
+   ========================================================= */
+
+.login-page {
+    width: 100%;
+    height: 100vh;
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    padding: clamp(22px, 5vw, 54px) 20px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+/* وقتی محتوا کوتاه است فرم تقریباً وسط صفحه می‌ماند؛
+   وقتی محتوا بلند شود، از بالا قابل اسکرول خواهد بود. */
+.login-page .login-container {
+    flex-shrink: 0;
+    margin-block: auto;
+}
+
+/* Scrollbar مخصوص صفحه ورود در Chrome / Edge */
+.login-page::-webkit-scrollbar {
+    width: 8px;
+}
+
+.login-page::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.login-page::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.login-page::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+    background-clip: padding-box;
+}
+
+/* در موبایل، کمی فضای بالایی/پایینی کمتر می‌شود. */
+@media (max-width: 480px) {
+    .login-page {
+        padding: 18px 12px 28px;
+    }
+
+    .login-page .login-container {
+        margin-block: 0;
+    }
+}
+/* END Login page scroll override */
+
+
+/* PersonalSpace generated background hook */
+body{background-image:linear-gradient(rgba(248,250,252,.92),rgba(248,250,252,.92)),url('/personalspace-background.png');background-size:cover;background-position:center;background-attachment:fixed;}

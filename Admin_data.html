@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>داده‌های مدیریتی</title>
+    <link rel="stylesheet" href="/admin.css">
+    <script src="/persian-digits.js"></script>
+</head>
+<body>
+<div class="admin-page">
+    <div class="admin-page-header">
+        <div>
+            <h1 id="title" class="admin-page-title">داده‌های مدیریتی</h1>
+            <p id="subtitle" class="admin-page-subtitle"></p>
+        </div>
+        <button id="createBtn" class="admin-btn primary" style="display:none">رکورد جدید</button>
+    </div>
+
+    <div id="statusBox" class="admin-status"></div>
+
+    <div class="admin-card admin-card-pad">
+        <div id="tableArea" class="admin-loading">در حال دریافت...</div>
+        <div class="admin-pagination">
+            <button id="prev" class="admin-btn">قبلی</button>
+            <span id="pageInfo">-</span>
+            <button id="next" class="admin-btn">بعدی</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalBg" class="admin-modal-backdrop">
+    <div class="admin-modal">
+        <h2 id="modalTitle" class="admin-modal-title">ویرایش</h2>
+        <form id="recordForm" class="admin-form-grid"></form>
+        <div class="admin-modal-actions">
+            <button class="admin-btn" type="button" onclick="closeModal()">انصراف</button>
+            <button id="saveBtn" class="admin-btn primary" type="button">ذخیره</button>
+        </div>
+    </div>
+</div>
+
+<script src="/admin.js"></script>
+<script>
+"use strict";
+
+const table = AdminAPI.qs("table", "");
+const requestedTitle = AdminAPI.qs("title", "");
+
+/*
+ * تنظیمات نمایشی جدول‌های مدیریتی
+ * این بخش باعث می‌شود کاربر مدیر به‌جای نام‌های فنی دیتابیس،
+ * عنوان و توضیح قابل‌فهم ببیند.
+ */
+const TABLE_UI = {
+    plans: {
+        title: "پلن‌های اشتراک",
+        subtitle: "پلن‌های قابل خرید را تعریف کنید؛ مانند مدت اشتراک، فضای قابل استفاده، تعداد مجاز فایل/بسته و قیمت.",
+        createText: "پلن جدید"
+    },
+    subscriptions: {
+        title: "اشتراک‌های کاربران",
+        subtitle: "اشتراک‌های ثبت‌شده کاربران و وضعیت فعال یا منقضی بودن آن‌ها را مشاهده کنید."
+    },
+    discount_codes: {
+        title: "کدهای تخفیف",
+        subtitle: "کد تخفیف، مقدار تخفیف، محدودیت استفاده و تاریخ اعتبار را مدیریت کنید.",
+        createText: "کد تخفیف جدید"
+    },
+    orders: {
+        title: "سفارش‌ها",
+        subtitle: "سفارش‌های خرید اشتراک و وضعیت پردازش آن‌ها را مشاهده کنید."
+    },
+    payments: {
+        title: "پرداخت‌ها",
+        subtitle: "تراکنش‌های مالی، مبلغ و وضعیت پرداخت را مشاهده کنید."
+    },
+    tickets: {
+        title: "تیکت‌های پشتیبانی",
+        subtitle: "درخواست‌های پشتیبانی کاربران و وضعیت رسیدگی را مشاهده کنید."
+    },
+    ticket_messages: {
+        title: "پیام‌های تیکت",
+        subtitle: "پیام‌های ثبت‌شده برای تیکت‌های پشتیبانی را مشاهده کنید."
+    },
+    app_settings: {
+        title: "تنظیمات سیستم",
+        subtitle: "تنظیمات عمومی سامانه را مدیریت کنید.",
+        createText: "تنظیم جدید"
+    }
+};
+
+/*
+ * نگاشت نام ستون‌های رایج دیتابیس به عنوان فارسی.
+ * اگر در دیتابیس شما نام ستونی متفاوت باشد، همان نام خام نمایش داده می‌شود
+ * تا صفحه از کار نیفتد.
+ */
+const FIELD_UI = {
+    id: { label: "شناسه" },
+    user_id: { label: "شناسه کاربر" },
+    plan_id: { label: "شناسه پلن" },
+    subscription_id: { label: "شناسه اشتراک" },
+    order_id: { label: "شناسه سفارش" },
+    payment_id: { label: "شناسه پرداخت" },
+
+    name: { label: "نام" },
+    title: { label: "عنوان" },
+    code: { label: "کد" },
+    slug: { label: "شناسه متنی" },
+    description: { label: "توضیحات" },
+
+    price: { label: "قیمت" },
+    amount: { label: "مبلغ" },
+    price_amount: { label: "قیمت" },
+    final_amount: { label: "مبلغ نهایی" },
+    discount_amount: { label: "مبلغ تخفیف" },
+    discount_percent: { label: "درصد تخفیف" },
+    percent: { label: "درصد تخفیف" },
+
+    duration_days: { label: "مدت اشتراک (روز)" },
+    duration_months: { label: "مدت اشتراک (ماه)" },
+    days: { label: "مدت (روز)" },
+    months: { label: "مدت (ماه)" },
+
+    storage_quota_bytes: { label: "فضای اشتراک", bytes: true },
+    storage_bytes: { label: "فضای اشتراک", bytes: true },
+    extra_storage_bytes: { label: "فضای اضافه", bytes: true },
+    quota_bytes: { label: "سهمیه فضا", bytes: true },
+    max_storage_bytes: { label: "حداکثر فضا", bytes: true },
+
+    max_files: { label: "حداکثر تعداد فایل" },
+    file_limit: { label: "حداکثر تعداد فایل" },
+    files_limit: { label: "حداکثر تعداد فایل" },
+    max_packages: { label: "حداکثر تعداد بسته" },
+    package_limit: { label: "حداکثر تعداد بسته" },
+    packages_limit: { label: "حداکثر تعداد بسته" },
+    package_count: { label: "تعداد بسته" },
+    max_items: { label: "حداکثر تعداد مورد" },
+
+    starts_at: { label: "شروع اشتراک" },
+    start_at: { label: "شروع اشتراک" },
+    started_at: { label: "شروع اشتراک" },
+    expires_at: { label: "پایان اشتراک" },
+    end_at: { label: "پایان اشتراک" },
+    ends_at: { label: "پایان اشتراک" },
+
+    status: { label: "وضعیت" },
+    is_active: { label: "فعال" },
+    active: { label: "فعال" },
+    enabled: { label: "فعال" },
+
+    max_uses: { label: "حداکثر دفعات استفاده" },
+    used_count: { label: "تعداد استفاده‌شده" },
+    usage_count: { label: "تعداد استفاده" },
+
+    key: { label: "کلید تنظیم" },
+    value: { label: "مقدار" },
+
+    created_at: { label: "تاریخ ایجاد" },
+    updated_at: { label: "آخرین ویرایش" },
+    paid_at: { label: "زمان پرداخت" },
+    deleted_at: { label: "زمان حذف" }
+};
+
+const boolTypes = ["boolean"];
+const numTypes = [
+    "smallint", "integer", "bigint", "numeric", "decimal", "real", "double precision"
+];
+const dateTypes = [
+    "date", "timestamp without time zone", "timestamp with time zone"
+];
+
+let page = 1;
+let totalPages = 0;
+let columns = [];
+let rows = [];
+let writable = false;
+let editingId = null;
+let pkName = null;
+
+function fieldConfig(name) {
+    return FIELD_UI[String(name || "").toLowerCase()] || {};
+}
+
+function fieldLabel(column) {
+    const cfg = fieldConfig(column.name);
+    return cfg.label || column.name;
+}
+
+function isAutoManagedField(column) {
+    const name = String(column.name || "").toLowerCase();
+
+    if (column.primaryKey) return true;
+
+    // فیلدهای سیستمی که معمولاً توسط دیتابیس مقداردهی می‌شوند.
+    if (["created_at", "updated_at", "deleted_at"].includes(name) && column.default) {
+        return true;
+    }
+
+    return false;
+}
+
+function formatBytes(bytes) {
+    const n = Number(bytes || 0);
+    if (!Number.isFinite(n) || n < 0) return "-";
+    return AdminAPI.formatBytes(n);
+}
+
+function formatCell(column, value) {
+    if (value == null || value === "") return "-";
+
+    const cfg = fieldConfig(column.name);
+    if (cfg.bytes) return formatBytes(value);
+
+    if (boolTypes.includes(column.dataType)) {
+        const yes = value === true || String(value).toLowerCase() === "true";
+        return yes ? "فعال" : "غیرفعال";
+    }
+
+    if (dateTypes.includes(column.dataType)) {
+        try {
+            return AdminAPI.formatDate(value);
+        } catch (_) {
+            return String(value);
+        }
+    }
+
+    if (typeof value === "object") return JSON.stringify(value);
+    return String(value);
+}
+
+function inputFor(column, value) {
+    const safeName = AdminAPI.esc(column.name);
+    const label = AdminAPI.esc(fieldLabel(column));
+    const cfg = fieldConfig(column.name);
+    const current = value == null ? "" : String(value);
+    const requiredText = column.nullable ? "اختیاری" : "الزامی";
+
+    if (boolTypes.includes(column.dataType)) {
+        const isTrue = value === true || String(value).toLowerCase() === "true";
+        const isFalse = value === false || String(value).toLowerCase() === "false";
+        return `
+            <div class="admin-field">
+                <label>${label}</label>
+                <select class="admin-select" data-field="${safeName}">
+                    <option value="">انتخاب کنید</option>
+                    <option value="true" ${isTrue ? "selected" : ""}>فعال</option>
+                    <option value="false" ${isFalse ? "selected" : ""}>غیرفعال</option>
+                </select>
+            </div>`;
+    }
+
+    /*
+     * فضای ذخیره‌سازی در دیتابیس بر حسب byte است، اما مدیر آن را بر حسب MB وارد می‌کند.
+     * هنگام ذخیره دوباره به byte تبدیل می‌شود.
+     */
+    if (cfg.bytes) {
+        const mbValue = current === "" ? "" : (Number(current) / (1024 * 1024));
+        const displayValue = Number.isFinite(mbValue) ? String(Number(mbValue.toFixed(2))) : "";
+        return `
+            <div class="admin-field">
+                <label>${label} <small>مگابایت</small></label>
+                <input
+                    class="admin-input"
+                    data-field="${safeName}"
+                    data-transform="mb-to-bytes"
+                    type="text"
+                    inputmode="decimal"
+                    data-persian-input
+                    value="${AdminAPI.esc(PersianDigits.toPersian(displayValue))}"
+                    placeholder="مثلاً 1024 برای یک گیگابایت"
+                >
+            </div>`;
+    }
+
+    const isNumeric = numTypes.includes(column.dataType);
+    const inputType = "text";
+    const numericAttr = isNumeric ? ' inputmode="decimal" data-persian-input' : "";
+
+    return `
+        <div class="admin-field">
+            <label>${label}</label>
+            <input
+                class="admin-input"
+                data-field="${safeName}"
+                type="${inputType}"
+                value="${AdminAPI.esc(isNumeric ? PersianDigits.toPersian(current) : current)}"
+                placeholder="${requiredText}"
+                ${numericAttr}
+            >
+        </div>`;
+}
+
+function applyPageText() {
+    const config = TABLE_UI[table] || {};
+    document.getElementById("title").textContent = requestedTitle || config.title || table || "داده‌های مدیریتی";
+    document.getElementById("subtitle").textContent = config.subtitle || "اطلاعات این بخش را مشاهده و مدیریت کنید.";
+    document.getElementById("createBtn").textContent = config.createText || "رکورد جدید";
+}
+
+async function load(p = 1) {
+    page = p;
+    applyPageText();
+
+    try {
+        await AdminAPI.init();
+        const d = await AdminAPI.request(
+            "/api/admin/data/" + encodeURIComponent(table) + "?page=" + page + "&per_page=25"
+        );
+
+        columns = d.columns || [];
+        rows = d.rows || [];
+        writable = !!d.writable;
+        pkName = (columns.find(c => c.primaryKey) || {}).name || null;
+
+        document.getElementById("createBtn").style.display = writable ? "inline-flex" : "none";
+        totalPages = d.pagination.totalPages || 0;
+        document.getElementById("pageInfo").textContent =
+            "صفحه " + AdminAPI.fa(page) + " از " + AdminAPI.fa(totalPages || 1);
+        document.getElementById("prev").disabled = page <= 1;
+        document.getElementById("next").disabled = page >= totalPages;
+
+        if (!columns.length) {
+            document.getElementById("tableArea").innerHTML =
+                '<div class="admin-empty">ستونی در این جدول پیدا نشد.</div>';
+            return;
+        }
+
+        const head = columns
+            .map(c => `<th>${AdminAPI.esc(fieldLabel(c))}</th>`)
+            .join("") + (writable ? "<th>عملیات</th>" : "");
+
+        const body = rows.map((row, index) => `
+            <tr>
+                ${columns.map(c => `
+                    <td class="${["text", "json", "jsonb"].includes(c.dataType) ? "wrap" : ""}">
+                        ${AdminAPI.esc(formatCell(c, row[c.name]))}
+                    </td>`).join("")}
+                ${writable ? `
+                    <td>
+                        <button class="admin-btn" onclick="editRow(${index})">ویرایش</button>
+                        <button class="admin-btn danger" onclick="deleteRow(${index})">حذف</button>
+                    </td>` : ""}
+            </tr>`).join("");
+
+        document.getElementById("tableArea").innerHTML = rows.length
+            ? `<div class="admin-table-wrap"><table class="admin-table"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`
+            : '<div class="admin-empty">هنوز رکوردی در این بخش ثبت نشده است.</div>';
+
+    } catch (e) {
+        AdminAPI.status("statusBox", e.message, "error");
+        document.getElementById("tableArea").innerHTML =
+            '<div class="admin-empty">دریافت داده انجام نشد.</div>';
+    }
+}
+
+function openForm(row) {
+    editingId = row && pkName ? row[pkName] : null;
+
+    const tableConfig = TABLE_UI[table] || {};
+    const entityName = tableConfig.title || "رکورد";
+    document.getElementById("modalTitle").textContent =
+        editingId == null ? (tableConfig.createText || "رکورد جدید") : "ویرایش " + entityName;
+
+    const editable = columns.filter(c => !isAutoManagedField(c));
+    document.getElementById("recordForm").innerHTML = editable
+        .map(c => inputFor(c, row ? row[c.name] : null))
+        .join("");
+
+    document.getElementById("modalBg").classList.add("show");
+}
+
+function closeModal() {
+    document.getElementById("modalBg").classList.remove("show");
+}
+
+function editRow(index) {
+    openForm(rows[index]);
+}
+
+async function deleteRow(index) {
+    const row = rows[index];
+    const id = pkName ? row[pkName] : null;
+
+    if (id == null) {
+        AdminAPI.status("statusBox", "کلید اصلی رکورد پیدا نشد.", "error");
+        return;
+    }
+
+    if (!AdminAPI.confirm("این رکورد حذف شود؟")) return;
+
+    try {
+        await AdminAPI.request(
+            "/api/admin/data/" + encodeURIComponent(table) + "/" + encodeURIComponent(id),
+            { method: "DELETE" }
+        );
+        AdminAPI.status("statusBox", "رکورد حذف شد.", "success");
+        load(page);
+    } catch (e) {
+        AdminAPI.status("statusBox", e.message, "error");
+    }
+}
+
+document.getElementById("saveBtn").onclick = async () => {
+    const fields = {};
+
+    document.querySelectorAll("[data-field]").forEach(el => {
+        let value = el.hasAttribute("data-persian-input")
+            ? PersianDigits.value(el)
+            : el.value;
+
+        if (value === "true") value = true;
+        else if (value === "false") value = false;
+
+        if (value === "") return;
+
+        if (el.dataset.transform === "mb-to-bytes") {
+            const mb = Number(value);
+            if (!Number.isFinite(mb) || mb < 0) return;
+            value = Math.round(mb * 1024 * 1024);
+        }
+
+        fields[el.dataset.field] = value;
+    });
+
+    try {
+        if (editingId == null) {
+            await AdminAPI.request(
+                "/api/admin/data/" + encodeURIComponent(table),
+                { method: "POST", body: JSON.stringify({ fields }) }
+            );
+        } else {
+            await AdminAPI.request(
+                "/api/admin/data/" + encodeURIComponent(table) + "/" + encodeURIComponent(editingId),
+                { method: "PATCH", body: JSON.stringify({ fields }) }
+            );
+        }
+
+        closeModal();
+        AdminAPI.status("statusBox", "اطلاعات با موفقیت ذخیره شد.", "success");
+        load(page);
+    } catch (e) {
+        AdminAPI.status("statusBox", e.message, "error");
+    }
+};
+
+document.getElementById("createBtn").onclick = () => openForm(null);
+document.getElementById("prev").onclick = () => page > 1 && load(page - 1);
+document.getElementById("next").onclick = () => page < totalPages && load(page + 1);
+
+applyPageText();
+load();
+</script>
+</body>
+</html>

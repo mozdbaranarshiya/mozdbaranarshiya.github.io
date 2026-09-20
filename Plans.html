@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>پلن‌ها و سرویس‌ها</title>
+
+  <link rel="stylesheet" href="/portal.css">
+
+  <style>
+    .plans-wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:20px;
+    }
+
+    .plans-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:14px;
+    }
+
+    .plan-card{
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:14px;
+      padding:16px;
+    }
+
+    .plan-card h3{
+      margin:0 0 8px;
+    }
+
+    .plan-meta{
+      color:#64748b;
+      font-size:14px;
+      line-height:1.9;
+    }
+
+    .plan-price{
+      font-weight:700;
+      font-size:18px;
+      margin:12px 0;
+    }
+
+    .plan-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .state{
+      padding:12px;
+      border-radius:10px;
+      margin:12px 0;
+      background:#f8fafc;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="plans-wrap">
+
+    <div class="portal-head">
+      <div>
+        <h1>پلن‌ها و سرویس‌ها</h1>
+        <p>
+          مشاهده پلن‌های فعال بدون نیاز به ورود.
+          برای خرید یا مدیریت سرویس وارد حساب کاربری شوید.
+        </p>
+      </div>
+
+      <div class="plan-actions">
+        <a class="portal-btn" href="/Login.html">
+          ورود
+        </a>
+
+        <a class="portal-btn primary" href="/User_plans.html">
+          پنل خرید
+        </a>
+      </div>
+    </div>
+
+    <div id="status" class="state">
+      در حال دریافت پلن‌ها…
+    </div>
+
+    <section>
+      <h2>فضای ذخیره‌سازی</h2>
+
+      <div
+        id="storagePlans"
+        class="plans-grid">
+      </div>
+    </section>
+
+    <section style="margin-top:24px">
+
+      <h2>سرویس‌ها</h2>
+
+      <div
+        id="servicePlans"
+        class="plans-grid">
+      </div>
+
+    </section>
+
+  </main>
+
+<script>
+
+const API = '/api/public/plans';
+
+
+function esc(value){
+
+  return String(value ?? '').replace(
+    /[&<>"']/g,
+    char => ({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#39;'
+    }[char])
+  );
+
+}
+
+
+function fa(value){
+
+  return String(value ?? '').replace(
+    /\d/g,
+    digit => '۰۱۲۳۴۵۶۷۸۹'[digit]
+  );
+
+}
+
+
+function money(value){
+
+  const number = Number(value || 0);
+
+  return (
+    fa(number.toLocaleString('en-US'))
+    + ' ریال'
+  );
+
+}
+
+
+function first(object, keys, fallback=''){
+
+  for(const key of keys){
+
+    if(
+      object &&
+      object[key] !== undefined &&
+      object[key] !== null &&
+      object[key] !== ''
+    ){
+      return object[key];
+    }
+
+  }
+
+  return fallback;
+
+}
+
+
+function card(plan, kind){
+
+  const title = first(
+    plan,
+    [
+      'name',
+      'title',
+      'label',
+      'productName',
+      'product_name'
+    ],
+    kind === 'storage'
+      ? 'پلن ذخیره‌سازی'
+      : 'سرویس'
+  );
+
+
+  const price = first(
+    plan,
+    [
+      'priceIrr',
+      'price_irr',
+      'price',
+      'amountIrr',
+      'amount_irr'
+    ],
+    0
+  );
+
+
+  const description = first(
+    plan,
+    [
+      'description',
+      'summary',
+      'subtitle'
+    ],
+    ''
+  );
+
+
+  const duration = first(
+    plan,
+    [
+      'durationMonths',
+      'duration_months',
+      'months'
+    ],
+    ''
+  );
+
+
+  const quota = first(
+    plan,
+    [
+      'quotaBytes',
+      'quota_bytes',
+      'storageBytes',
+      'storage_bytes'
+    ],
+    ''
+  );
+
+
+  const id = first(
+    plan,
+    ['id'],
+    ''
+  );
+
+
+  const extras = [];
+
+
+  if(duration){
+
+    extras.push(
+      `مدت: ${fa(duration)} ماه`
+    );
+
+  }
+
+
+  if(quota){
+
+    extras.push(
+      `فضا: ${fa(quota)} بایت`
+    );
+
+  }
+
+
+  return `
+    <article class="plan-card">
+
+      <h3>
+        ${esc(title)}
+      </h3>
+
+      ${
+        description
+          ? `<div class="plan-meta">${esc(description)}</div>`
+          : ''
+      }
+
+      ${
+        extras.length
+          ? `<div class="plan-meta">${extras.map(esc).join(' · ')}</div>`
+          : ''
+      }
+
+      <div class="plan-price">
+        ${money(price)}
+      </div>
+
+      <div class="plan-actions">
+
+        <a
+          class="portal-btn primary"
+          data-purchase="${esc(kind)}:${esc(id)}"
+          href="/User_plans.html">
+          خرید / ادامه در پنل
+        </a>
+
+        <a
+          class="portal-btn"
+          href="/Login.html">
+          ورود
+        </a>
+
+      </div>
+
+    </article>
+  `;
+
+}
+
+
+async function load(){
+
+  const status =
+    document.getElementById('status');
+
+
+  try{
+
+    const response = await fetch(
+      API,
+      {
+        headers:{
+          'Accept':'application/json'
+        }
+      }
+    );
+
+
+    const data =
+      await response.json();
+
+
+    if(
+      !response.ok ||
+      data.ok === false
+    ){
+
+      throw new Error(
+        data.message ||
+        'خطا در دریافت اطلاعات'
+      );
+
+    }
+
+
+    const storage =
+      Array.isArray(data.storagePlans)
+        ? data.storagePlans
+        : [];
+
+
+    const services =
+      Array.isArray(data.servicePlans)
+        ? data.servicePlans
+        : [];
+
+
+    document.getElementById(
+      'storagePlans'
+    ).innerHTML =
+
+      storage.length
+
+      ? storage
+          .map(
+            item =>
+              card(item,'storage')
+          )
+          .join('')
+
+      : `
+        <div class="portal-empty">
+          پلن ذخیره‌سازی فعالی وجود ندارد.
+        </div>
+      `;
+
+
+    document.getElementById(
+      'servicePlans'
+    ).innerHTML =
+
+      services.length
+
+      ? services
+          .map(
+            item =>
+              card(item,'service')
+          )
+          .join('')
+
+      : `
+        <div class="portal-empty">
+          سرویس فعالی وجود ندارد.
+        </div>
+      `;
+
+
+    status.textContent =
+      fa(
+        storage.length +
+        services.length
+      )
+      + ' مورد فعال';
+
+
+  }
+  catch(error){
+
+    status.textContent =
+      'خطا: ' +
+      error.message;
+
+  }
+
+}
+
+
+load();
+
+</script>
+
+</body>
+</html>

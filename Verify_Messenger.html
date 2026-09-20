@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تأیید شماره با بله یا سروش+</title>
+    <link rel="icon" type="image/png" href="/personalspace-icon.png">
+    <link rel="stylesheet" href="/app.css">
+    <style>
+        body{min-height:100vh;padding:28px 16px;background:#f5f7fb}
+        .verify-wrap{width:min(820px,100%);margin:0 auto}
+        .verify-card{background:#fff;border:1px solid var(--border);border-radius:24px;padding:26px;box-shadow:var(--shadow-lg)}
+        h1{margin:0 0 8px;font-size:26px}.lead{margin:0 0 18px;color:var(--text-muted);line-height:1.95}
+        .providers{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+        .provider{border:2px solid #e2e8f0;background:#fff;border-radius:18px;padding:16px;text-align:right;cursor:pointer;font:inherit;color:inherit;transition:.18s}
+        .provider:hover{border-color:#93c5fd}.provider.active{border-color:#2563eb;background:#eff6ff}
+        .provider strong{display:block;font-size:18px;margin-bottom:4px}.provider span{font-size:12px;color:#64748b;line-height:1.8}
+        .steps{display:grid;gap:9px;margin:14px 0 18px}.step{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;padding:10px 12px;border:1px solid #e2e8f0;border-radius:13px;background:#f8fafc}
+        .step-num{width:30px;height:30px;border-radius:9px;background:#2563eb;color:#fff;display:grid;place-items:center;font-weight:800}
+        .step p{margin:2px 0;color:#475569;font-size:13px;line-height:1.9}
+        .form{display:grid;gap:12px}.form label{font-size:13px;color:#475569}.form input{width:100%;text-align:right;direction:ltr}
+        .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}.actions button,.actions a{flex:1;min-width:180px;text-align:center;text-decoration:none}
+        .bot-link.disabled{pointer-events:none;opacity:.55}
+        .notice{padding:12px 14px;border-radius:13px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;font-size:13px;line-height:1.9}
+        #status{min-height:28px;margin-top:12px;line-height:1.9}.ok{color:#15803d}.error{color:#b91c1c}
+        .limit-note{margin-top:16px;padding:12px 14px;border-radius:13px;background:#f8fafc;border:1px solid #e2e8f0;color:#475569;font-size:12px;line-height:1.9}
+        @media(max-width:680px){.providers{grid-template-columns:1fr}.verify-card{padding:18px}.actions{display:grid}.actions button,.actions a{min-width:0}}
+    </style>
+    <script src="/persian-digits.js"></script>
+</head>
+<body>
+<main class="verify-wrap">
+    <section class="verify-card">
+        <h1>تأیید یک‌باره شماره موبایل</h1>
+        <p class="lead">یکی از پیام‌رسان‌ها را انتخاب کنید. شماره‌ای که در بازو/بات می‌فرستید باید همان شماره‌ای باشد که هنگام ثبت‌نام وارد کرده‌اید.</p>
+
+        <div class="providers" aria-label="انتخاب پیام‌رسان">
+            <button type="button" class="provider active" data-provider="bale">
+                <strong>بله</strong>
+                <span>تأیید حساب، اعلان‌های امنیتی و پرداخت سفارش‌های غیررایگان.</span>
+            </button>
+            <button type="button" class="provider" data-provider="soroush">
+                <strong>سروش+</strong>
+                <span>تأیید حساب، اعلان‌های امنیتی، بازیابی رمز و پیام‌های وضعیت سرویس.</span>
+            </button>
+        </div>
+
+        <div class="notice" id="providerNote">برای خریدهای غیررایگان، پرداخت سامانه فعلاً فقط از طریق بله انجام می‌شود.</div>
+
+        <div class="steps">
+            <div class="step"><div class="step-num">۱</div><p>بازوی پیام‌رسان انتخاب‌شده را باز کنید و در گفت‌وگوی خصوصی دستور <b>/start</b> را ارسال کنید.</p></div>
+            <div class="step"><div class="step-num">۲</div><p>فقط با دکمه <b>«ارسال شماره موبایل من»</b> شماره خودتان را به اشتراک بگذارید؛ شماره را دستی تایپ نکنید.</p></div>
+            <div class="step"><div class="step-num">۳</div><p>بازو پس از تأیید شماره، <b>شناسه عددی گفت‌وگو</b> را برای شما نمایش می‌دهد. همان شناسه را در کادر زیر وارد کنید.</p></div>
+            <div class="step"><div class="step-num">۴</div><p>روی «تأیید و فعال‌سازی حساب» بزنید. پس از موفقیت می‌توانید با کد ملی و رمز عبور وارد شوید.</p></div>
+        </div>
+
+        <div class="form">
+            <label for="phone">شماره موبایل ثبت‌نامی</label>
+            <input class="field" id="phone" type="tel" inputmode="numeric" maxlength="11" autocomplete="tel" placeholder="09123456789" data-persian-input>
+
+            <label for="nationalId">کد ملی</label>
+            <input class="field" id="nationalId" type="text" inputmode="numeric" maxlength="10" autocomplete="username" placeholder="کد ملی ۱۰ رقمی" data-persian-input>
+
+            <label for="chatId">شناسه عددی گفت‌وگو که بازو نمایش داده است</label>
+            <input class="field" id="chatId" type="text" inputmode="numeric" maxlength="24" placeholder="مثال: 123456789" data-persian-input>
+
+            <div class="actions">
+                <a id="botLink" class="button bot-link disabled" href="#" target="_blank" rel="noopener noreferrer">در حال دریافت لینک بازو...</a>
+                <button type="button" id="verifyBtn">تأیید و فعال‌سازی حساب</button>
+                <a class="button" href="/information.html#signup">مشاهده آموزش ثبت‌نام</a>
+            </div>
+        </div>
+
+        <div id="status" aria-live="polite"></div>
+        <div class="limit-note"><b>امنیت:</b> شناسه گفت‌وگو، کد تأیید، رمز عبور یا شماره دیگران را برای فرد دیگری ارسال نکنید. اتصال شماره فقط در گفت‌وگوی خصوصی با بازوی سامانه انجام می‌شود.</div>
+    </section>
+</main>
+<script>
+(function(){
+    "use strict";
+    const providers={bale:{label:"بله",enabled:false,url:""},soroush:{label:"سروش+",enabled:false,url:""}};
+    let selected="bale";
+    const phone=document.getElementById("phone");
+    const nationalId=document.getElementById("nationalId");
+    const chatId=document.getElementById("chatId");
+    const status=document.getElementById("status");
+    const botLink=document.getElementById("botLink");
+    const verifyBtn=document.getElementById("verifyBtn");
+    const fa="۰۱۲۳۴۵۶۷۸۹", ar="٠١٢٣٤٥٦٧٨٩";
+    const ascii=v=>String(v||"").replace(/[۰-۹]/g,d=>String(fa.indexOf(d))).replace(/[٠-٩]/g,d=>String(ar.indexOf(d))).replace(/\s+/g,"");
+
+    phone.value=sessionStorage.getItem("pendingVerifyPhone")||"";
+    nationalId.value=sessionStorage.getItem("pendingVerifyNationalId")||"";
+
+    function show(text,ok=false){status.textContent=text||"";status.className=ok?"ok":"error";}
+
+    function renderProvider(){
+        document.querySelectorAll(".provider").forEach(btn=>btn.classList.toggle("active",btn.dataset.provider===selected));
+        const p=providers[selected];
+        if(p.enabled&&p.url){
+            botLink.href=p.url;
+            botLink.textContent="باز کردن بازوی "+p.label;
+            botLink.classList.remove("disabled");
+        }else{
+            botLink.href="#";
+            botLink.textContent=p.enabled?("لینک بازوی "+p.label+" تنظیم نشده است"):("بازوی "+p.label+" در سرور فعال نیست");
+            botLink.classList.add("disabled");
+        }
+        document.getElementById("providerNote").textContent=selected==="soroush"
+            ? "سروش+ می‌تواند پیام‌رسان اصلی حساب شما باشد؛ اما پرداخت سفارش‌های غیررایگان فعلاً فقط از طریق بله انجام می‌شود."
+            : "بله می‌تواند پیام‌رسان اصلی حساب باشد و پرداخت سفارش‌های غیررایگان نیز از طریق بله انجام می‌شود.";
+    }
+
+    document.querySelectorAll(".provider").forEach(btn=>btn.addEventListener("click",()=>{selected=btn.dataset.provider;show("");renderProvider();}));
+
+    async function loadConfig(){
+        try{
+            const response=await fetch("/api/messenger/verification-config",{credentials:"same-origin",cache:"no-store"});
+            const data=await response.json().catch(()=>({}));
+            if(response.ok&&data.ok&&data.providers){
+                for(const key of ["bale","soroush"]){
+                    const item=data.providers[key]||{};
+                    providers[key].enabled=!!item.enabled;
+                    providers[key].url=String(item.url||"").trim();
+                    providers[key].label=String(item.label||providers[key].label);
+                }
+            }
+        }catch(_){
+            show("امکان دریافت وضعیت بازوها وجود ندارد؛ در صورت نیاز لینک بازو را از مدیر سامانه دریافت کنید.");
+        }
+        renderProvider();
+    }
+
+    verifyBtn.addEventListener("click",async()=>{
+        const payload={phone:ascii(phone.value),nationalId:ascii(nationalId.value),provider:selected,chatId:ascii(chatId.value)};
+        if(!/^09\d{9}$/.test(payload.phone)){show("شماره موبایل معتبر وارد کنید.");return;}
+        if(!/^\d{10}$/.test(payload.nationalId)){show("کد ملی باید ۱۰ رقم باشد.");return;}
+        if(!/^-?\d{1,24}$/.test(payload.chatId)){show("شناسه عددی گفت‌وگو معتبر نیست.");return;}
+        verifyBtn.disabled=true;
+        verifyBtn.textContent="در حال تأیید...";
+        try{
+            const response=await fetch("/api/messenger/verify",{method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",body:JSON.stringify(payload)});
+            const data=await response.json().catch(()=>({}));
+            if(!response.ok||!data.ok){show(data.message||"تأیید انجام نشد.");return;}
+            sessionStorage.removeItem("pendingVerifyPhone");
+            sessionStorage.removeItem("pendingVerifyNationalId");
+            show(data.message||"شماره با موفقیت تأیید شد.",true);
+            window.setTimeout(()=>window.location.replace("/Login.html"),900);
+        }catch(_){
+            show("ارتباط با سامانه برقرار نشد.");
+        }finally{
+            verifyBtn.disabled=false;
+            verifyBtn.textContent="تأیید و فعال‌سازی حساب";
+        }
+    });
+
+    loadConfig();
+})();
+</script>
+</body>
+</html>

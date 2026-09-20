@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#172554">
+  <link rel="icon" type="image/png" href="/personalspace-icon.png">
+  <title>راهنمای کامل سامانه فضای شخصی</title>
+  <meta name="description" content="راهنمای کامل سامانه فضای شخصی؛ ثبت‌نام، بله و سروش+، ورود و امنیت، فایل، یادداشت، پلن، سفارش، پشتیبانی، پنل مدیریت و قابلیت‌های به‌زودی.">
+  <style>
+    @font-face{font-family:"Vazirmatn";src:url("/fonts/Vazirmatn-Variable.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
+    :root{--bg:#f5f7fb;--surface:#fff;--surface-2:#f8fafc;--text:#172033;--muted:#667085;--border:#e4e7ec;--accent:#2563eb;--accent-dark:#1d4ed8;--accent-soft:#eff6ff;--success:#15803d;--success-soft:#ecfdf3;--warning:#b45309;--warning-soft:#fff7ed;--danger:#b42318;--shadow:0 12px 32px rgba(16,24,40,.07);--radius:20px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:18px}body{margin:0;font-family:"Vazirmatn",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.95}a{color:inherit}.page{width:min(1180px,calc(100% - 28px));margin:0 auto;padding:24px 0 56px}
+    .hero{background:radial-gradient(circle at 12% 12%,rgba(96,165,250,.28),transparent 28%),linear-gradient(135deg,#172554,#1d4ed8);color:#fff;border-radius:28px;padding:38px;box-shadow:var(--shadow);position:relative;overflow:hidden}.hero:after{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.07);left:-90px;top:-120px}.hero h1{margin:0 0 10px;font-size:clamp(28px,5vw,48px);line-height:1.35;position:relative;z-index:1}.hero p{margin:0;max-width:920px;color:#dbeafe;font-size:15px;position:relative;z-index:1}.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;position:relative;z-index:1}.hero-actions a{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:12px;padding:10px 15px;font-weight:700;font-size:13px;background:#fff;color:#1e3a8a}.hero-actions a.secondary{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.22)}
+    .status-legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:17px;position:relative;z-index:1}.status-chip{padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18)}
+    .quick-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;position:relative;z-index:1}.quick-nav a{text-decoration:none;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 12px;color:#fff;font-size:12px}.quick-nav a:hover{background:rgba(255,255,255,.2)}
+    section{margin-top:22px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow)}.section-title{display:flex;align-items:center;gap:12px;margin-bottom:10px}.icon{width:44px;height:44px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);border-radius:14px;font-size:21px;flex:0 0 auto}.section-title h2{margin:0;font-size:22px}.lead{color:var(--muted);margin:0 0 18px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.card{padding:17px;background:var(--surface-2);border:1px solid var(--border);border-radius:16px;min-height:136px}.card h3{margin:0 0 7px;font-size:16px}.card p{margin:0;color:var(--muted);font-size:13px}.card ul{margin:8px 0 0;padding-right:18px;color:var(--muted);font-size:13px}.card li{margin:5px 0}
+    .badge{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:800;background:#eef2ff;color:#3730a3;margin-bottom:7px}.badge.green{background:var(--success-soft);color:var(--success)}.badge.orange{background:var(--warning-soft);color:var(--warning)}.badge.soon{background:var(--warning-soft);color:var(--warning)}
+    .steps{counter-reset:steps;display:grid;gap:10px}.step{counter-increment:steps;position:relative;padding:14px 58px 14px 14px;border:1px solid var(--border);border-radius:15px;background:#fff}.step:before{content:counter(steps);position:absolute;right:14px;top:14px;width:32px;height:32px;display:grid;place-items:center;border-radius:9px;background:var(--accent);color:#fff;font-weight:800}.step strong{display:block;margin-bottom:2px}.step span{color:var(--muted);font-size:13px}
+    .note{border-right:4px solid var(--accent);background:var(--accent-soft);padding:13px 15px;border-radius:12px;color:#1e3a8a;margin-top:15px;font-size:13px}.warning{border-right-color:#f59e0b;background:var(--warning-soft);color:#92400e}.success{border-right-color:#22c55e;background:var(--success-soft);color:#166534}
+    .video-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.video-card{border:1px solid var(--border);border-radius:18px;overflow:hidden;background:#fff}.video-card .video-head{padding:14px 16px;border-bottom:1px solid var(--border);background:var(--surface-2)}.video-card h3{margin:0 0 3px;font-size:17px}.video-card p{margin:0;color:var(--muted);font-size:12px}.video-card video{display:block;width:100%;aspect-ratio:16/9;background:#0f172a}.video-actions{padding:12px 14px;display:flex;gap:8px;flex-wrap:wrap}.btn{display:inline-flex;align-items:center;justify-content:center;border:0;text-decoration:none;border-radius:10px;padding:9px 13px;background:#e8edf7;color:#24304a;font:inherit;font-size:13px;font-weight:700;cursor:pointer}.btn.primary{background:var(--accent);color:#fff}.btn.disabled{opacity:.55;pointer-events:none}.bot-status{font-size:11px;color:var(--muted);padding-top:4px}
+    .compare{width:100%;border-collapse:collapse;background:#fff}.compare-wrap{overflow:auto;border:1px solid var(--border);border-radius:15px}.compare th,.compare td{padding:11px 12px;border-bottom:1px solid #edf0f5;text-align:right;vertical-align:top;min-width:170px}.compare th{background:#f8fafc;color:#475569;font-size:12px}.compare td{font-size:13px}.yes{color:#15803d;font-weight:800}.limited{color:#b45309;font-weight:800}
+    .feature-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.feature{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--border);border-radius:14px;background:#fff}.feature .tick{width:26px;height:26px;display:grid;place-items:center;border-radius:8px;background:var(--success-soft);color:var(--success);font-weight:900;flex:0 0 auto}.feature strong{display:block;font-size:14px}.feature span{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+    .code-list{display:grid;gap:8px}.code-row{display:flex;justify-content:space-between;gap:12px;align-items:center;border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:var(--surface-2)}.code-row code{direction:ltr;text-align:left;color:#334155;font-family:Consolas,monospace;font-size:12px;overflow-wrap:anywhere}.code-row span{color:var(--muted);font-size:12px}
+    .admin-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}.admin-item{padding:13px;border:1px solid var(--border);border-radius:14px;background:var(--surface-2)}.admin-item b{display:block;font-size:13px}.admin-item span{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+    .future{border-color:#fed7aa;background:linear-gradient(180deg,#fff,#fffaf4)}.future-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.future-item{padding:15px;border:1px solid #fed7aa;border-radius:15px;background:#fff}.future-item h3{margin:0 0 6px;font-size:15px}.future-item p{margin:0;color:var(--muted);font-size:12px}
+    .footer{text-align:center;color:var(--muted);padding:26px 12px 0;font-size:12px}.footer-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+    @media(max-width:960px){.grid,.future-grid,.admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:760px){.video-grid,.grid.two,.feature-list{grid-template-columns:1fr}}@media(max-width:620px){.page{width:min(100% - 18px,1180px);padding-top:10px}.hero{padding:27px 19px;border-radius:20px}section{padding:19px;border-radius:18px}.grid,.future-grid,.admin-grid{grid-template-columns:1fr}.hero-actions a{width:100%}.code-row{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+<main class="page">
+  <header class="hero">
+    <h1>راهنمای کامل سامانه فضای شخصی</h1>
+    <p>مرجع یکپارچه امکانات فعلی سامانه و قابلیت‌های برنامه‌ریزی‌شده؛ از ثبت‌نام و تأیید شماره با بله یا سروش+ تا مدیریت فایل، یادداشت، پلن، سفارش، پشتیبانی، امنیت حساب و پنل مدیریت.</p>
+    <div class="hero-actions"><a href="/index.html" target="_top">صفحه اصلی</a><a class="secondary" href="/SignUp.html" target="_top">ثبت‌نام</a><a class="secondary" href="/Login.html" target="_top">ورود</a></div>
+    <div class="status-legend"><span class="status-chip">✓ بدون برچسب = قابلیت فعلی</span><span class="status-chip">به‌زودی = در حال توسعه</span></div>
+    <nav class="quick-nav" aria-label="دسترسی سریع">
+      <a href="#signup">ثبت‌نام</a><a href="#messengers">پیام‌رسان‌ها</a><a href="#account">حساب و امنیت</a><a href="#files">فایل‌ها</a><a href="#notes">یادداشت‌ها</a><a href="#plans">پلن و سرویس</a><a href="#support">پشتیبانی</a><a href="#admin">مدیریت</a><a href="#future">به‌زودی</a>
+    </nav>
+  </header>
+
+  <section id="overview">
+    <div class="section-title"><div class="icon">🧭</div><h2>سامانه فضای شخصی چیست؟</h2></div>
+    <p class="lead">یک پنل شخصی برای نگهداری و مدیریت اطلاعات و فایل‌های کاربر، یادداشت‌ها، ارتباط با پشتیبانی، خرید فضای بیشتر و سرویس‌ها، همراه با پنل مدیریتی برای کنترل کاربران و عملیات سامانه.</p>
+    <div class="grid">
+      <article class="card"><h3>داده‌های حساب و سامانه</h3><p>اطلاعات کاربران، نقش‌ها، نشست‌ها، پیام‌ها، یادداشت‌ها، سفارش‌ها، تیکت‌ها و فراداده فایل‌ها در پایگاه داده ساختاریافته نگهداری می‌شوند.</p></article>
+      <article class="card"><h3>فایل‌های کاربر</h3><p>فایل‌های جدید در Object Storage آروان ذخیره می‌شوند و Backend فراداده، مالکیت و مسیر دانلود آنها را مدیریت می‌کند.</p></article>
+      <article class="card"><h3>پنل کاربر و مدیر</h3><p>کاربر امکانات شخصی خود را می‌بیند و مدیر از صفحات جداگانه برای کاربران، Storage، فایل‌ها، سرویس‌ها، تیکت‌ها و سلامت سامانه استفاده می‌کند.</p></article>
+    </div>
+  </section>
+
+  <section id="signup">
+    <div class="section-title"><div class="icon">👤+</div><h2>ثبت‌نام و تأیید شماره موبایل</h2></div>
+    <p class="lead">ابتدا حساب ساخته می‌شود و سپس شماره موبایل با یکی از پیام‌رسان‌های پشتیبانی‌شده تأیید می‌شود.</p>
+    <div class="video-grid">
+      <article class="video-card">
+        <div class="video-head"><span class="badge green">ویدیوی ۱</span><h3>ثبت‌نام و تأیید با بله</h3><p>ساخت حساب، شروع بازو، ارسال Contact، دریافت Chat ID و تأیید نهایی.</p></div>
+        <video controls preload="metadata" playsinline src="/videos/register-bale.mp4">مرورگر شما پخش ویدیو را پشتیبانی نمی‌کند.</video>
+        <div class="video-actions"><a class="btn primary bot-link disabled" id="baleBotLink" href="#" target="_blank" rel="noopener noreferrer">لینک بازوی بله</a><a class="btn" href="/Verify_Messenger.html">صفحه تأیید</a><div class="bot-status" id="baleBotStatus">در حال بررسی تنظیمات بله...</div></div>
+      </article>
+      <article class="video-card">
+        <div class="video-head"><span class="badge green">ویدیوی ۲</span><h3>ثبت‌نام و تأیید با سروش+</h3><p>ساخت حساب، شروع بات، ارسال Contact، دریافت Chat ID و تأیید نهایی.</p></div>
+        <video controls preload="metadata" playsinline src="/videos/register-soroush.mp4">مرورگر شما پخش ویدیو را پشتیبانی نمی‌کند.</video>
+        <div class="video-actions"><a class="btn primary bot-link disabled" id="soroushBotLink" href="#" target="_blank" rel="noopener noreferrer">لینک بات سروش+</a><a class="btn" href="/Verify_Messenger.html">صفحه تأیید</a><div class="bot-status" id="soroushBotStatus">در حال بررسی تنظیمات سروش+...</div></div>
+      </article>
+    </div>
+    <div class="steps" style="margin-top:17px">
+      <div class="step"><strong>فرم ثبت‌نام را تکمیل کنید.</strong><span>اطلاعات درخواستی حساب، شماره موبایل و رمز امن را ثبت کنید.</span></div>
+      <div class="step"><strong>پیام‌رسان را انتخاب کنید.</strong><span>بله یا سروش+ را باز و در گفت‌وگوی خصوصی Contact شماره خودتان را ارسال کنید.</span></div>
+      <div class="step"><strong>Chat ID را دریافت کنید.</strong><span>پس از بررسی مالکیت شماره، شناسه گفت‌وگو برای اتصال حساب در اختیار شما قرار می‌گیرد.</span></div>
+      <div class="step"><strong>حساب را فعال کنید.</strong><span>اطلاعات تأیید در سایت بررسی می‌شود و بعد از موفقیت، حساب آماده ورود خواهد بود.</span></div>
+    </div>
+    <div class="note success">برای اتصال شماره، Contact خودتان را از دکمه رسمی پیام‌رسان ارسال کنید. اطلاعات حساس، Token یا رمز را برای اشخاص دیگر ارسال نکنید.</div>
+  </section>
+
+  <section id="messengers">
+    <div class="section-title"><div class="icon">💬</div><h2>بله و سروش+ در سامانه</h2></div>
+    <p class="lead">هر دو پیام‌رسان در مسیرهای تأیید شماره و پیام‌های شخصی حساب قابل استفاده‌اند؛ پرداخت غیررایگان در ساختار فعلی از بله انجام می‌شود.</p>
+    <div class="compare-wrap"><table class="compare"><thead><tr><th>قابلیت</th><th>بله</th><th>سروش+</th></tr></thead><tbody>
+      <tr><td>تأیید شماره در ثبت‌نام</td><td class="yes">پشتیبانی می‌شود</td><td class="yes">پشتیبانی می‌شود</td></tr>
+      <tr><td>انتخاب به‌عنوان پیام‌رسان اصلی</td><td class="yes">بله</td><td class="yes">بله</td></tr>
+      <tr><td>OTP و بازیابی رمز</td><td class="yes">بله</td><td class="yes">بله</td></tr>
+      <tr><td>اعلان‌های ورود و حساب</td><td class="yes">بله</td><td class="yes">بله</td></tr>
+      <tr><td>پیام‌های سفارش و سرویس</td><td class="yes">بله</td><td class="yes">بله</td></tr>
+      <tr><td>ارسال درخواست پرداخت</td><td class="yes">پشتیبانی می‌شود</td><td class="limited">فعلاً پرداخت از بله</td></tr>
+    </tbody></table></div>
+    <div class="note warning">اگر سروش+ پیام‌رسان اصلی حساب باشد، برای سفارش‌هایی که پرداخت بله نیاز دارند ممکن است اتصال بله نیز لازم باشد.</div>
+  </section>
+
+  <section id="soroush">
+    <div class="section-title"><div class="icon">🟣</div><h2>قابلیت‌های فنی سروش+</h2></div>
+    <div class="feature-list">
+      <div class="feature"><div class="tick">✓</div><div><strong>شروع بات و درخواست Contact</strong><span>بات می‌تواند کاربر را برای ارسال شماره خودش هدایت کند.</span></div></div>
+      <div class="feature"><div class="tick">✓</div><div><strong>بررسی مالکیت شماره</strong><span>شناسه فرستنده و Contact برای جلوگیری از اتصال شماره دیگران بررسی می‌شود.</span></div></div>
+      <div class="feature"><div class="tick">✓</div><div><strong>ثبت اتصال حساب</strong><span>Chat ID تأییدشده به رکورد کاربر و Provider پیام‌رسان مرتبط می‌شود.</span></div></div>
+      <div class="feature"><div class="tick">✓</div><div><strong>پیام‌های امنیتی و OTP</strong><span>ورود، بازیابی رمز و رویدادهای مرتبط می‌توانند از Provider تأییدشده ارسال شوند.</span></div></div>
+      <div class="feature"><div class="tick">✓</div><div><strong>Polling</strong><span>Worker داخلی می‌تواند Updateهای جدید را با Offset دریافت کند.</span></div></div>
+      <div class="feature"><div class="tick">✓</div><div><strong>Webhook</strong><span>حالت Webhook با Secret و HTTPS در Gateway قابل استفاده است.</span></div></div>
+    </div>
+    <h3 style="margin:22px 0 10px;font-size:17px">تنظیمات محیطی مرتبط با سروش+</h3>
+    <div class="code-list"><div class="code-row"><span>توکن بات</span><code>SOROUSH_BOT_TOKEN</code></div><div class="code-row"><span>لینک عمومی بات</span><code>SOROUSH_BOT_URL</code></div><div class="code-row"><span>روش دریافت Update</span><code>SOROUSH_UPDATE_MODE=polling | webhook | disabled</code></div><div class="code-row"><span>Secret وب‌هوک</span><code>SOROUSH_WEBHOOK_SECRET</code></div></div>
+    <div class="note">مقادیر واقعی Token، Secret، Database URL و کلیدهای Storage نباید داخل HTML یا مخزن عمومی قرار بگیرند.</div>
+  </section>
+
+  <section id="account">
+    <div class="section-title"><div class="icon">🔐</div><h2>حساب کاربری، ورود و امنیت فعلی</h2></div>
+    <div class="grid">
+      <article class="card"><h3>ورود با شناسه حساب و رمز</h3><p>پس از فعال‌سازی، ورود عادی با اطلاعات حساب و رمز ذخیره‌شده انجام می‌شود.</p></article>
+      <article class="card"><h3>ورود با شماره موبایل</h3><p>مسیر ورود مبتنی بر شماره موبایل و OTP پیام‌رسان برای سناریوهای تعریف‌شده در سامانه وجود دارد.</p></article>
+      <article class="card"><h3>بازیابی رمز</h3><p>کد بازیابی کوتاه‌مدت به پیام‌رسان تأییدشده ارسال می‌شود و سپس رمز جدید تعیین می‌گردد.</p></article>
+      <article class="card"><h3>تغییر رمز</h3><p>رمز فعلی بررسی می‌شود، رمز جدید امن ذخیره می‌شود و نشست‌های دیگر قابل بی‌اعتبارشدن هستند.</p></article>
+      <article class="card"><h3>Session و CSRF</h3><p>عملیات حساس با Session معتبر و کنترل‌های سمت سرور محافظت می‌شوند.</p></article>
+      <article class="card"><h3>Rate limit و Cooldown</h3><p>تلاش‌های ورود و درخواست‌های OTP/بازیابی دارای محدودیت و بازه انتظار هستند.</p></article>
+    </div>
+  </section>
+
+  <section id="files">
+    <div class="section-title"><div class="icon">📁</div><h2>فایل‌ها و فضای ذخیره‌سازی</h2></div>
+    <p class="lead">فایل‌های جدید روی Arvan Object Storage قرار می‌گیرند و اطلاعات فایل، مالک، نسخه و وضعیت حذف در Backend مدیریت می‌شود.</p>
+    <div class="grid">
+      <article class="card"><h3>آپلود PDF</h3><p>یک یا چند PDF با کنترل اعتبار فایل و سهمیه کاربر قابل ثبت است.</p></article>
+      <article class="card"><h3>مشاهده و دانلود</h3><p>فهرست فایل‌ها و مسیر دانلود کنترل‌شده از پنل در دسترس است.</p></article>
+      <article class="card"><h3>جست‌وجوی فایل</h3><p>صفحه جست‌وجو و API مربوط به جست‌وجوی فایل‌های ثبت‌شده در پروژه وجود دارد.</p></article>
+      <article class="card"><h3>سطل زباله</h3><p>فایل حذف‌شده ابتدا وارد Trash می‌شود و امکان بازیابی یا حذف دائمی دارد.</p></article>
+      <article class="card"><h3>سهمیه کاربر</h3><p>فضای کل، مصرف‌شده و باقی‌مانده در پنل محاسبه و نمایش داده می‌شود.</p></article>
+      <article class="card"><h3>حذف از Provider واقعی</h3><p>در حذف دائمی، Backend فایل را از Storage Provider مربوط به همان نسخه پاک می‌کند.</p></article>
+    </div>
+  </section>
+
+  <section id="notes">
+    <div class="section-title"><div class="icon">📝</div><h2>یادداشت‌ها</h2></div>
+    <div class="grid">
+      <article class="card"><h3>ایجاد و ویرایش</h3><p>عنوان و متن یادداشت شخصی قابل ایجاد و ویرایش است.</p></article>
+      <article class="card"><h3>جست‌وجو</h3><p>یادداشت‌های موجود با متن جست‌وجو قابل پیدا کردن هستند.</p></article>
+      <article class="card"><h3>سنجاق</h3><p>یادداشت‌های مهم برای دسترسی بهتر Pin می‌شوند.</p></article>
+      <article class="card"><h3>آرشیو</h3><p>یادداشت بدون حذف دائمی قابل انتقال به آرشیو است.</p></article>
+      <article class="card"><h3>حذف</h3><p>یادداشت انتخابی با تأیید کاربر قابل حذف است.</p></article>
+      <article class="card"><h3>حساب آزمایشی</h3><p>در حساب Demo عملیات حساس و نوشتنی مطابق محدودیت‌های Backend غیرفعال می‌شوند.</p></article>
+    </div>
+  </section>
+
+  <section id="plans">
+    <div class="section-title"><div class="icon">💳</div><h2>پلن‌ها، تخفیف، سفارش و سرویس‌ها</h2></div>
+    <div class="grid">
+      <article class="card"><span class="badge">Storage</span><h3>افزایش سهمیه فضای ذخیره‌سازی</h3><p>پلن‌های فعال فضای اضافه از Backend خوانده می‌شوند و پس از پرداخت موفق سهمیه کاربر افزایش می‌یابد.</p></article>
+      <article class="card"><span class="badge">سرویس</span><h3>سرویس‌های قابل تعریف</h3><p>نام محصول، نوع خرید، سطح حساب، مدت و قیمت‌ها از تنظیمات Backend دریافت می‌شوند.</p></article>
+      <article class="card"><span class="badge">تخفیف</span><h3>کد تخفیف</h3><p>کدهای تخفیف می‌توانند دارای درصد، تاریخ انقضا، هدف و محدودیت پلن/سرویس باشند.</p></article>
+      <article class="card"><span class="badge orange">پرداخت</span><h3>پرداخت سفارش</h3><p>سفارش‌های غیررایگان در ساختار فعلی از مسیر پرداخت بله پردازش و استعلام می‌شوند.</p></article>
+      <article class="card"><span class="badge green">تحویل</span><h3>فعال‌سازی سرویس</h3><p>وضعیت‌هایی مانند در انتظار پرداخت، در انتظار توکن، فعال، منقضی یا لغوشده قابل مدیریت هستند.</p></article>
+      <article class="card"><span class="badge">سفارش‌ها</span><h3>تاریخچه و پیگیری</h3><p>کد سفارش، مبلغ، وضعیت پرداخت، جزئیات سرویس و تیکت مرتبط در پنل قابل مشاهده است.</p></article>
+    </div>
+    <div class="note warning">اطلاعات محرمانه سرویس‌های شخص ثالث، مانند Cookie یا Session، نباید در فرم عمومی یا پیام پشتیبانی ارسال شوند مگر سامانه صریحاً و از مسیر امن آن را درخواست کند.</div>
+  </section>
+
+  <section id="support">
+    <div class="section-title"><div class="icon">🎫</div><h2>پشتیبانی، پیام و اعلان‌ها</h2></div>
+    <div class="grid">
+      <article class="card"><h3>ثبت تیکت</h3><p>کاربر می‌تواند درخواست خود را ثبت و پاسخ‌های مدیر را در همان گفتگو دنبال کند.</p></article>
+      <article class="card"><h3>تیکت سفارش</h3><p>سفارش سرویس می‌تواند با تیکت مرتبط شود تا فرایند فعال‌سازی و پاسخ‌گویی قابل پیگیری باشد.</p></article>
+      <article class="card"><h3>اعلان داخل سامانه</h3><p>مدیر می‌تواند اعلان ایجاد کند و کاربر اعلان‌های فعال را در پنل ببیند.</p></article>
+      <article class="card"><h3>پیام شخصی پیام‌رسان</h3><p>Backend بر اساس Provider تأییدشده حساب، پیام را به بله یا سروش+ ارسال می‌کند.</p></article>
+      <article class="card"><h3>اعلان عمومی</h3><p>مقصد اعلان عمومی بله می‌تواند در تنظیمات مدیریتی سامانه تعیین شود.</p></article>
+      <article class="card"><h3>راهنما و آموزش</h3><p>صفحات راهنمای فعال‌سازی، «بیشتر بدانیم» و همین مرکز اطلاعات برای آموزش کاربران در پروژه وجود دارند.</p></article>
+    </div>
+  </section>
+
+  <section id="demo">
+    <div class="section-title"><div class="icon">🧪</div><h2>حساب آزمایشی</h2></div>
+    <p class="lead">سامانه امکان حساب Demo فقط‌خواندنی را در Backend در نظر گرفته است تا رابط کاربری بدون اجازه انجام عملیات حساس قابل مشاهده باشد.</p>
+    <div class="note">خرید، آپلود، تغییر اطلاعات حساس، ایجاد داده جدید و عملیات مشابه برای حساب آزمایشی می‌توانند توسط Backend محدود شوند.</div>
+  </section>
+
+  <section id="admin">
+    <div class="section-title"><div class="icon">🧰</div><h2>امکانات پنل مدیریت</h2></div>
+    <p class="lead">صفحات مدیریتی فقط برای Session دارای نقش manager ارائه می‌شوند و کنترل دسترسی در Backend انجام می‌شود.</p>
+    <div class="admin-grid">
+      <div class="admin-item"><b>داشبورد مدیریت</b><span>خلاصه وضعیت سامانه و دسترسی سریع.</span></div>
+      <div class="admin-item"><b>مدیریت کاربران</b><span>کاربران، مدیران، فعال/غیرفعال بودن و اطلاعات حساب.</span></div>
+      <div class="admin-item"><b>گزارش Storage</b><span>سهمیه و مصرف فضای کاربران و Providerها.</span></div>
+      <div class="admin-item"><b>مدیریت فایل‌ها</b><span>بررسی فراداده فایل، نسخه و وضعیت حذف.</span></div>
+      <div class="admin-item"><b>پلن‌های Storage</b><span>تعریف پلن‌های افزایش فضا و قیمت آنها.</span></div>
+      <div class="admin-item"><b>پلن‌های سرویس</b><span>تعریف محصول، نوع خرید، سطح حساب، مدت و قیمت.</span></div>
+      <div class="admin-item"><b>درخواست‌های سرویس</b><span>فعال‌سازی، ثبت توکن/کد و مدیریت وضعیت تحویل.</span></div>
+      <div class="admin-item"><b>کدهای تخفیف</b><span>ساخت، فعال/غیرفعال‌کردن و محدودیت هدف.</span></div>
+      <div class="admin-item"><b>پرداخت‌ها</b><span>مشاهده و استعلام تراکنش‌های سفارش.</span></div>
+      <div class="admin-item"><b>تیکت‌ها</b><span>مشاهده، پاسخ و مدیریت درخواست پشتیبانی.</span></div>
+      <div class="admin-item"><b>اعلان‌ها</b><span>اعلان داخل سامانه و پیام‌های مدیریتی.</span></div>
+      <div class="admin-item"><b>تنظیمات Portal</b><span>تنظیمات عمومی سرویس و مقصد اعلان.</span></div>
+      <div class="admin-item"><b>گزارش‌ها</b><span>گزارش‌های مدیریتی و مالی سامانه.</span></div>
+      <div class="admin-item"><b>Audit</b><span>ثبت و بررسی فعالیت‌های مدیریتی مهم.</span></div>
+      <div class="admin-item"><b>سلامت سامانه</b><span>بررسی Database، Storage، Backend و پیام‌رسان‌ها.</span></div>
+      <div class="admin-item"><b>پنل شخصی مدیر</b><span>مدیر همچنان می‌تواند از امکانات حساب شخصی استفاده کند.</span></div>
+    </div>
+  </section>
+
+  <section id="future" class="future">
+    <div class="section-title"><div class="icon">🚀</div><h2>قابلیت‌های برنامه‌ریزی‌شده</h2></div>
+    <p class="lead">این موارد هنوز به‌عنوان قابلیت کامل و نهایی سامانه معرفی نمی‌شوند و تا زمان پیاده‌سازی با برچسب «به‌زودی» مشخص هستند.</p>
+    <div class="future-grid">
+      <article class="future-item"><span class="badge soon">به‌زودی</span><h3>رمزگذاری دسترسی هر فایل</h3><p>کاربر بتواند برای فایل رمز جداگانه تعیین کند و پیش از مشاهده/دانلود فایل محافظت‌شده، رمز بررسی شود.</p></article>
+      <article class="future-item"><span class="badge soon">به‌زودی</span><h3>ثبت و تأیید ایمیل</h3><p>در اولین ورود، ایمیل ثبت و پیش از دسترسی کامل تأیید شود؛ مسیر تأیید با Google یا ارسال ایمیل در نظر گرفته شده است.</p></article>
+      <article class="future-item"><span class="badge soon">به‌زودی</span><h3>ورود با Google</h3><p>گزینه «ورود با گوگل» برای مسیر تأیید هویت ایمیل و اتصال امن آن به حساب کاربر.</p></article>
+      
+      <article class="future-item"><span class="badge soon">به‌زودی</span><h3>سهمیه ایمیل مدیریتی</h3><p>مدیر بتواند سهمیه داخلی ارسال ایمیل را مشاهده و مقدار مجاز داخلی را تنظیم کند؛ محدودیت واقعی Provider مستقل خواهد بود.</p></article>
+      <article class="future-item"><span class="badge soon">به‌زودی</span><h3>بازیابی رمز با ایمیل یا موبایل</h3><p>کاربر هنگام فراموشی رمز بتواند بین کد تأیید پیام‌رسان/شماره موبایل و ایمیل تأییدشده انتخاب کند.</p></article>
+      <article class="future-item"><span class="badge soon">به‌زودی</span><h3>تغییر ایمیل با تأیید</h3><p>ایمیل جدید فقط پس از تأیید جایگزین شود؛ تا آن زمان ایمیل قبلی حساب معتبر باقی بماند.</p></article>
+      <article class="future-item"><span class="badge soon">به‌زودی</span><h3>گذرواژه دومرحله‌ای اختیاری</h3><p>امکان تعریف گذرواژه دوم، تکرار گذرواژه و راهنما به انتخاب کاربر برای لایه امنیتی اضافه.</p></article>
+      <article class="future-item"><span class="badge soon">به‌زودی</span><h3>زیر‌دامنه مدیریت امنیت حساب</h3><p>ورود با شماره و OTP پیام‌رسان برای مدیریت رمز دوم، حذف حساب و ورود مستقیم امن به پنل اصلی.</p></article>
+      <article class="future-item"><span class="badge soon">به‌زودی</span><h3>حذف کامل حساب</h3><p>فرایند تأییدشده برای حذف حساب، نشست‌ها، داده‌های متعلق به کاربر و فایل‌های مربوط از Storage.</p></article>
+      <article class="future-item"><span class="badge soon">به‌زودی</span><h3>مهلت ۳۰ روزه ایمیل</h3><p>حساب فاقد ایمیل تأییدشده دسترسی کامل نداشته باشد، روزهای باقی‌مانده را ببیند و پس از پایان مهلت وارد فرایند حذف شود.</p></article>
+      <article class="future-item"><span class="badge soon">به‌زودی</span><h3>اعلان تیکت برای همه مدیران</h3><p>هنگام ثبت تیکت، به مسیرهای پیام‌رسان فعال مدیران اعلان ارسال شود؛ شکست یک Provider مانع ثبت تیکت نشود.</p></article>
+      
+    </div>
+  </section>
+
+  <section id="security">
+    <div class="section-title"><div class="icon">🛡️</div><h2>نکات امنیتی استفاده از سامانه</h2></div>
+    <div class="steps">
+      <div class="step"><strong>Token و Secret را در HTML یا پیام عمومی قرار ندهید.</strong><span>Database URL، کلیدهای Storage، Token بات‌ها و Secretهای Webhook فقط در Environment سرور نگهداری شوند.</span></div>
+      <div class="step"><strong>برای اتصال موبایل فقط Contact خودتان را ارسال کنید.</strong><span>اتصال حساب باید از گفت‌وگوی خصوصی و با دکمه رسمی ارسال شماره انجام شود.</span></div>
+      <div class="step"><strong>رمز حساب را در تیکت ارسال نکنید.</strong><span>برای پشتیبانی، متن خطا و زمان وقوع کافی است؛ رمز، کد OTP، Cookie و Session را ارسال نکنید.</span></div>
+      <div class="step"><strong>وضعیت سفارش را از پنل بررسی کنید.</strong><span>پیام‌رسان برای اعلان است؛ مرجع نهایی وضعیت سفارش، پرداخت و سرویس همان Backend و پنل است.</span></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div>راهنمای یکپارچه سامانه فضای شخصی — قابلیت‌های «به‌زودی» تا زمان تکمیل، جزو امکانات فعال محسوب نمی‌شوند.</div>
+    <div class="footer-actions"><a class="btn primary" href="/index.html" target="_top">صفحه اصلی</a><a class="btn" href="/Login.html" target="_top">ورود</a><a class="btn" href="/SignUp.html" target="_top">ثبت‌نام</a><a class="btn" href="#future">امکانات به‌زودی</a></div>
+  </footer>
+</main>
+<script>
+(function(){
+  "use strict";
+  async function loadMessengerConfig(){
+    const ids={bale:{link:"baleBotLink",status:"baleBotStatus",fallback:"بازوی بله"},soroush:{link:"soroushBotLink",status:"soroushBotStatus",fallback:"بات سروش+"}};
+    try{
+      const response=await fetch("/api/messenger/verification-config",{credentials:"same-origin",cache:"no-store"});
+      const data=await response.json().catch(()=>({}));
+      if(!response.ok||!data.ok||!data.providers) throw new Error("CONFIG");
+      Object.entries(ids).forEach(([key,ui])=>{
+        const item=data.providers[key]||{};
+        const link=document.getElementById(ui.link);
+        const status=document.getElementById(ui.status);
+        const label=String(item.label||ui.fallback);
+        const url=String(item.url||"").trim();
+        if(item.enabled&&url){link.href=url;link.textContent="باز کردن "+label;link.classList.remove("disabled");status.textContent="بات/بازو روی سرور فعال است.";}
+        else if(item.enabled){link.href="#";link.textContent=label;link.classList.add("disabled");status.textContent="بات فعال است اما URL عمومی آن تنظیم نشده است.";}
+        else{link.href="#";link.textContent=label;link.classList.add("disabled");status.textContent="این پیام‌رسان در تنظیمات فعلی سرور فعال نیست.";}
+      });
+    }catch(_){
+      const bale=document.getElementById("baleBotStatus"); const soroush=document.getElementById("soroushBotStatus");
+      if(bale) bale.textContent="وضعیت بازوی بله دریافت نشد.";
+      if(soroush) soroush.textContent="وضعیت بات سروش+ دریافت نشد.";
+    }
+  }
+  loadMessengerConfig();
+})();
+</script>
+</body>
+</html>

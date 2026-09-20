@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود با شماره موبایل</title>
+    <link rel="icon" type="image/png" href="/personalspace-icon.png">
+    <link rel="stylesheet" href="/app.css">
+    <style>
+        html { overflow-y: auto; direction: ltr; }
+        body { direction: rtl; min-height: 100vh; padding: 24px; display:flex; align-items:center; justify-content:center; }
+        .mobile-login-card { width:min(470px,100%); padding:28px; border:1px solid var(--border); border-radius:24px; background:rgba(255,255,255,.9); box-shadow:var(--shadow-lg); backdrop-filter:blur(18px); }
+        .mobile-login-card h1 { margin:0 0 8px; text-align:right; font-size:26px; }
+        .mobile-login-card .hint { margin:0 0 22px; color:var(--text-muted); line-height:1.9; font-size:13px; }
+        .mobile-login-card .field { margin-bottom:14px; }
+        .mobile-login-card input { width:100%; max-width:none; direction:rtl; text-align:right; }
+        .actions { display:flex; flex-direction:column; gap:10px; margin-top:16px; }
+        .actions button { width:100%; }
+        #message { margin-top:14px; line-height:1.9; }
+        .code-wrap { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; }
+        .code-wrap button { min-width:160px; }
+        @media (max-width:560px){ .code-wrap{grid-template-columns:1fr}.code-wrap button{width:100%;} }
+    </style>
+    <script src="/persian-digits.js"></script>
+</head>
+<body>
+<main class="mobile-login-card">
+    <h1>ورود با شماره موبایل</h1>
+    <p class="hint">کد ملی و شماره موبایل ثبت‌شده را وارد کنید. کد تأیید ۶ رقمی در پیام‌رسان تأییدشده شما برای حساب متصل به این شماره ارسال می‌شود.</p>
+
+    <div class="field">
+        <input id="kodemeli" type="text" inputmode="numeric" maxlength="10" autocomplete="username" placeholder="نام کاربری (کد ملی)" data-persian-input>
+    </div>
+
+    <div class="field">
+        <input id="phonenumber" type="tel" inputmode="numeric" maxlength="11" autocomplete="tel" placeholder="شماره موبایل، مثال: 09123456789" data-persian-input>
+    </div>
+
+    <div class="code-wrap">
+        <div class="field" style="margin:0">
+            <input id="verificationCode" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="کد تأیید ۶ رقمی" data-persian-input>
+        </div>
+        <button type="button" id="sendCodeBtn">ارسال کد</button>
+    </div>
+
+    <p id="message" aria-live="polite"></p>
+
+    <div class="actions">
+        <button type="button" id="verifyBtn">تأیید کد و ورود</button>
+        <button type="button" id="backBtn" class="secondary">بازگشت به صفحه ورود</button>
+    </div>
+</main>
+
+<script>
+(function(){
+    "use strict";
+    const fa = "۰۱۲۳۴۵۶۷۸۹";
+    const ar = "٠١٢٣٤٥٦٧٨٩";
+    function asciiDigits(value){
+        return String(value || "")
+            .replace(/[۰-۹]/g, d => String(fa.indexOf(d)))
+            .replace(/[٠-٩]/g, d => String(ar.indexOf(d)))
+            .replace(/\s+/g, "");
+    }
+    function setMessage(text, ok){
+        const el=document.getElementById("message");
+        el.textContent=text || "";
+        el.style.color=ok ? "#15803d" : "#b91c1c";
+    }
+    function values(){
+        return {
+            personnelCode: asciiDigits(document.getElementById("kodemeli").value),
+            phone: asciiDigits(document.getElementById("phonenumber").value),
+            code: asciiDigits(document.getElementById("verificationCode").value)
+        };
+    }
+    let timerId=null;
+    function startTimer(seconds){
+        const btn=document.getElementById("sendCodeBtn");
+        if(timerId) clearInterval(timerId);
+        let remain=Number(seconds || 120);
+        btn.disabled=true;
+        const render=()=>{
+            btn.textContent=remain > 0 ? `ارسال مجدد تا ${remain} ثانیه` : "ارسال مجدد کد";
+            if(remain <= 0){ clearInterval(timerId); timerId=null; btn.disabled=false; }
+            remain--;
+        };
+        render();
+        timerId=setInterval(render,1000);
+    }
+    async function sendCode(){
+        const v=values();
+        if(!/^\d{10}$/.test(v.personnelCode) || !/^09\d{9}$/.test(v.phone)){
+            setMessage("کد ملی باید ۱۰ رقم و شماره موبایل باید ۱۱ رقم با 09 شروع شود.", false); return;
+        }
+        const btn=document.getElementById("sendCodeBtn");
+        btn.disabled=true; btn.textContent="در حال ارسال..."; setMessage("در حال بررسی اطلاعات...", true);
+        try{
+            const response=await fetch("/api/login/emergency/start",{
+                method:"POST", headers:{"Content-Type":"application/json"}, credentials:"same-origin",
+                body:JSON.stringify({personnelCode:v.personnelCode, phone:v.phone})
+            });
+            const data=await response.json().catch(()=>({}));
+            if(!response.ok || !data.ok){
+                setMessage(data.message || "ارسال کد تأیید انجام نشد.", false);
+                btn.disabled=false; btn.textContent="ارسال کد"; return;
+            }
+            setMessage(data.message || "کد تأیید ارسال شد.", true);
+            startTimer(120);
+        }catch(e){
+            setMessage("ارتباط با سامانه برقرار نشد.", false);
+            btn.disabled=false; btn.textContent="ارسال کد";
+        }
+    }
+    async function verify(){
+        const v=values();
+        if(!/^\d{10}$/.test(v.personnelCode) || !/^09\d{9}$/.test(v.phone) || !/^\d{6}$/.test(v.code)){
+            setMessage("کد ملی، شماره موبایل و کد تأیید ۶ رقمی را کامل وارد کنید.", false); return;
+        }
+        const btn=document.getElementById("verifyBtn"); btn.disabled=true; btn.textContent="در حال ورود...";
+        try{
+            const response=await fetch("/api/login/emergency/verify",{
+                method:"POST", headers:{"Content-Type":"application/json"}, credentials:"same-origin",
+                body:JSON.stringify({personnelCode:v.personnelCode, phone:v.phone, code:v.code})
+            });
+            const data=await response.json().catch(()=>({}));
+            if(!response.ok || !data.ok){ setMessage(data.message || "کد تأیید صحیح نیست.", false); btn.disabled=false; btn.textContent="تأیید کد و ورود"; return; }
+            setMessage("ورود با موفقیت انجام شد.", true);
+            window.location.replace(data.redirect || "/panel.html");
+        }catch(e){
+            setMessage("ارتباط با سامانه برقرار نشد.", false); btn.disabled=false; btn.textContent="تأیید کد و ورود";
+        }
+    }
+    document.getElementById("sendCodeBtn").addEventListener("click",sendCode);
+    document.getElementById("verifyBtn").addEventListener("click",verify);
+    document.getElementById("backBtn").addEventListener("click",()=>window.location.replace("/Login.html"));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>کدهای تخفیف</title>
+<link rel="stylesheet" href="/admin.css"><link rel="stylesheet" href="/portal.css"><link rel="stylesheet" href="/vendor/persian-datepicker.min.css">
+<style>
+.discount-actions{display:flex;gap:6px;flex-wrap:wrap}.expired-text{color:#b91c1c;font-weight:700}.date-row{display:flex;gap:7px;align-items:center}.date-row .portal-input{flex:1}.date-row .admin-btn{white-space:nowrap}.scope-help{font-size:12px;color:#64748b;line-height:1.8;margin-top:5px}.hidden{display:none!important}
+</style>
+<script src="/persian-digits.js"></script>
+</head>
+<body>
+<div class="admin-page">
+ <div class="admin-page-header"><div><h1 class="admin-page-title">کدهای تخفیف</h1><p class="admin-page-subtitle">کد تخفیف را برای همه خریدها، یک بخش یا یک خرید مشخص تعریف کنید.</p></div></div>
+ <div id="status" class="admin-status"></div>
+ <section class="admin-card admin-card-pad">
+  <h2 id="formTitle" class="admin-section-title">کد تخفیف جدید</h2>
+  <div class="portal-form two">
+   <div><label>کد تخفیف</label><input id="code" class="portal-input" placeholder="WELCOME100"></div>
+   <div><label>درصد تخفیف</label><input id="percent" class="portal-input" type="text" value="10" data-persian-input inputmode="numeric"></div>
+   <div><label>مخاطب</label><select id="target" class="portal-select"><option value="all">همه کاربران</option><option value="user">یک کاربر مشخص</option></select></div>
+   <div id="userBox" class="hidden"><label>کد ملی/شناسه کاربر</label><input id="personnel" class="portal-input" inputmode="numeric" data-persian-input></div>
+   <div>
+     <label>محدوده خرید</label>
+     <select id="purchaseScope" class="portal-select">
+       <option value="all">همه خریدها</option>
+       <option value="storage">همه خریدهای فضای ذخیره‌سازی</option>
+       <option value="storage_plan">یک پلن مشخص فضای ذخیره‌سازی</option>
+       <option value="service">همه خریدهای ChatGPT</option>
+       <option value="service_plan">یک گزینه مشخص ChatGPT</option>
+     </select>
+     <div class="scope-help">می‌توانید یک کد را برای کل سامانه، یک بخش یا فقط یک پلن مشخص محدود کنید.</div>
+   </div>
+   <div id="scopePlanBox" class="hidden"><label>پلن هدف</label><select id="scopePlanId" class="portal-select"></select></div>
+   <div id="scopeDurationBox" class="hidden"><label>مدت ChatGPT</label><select id="scopeDurationMonths" class="portal-select"><option value="">همه مدت‌های این گزینه</option></select></div>
+   <div><label>تاریخ انقضا</label><div class="date-row"><input id="expiresAt" class="portal-input" type="text" readonly placeholder="بدون انقضا"><button id="clearExpiry" type="button" class="admin-btn">پاک کردن</button></div></div>
+   <div><label style="display:flex;gap:8px;align-items:center;margin-top:26px"><input id="active" type="checkbox" checked> فعال باشد</label></div>
+  </div>
+  <div class="portal-actions" style="margin-top:12px"><button id="save" class="admin-btn primary">ثبت کد</button><button id="cancel" class="admin-btn" hidden>انصراف</button></div>
+ </section>
+ <section class="admin-card admin-card-pad"><h2 class="admin-section-title">کدهای ثبت‌شده</h2><div id="list" class="admin-loading">در حال دریافت...</div></section>
+</div>
+<script src="/vendor/jquery-3.7.1.min.js"></script><script src="/vendor/persian-date.iife.js"></script><script src="/vendor/persian-datepicker.min.js"></script><script src="/admin.js"></script>
+<script>
+(function(){
+"use strict";
+let cache=[],editing=null,expiryIsoValue=null,storagePlans=[],servicePlans=[];
+const $=id=>document.getElementById(id);
+function targetChanged(){$('userBox').classList.toggle('hidden',$('target').value!=='user')}
+function servicePlanLabel(p){return [p.productLabel,p.purchaseTypeLabel,p.accountTierLabel].filter(Boolean).join(' — ')}
+function selectedServicePlan(){const id=Number(PersianDigits.value($('scopePlanId').value||0));return servicePlans.find(x=>Number(x.id)===id)}
+function renderDurations(preferred){
+ const p=selectedServicePlan(),box=$('scopeDurationMonths');
+ const opts=(p?.prices||[]).map(x=>`<option value="${x.months}">${AdminAPI.fa(x.months)} ماهه — ${AdminAPI.fa(Number(x.priceIrr||0).toLocaleString('en-US'))} ریال</option>`).join('');
+ box.innerHTML='<option value="">همه مدت‌های این گزینه</option>'+opts;
+ if(preferred&&[...box.options].some(o=>String(o.value)===String(preferred)))box.value=String(preferred);
+}
+function scopeChanged(preferredPlan,preferredDuration){
+ const scope=$('purchaseScope').value;
+ const needsPlan=scope==='storage_plan'||scope==='service_plan';
+ $('scopePlanBox').classList.toggle('hidden',!needsPlan);
+ $('scopeDurationBox').classList.toggle('hidden',scope!=='service_plan');
+ if(scope==='storage_plan'){
+   $('scopePlanId').innerHTML=storagePlans.map(p=>`<option value="${p.id}">${AdminAPI.esc(p.name)}</option>`).join('');
+ }else if(scope==='service_plan'){
+   $('scopePlanId').innerHTML=servicePlans.map(p=>`<option value="${p.id}">${AdminAPI.esc(servicePlanLabel(p))}</option>`).join('');
+ }else $('scopePlanId').innerHTML='';
+ if(preferredPlan&&[...$('scopePlanId').options].some(o=>String(o.value)===String(preferredPlan)))$('scopePlanId').value=String(preferredPlan);
+ renderDurations(preferredDuration);
+}
+$('target').onchange=targetChanged;$('purchaseScope').onchange=()=>scopeChanged();$('scopePlanId').onchange=()=>renderDurations();
+function normalizeUnix(unix){let n=Number(unix);if(!Number.isFinite(n))return null;if(n<1e12)n*=1000;const d=new Date(n);d.setHours(23,59,59,999);return d.toISOString()}
+function jalaliFromIso(value){if(!value)return '';try{const ms=new Date(value).getTime();if(window.persianDate)return new persianDate(ms).format('YYYY/MM/DD')}catch(_){}return ''}
+if(window.jQuery&&jQuery.fn.persianDatepicker){jQuery('#expiresAt').persianDatepicker({format:'YYYY/MM/DD',autoClose:true,initialValue:false,onSelect:function(unix){expiryIsoValue=normalizeUnix(unix)}})}
+$('clearExpiry').onclick=()=>{expiryIsoValue=null;$('expiresAt').value=''};
+function reset(){editing=null;expiryIsoValue=null;$('formTitle').textContent='کد تخفیف جدید';$('save').textContent='ثبت کد';$('cancel').hidden=true;$('code').value='';$('percent').value=PersianDigits.toPersian('10');$('target').value='all';$('personnel').value='';$('purchaseScope').value='all';$('expiresAt').value='';$('active').checked=true;targetChanged();scopeChanged()}
+window.editDiscount=id=>{const x=cache.find(v=>v.id===id);if(!x)return;editing=x;$('formTitle').textContent='ویرایش کد تخفیف';$('save').textContent='ذخیره تغییرات';$('cancel').hidden=false;$('code').value=x.code;$('percent').value=PersianDigits.toPersian(x.percent);$('target').value=x.targetType;$('personnel').value=PersianDigits.toPersian(x.targetPersonnelCode||'');$('purchaseScope').value=x.purchaseScope||'all';expiryIsoValue=x.expiresAt||null;$('expiresAt').value=jalaliFromIso(x.expiresAt);$('active').checked=!!x.active;targetChanged();scopeChanged(x.scopePlanId,x.scopeDurationMonths);scrollTo({top:0,behavior:'smooth'})};
+window.toggleDiscount=async(id,a)=>{try{await AdminAPI.request('/api/admin/portal/discounts/'+id+'/active',{method:'PATCH',body:{active:!a}});await load()}catch(e){AdminAPI.status('status',e.message,'error')}};
+window.notifyDiscount=async id=>{if(!confirm('اطلاع‌رسانی این کد تخفیف ارسال شود؟'))return;try{const d=await AdminAPI.request('/api/admin/portal/discounts/'+id+'/notify',{method:'POST',body:{}});AdminAPI.status('status',d.message,'success')}catch(e){AdminAPI.status('status',e.message,'error')}};
+async function load(){try{await AdminAPI.init();const d=await AdminAPI.request('/api/admin/portal/discounts');cache=d.discounts||[];storagePlans=d.storagePlans||[];servicePlans=d.servicePlans||[];if(!editing)scopeChanged();$('list').innerHTML=cache.length?`<div class="portal-table-wrap"><table class="portal-table"><thead><tr><th>کد</th><th>درصد</th><th>مخاطب</th><th>محدوده خرید</th><th>انقضا</th><th>وضعیت</th><th>عملیات</th></tr></thead><tbody>${cache.map(x=>`<tr><td class="admin-code">${AdminAPI.esc(x.code)}</td><td>${AdminAPI.fa(x.percent)}٪</td><td>${AdminAPI.esc(x.targetUserName)}${x.targetPersonnelCode?'<br><small>'+AdminAPI.esc(x.targetPersonnelCode)+'</small>':''}</td><td>${AdminAPI.esc(x.scopeLabel||'همه خریدها')}</td><td class="${x.expired?'expired-text':''}">${x.expiresAt?AdminAPI.formatDate(x.expiresAt):'بدون انقضا'}${x.expired?' (منقضی)':''}</td><td>${x.active?'فعال':'غیرفعال'}</td><td><div class="discount-actions"><button class="admin-btn" onclick="editDiscount(${x.id})">ویرایش</button><button class="admin-btn" onclick="toggleDiscount(${x.id},${x.active})">${x.active?'غیرفعال':'فعال'}</button><button class="admin-btn primary" onclick="notifyDiscount(${x.id})">اطلاع‌رسانی</button></div></td></tr>`).join('')}</tbody></table></div>`:'<div class="portal-empty">کدی ثبت نشده است.</div>'}catch(e){AdminAPI.status('status',e.message,'error')}}
+$('save').onclick=async()=>{const body={code:$('code').value,percent:Number(PersianDigits.value($('percent'))),targetType:$('target').value,targetPersonnelCode:PersianDigits.value($('personnel')),purchaseScope:$('purchaseScope').value,scopePlanId:Number(PersianDigits.value($('scopePlanId').value||0))||null,scopeDurationMonths:Number(PersianDigits.value($('scopeDurationMonths').value||0))||null,expiresAt:expiryIsoValue,active:$('active').checked};try{let d;if(editing)d=await AdminAPI.request('/api/admin/portal/discounts/'+editing.id,{method:'PATCH',body});else d=await AdminAPI.request('/api/admin/portal/discounts',{method:'POST',body});AdminAPI.status('status',d.message,'success');reset();await load()}catch(e){AdminAPI.status('status',e.message,'error')}};
+$('cancel').onclick=reset;reset();load();
+})();
+</script>
+</body></html>

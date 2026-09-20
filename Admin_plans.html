@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مدیریت پلن‌ها</title>
+<link rel="stylesheet" href="/admin.css">
+<link rel="stylesheet" href="/portal.css">
+<style>
+.plan-editor{display:grid;gap:14px}.service-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.months-box{border:1px solid var(--border,#e2e8f0);border-radius:14px;padding:12px;background:#fff}.months-head{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:10px}.months-head input{max-width:220px}.months-grid{display:grid;grid-template-columns:repeat(9,minmax(56px,1fr));gap:7px;max-height:220px;overflow:auto;padding:2px}.month-chip{border:1px solid #dbe3ee;background:#f8fafc;color:#334155;border-radius:10px;padding:8px 5px;cursor:pointer;min-width:0;min-height:38px;font-size:12px;box-shadow:none}.month-chip:hover{background:#eff6ff;color:#1d4ed8}.month-chip.selected{background:#2563eb;color:#fff;border-color:#2563eb}.price-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.price-item{border:1px solid #e2e8f0;border-radius:12px;padding:10px;background:#f8fafc}.price-item label{display:block;font-size:12px;margin-bottom:6px}.muted{color:#64748b;font-size:12px;line-height:1.9}.hidden{display:none!important}.type-badge{display:inline-block;padding:3px 8px;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:11px;margin-left:4px}@media(max-width:900px){.service-grid,.price-grid{grid-template-columns:1fr 1fr}.months-grid{grid-template-columns:repeat(6,minmax(52px,1fr))}}@media(max-width:620px){.service-grid,.price-grid{grid-template-columns:1fr}.months-grid{grid-template-columns:repeat(4,minmax(52px,1fr))}}
+</style>
+<script src="/persian-digits.js"></script>
+</head>
+<body>
+<div class="admin-page compact-page">
+ <div class="admin-page-header"><div><h1 class="admin-page-title">مدیریت پلن‌ها</h1><p class="admin-page-subtitle">فضای اضافه و گزینه‌های ChatGPT را با مدت و قیمت مستقل مدیریت کنید.</p></div></div>
+ <div id="status" class="admin-status"></div>
+ <div class="portal-tabs"><button class="portal-tab active" data-tab="storage">فضای اضافه</button><button class="portal-tab" data-tab="service">ChatGPT</button></div>
+
+ <section id="storagePanel" class="tab-panel active">
+  <section class="admin-card admin-card-pad compact-card"><h2 class="admin-section-title" id="storageTitle">پلن فضای جدید</h2><div class="portal-form four"><div><label>نام بسته</label><input id="sName" class="portal-input" maxlength="80"></div><div><label>مبلغ (ریال)</label><input id="sPrice" class="portal-input" type="text" data-persian-input inputmode="numeric"></div><div><label>مقدار حجم</label><input id="sSize" class="portal-input" type="text" data-persian-input inputmode="decimal"></div><div><label>واحد</label><select id="sUnit" class="portal-select"><option value="MB">MB</option><option value="GB" selected>GB</option></select></div></div><div class="portal-actions"><button id="sSave" class="admin-btn primary">ثبت</button><button id="sCancel" class="admin-btn" hidden>انصراف</button></div></section>
+  <section class="admin-card admin-card-pad compact-card"><h2 class="admin-section-title">پلن‌های فضای ثبت‌شده</h2><div id="storageList" class="admin-loading">در حال دریافت...</div></section>
+ </section>
+
+ <section id="servicePanel" class="tab-panel">
+  <section class="admin-card admin-card-pad compact-card plan-editor">
+   <div><h2 class="admin-section-title" id="serviceTitle">گزینه جدید ChatGPT</h2><p class="muted">مدیر فقط گزینه‌ها را انتخاب می‌کند. برای هر مدت انتخاب‌شده مبلغ جداگانه تعیین می‌شود.</p></div>
+   <div class="service-grid">
+    <div><label>پلن انتخابی</label><select id="productKey" class="portal-select"><option value="chatgpt_go">ChatGPT Go</option><option value="chatgpt_plus">ChatGPT Plus</option><option value="chatgpt_pro">ChatGPT Pro</option></select></div>
+    <div><label>طرح خرید</label><select id="purchaseType" class="portal-select"></select></div>
+    <div id="tierBox" class="hidden"><label>نوع حساب اشتراکی</label><select id="accountTier" class="portal-select"><option value="standard">استاندارد</option><option value="dedicated">اختصاصی</option><option value="vip">VIP</option></select></div>
+   </div>
+   <div><label>توضیحات اختیاری</label><textarea id="description" class="portal-textarea" maxlength="1000" placeholder="توضیحی که کاربر هنگام مشاهده پلن می‌بیند"></textarea></div>
+   <div class="months-box">
+    <div class="months-head"><div><b>مدت‌های قابل خرید</b><div class="muted">از ۱ تا ۳۶ ماه؛ چند مورد را هم‌زمان انتخاب کنید.</div></div><input id="monthSearch" class="portal-input" type="text" inputmode="numeric" data-persian-input placeholder="جست‌وجوی ماه، مثال: 12"></div>
+    <div id="monthsGrid" class="months-grid"></div>
+   </div>
+   <div><h3 class="admin-section-title" style="font-size:15px">مبلغ هر مدت</h3><div id="priceGrid" class="price-grid"><div class="portal-empty">ابتدا مدت‌ها را انتخاب کنید.</div></div></div>
+   <label style="display:flex;gap:8px;align-items:center"><input id="serviceActive" type="checkbox" checked> این گزینه برای کاربران فعال باشد</label>
+   <div class="portal-actions"><button id="pSave" class="admin-btn primary">ثبت گزینه</button><button id="pCancel" class="admin-btn" hidden>انصراف</button></div>
+  </section>
+  <section class="admin-card admin-card-pad compact-card"><h2 class="admin-section-title">گزینه‌های ثبت‌شده ChatGPT</h2><div id="serviceList" class="admin-loading">در حال دریافت...</div></section>
+ </section>
+</div>
+<script src="/admin.js"></script>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id), factor=u=>u==='GB'?1024**3:1024**2;
+const productLabels={chatgpt_go:'ChatGPT Go',chatgpt_plus:'ChatGPT Plus',chatgpt_pro:'ChatGPT Pro'};
+const purchaseTypes={
+ chatgpt_go:[['dedicated_renewal','خرید اکانت اختصاصی - تمدید'],['dedicated_new','خرید اکانت اختصاصی - خرید اول']],
+ chatgpt_plus:[['dedicated_renewal','خرید اکانت اختصاصی - تمدید'],['dedicated_new','خرید اکانت اختصاصی - حساب جدید'],['shared','حساب‌های اشتراکی']],
+ chatgpt_pro:[['pro_5x_personal','Pro 5x - حساب شخصی'],['pro_5x_new','Pro 5x - حساب جدید']]
+};
+const tierLabels={standard:'استاندارد',dedicated:'اختصاصی',vip:'VIP'};
+let storageCache=[],serviceCache=[],storageEditing=null,serviceEditing=null;
+const selectedMonths=new Set(), priceValues=new Map();
+
+function tab(name){document.querySelectorAll('.portal-tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));$('storagePanel').classList.toggle('active',name==='storage');$('servicePanel').classList.toggle('active',name==='service')}
+document.querySelectorAll('.portal-tab').forEach(b=>b.onclick=()=>tab(b.dataset.tab));
+
+function updatePurchaseTypes(preferred){const product=$('productKey').value;const options=purchaseTypes[product]||[];$('purchaseType').innerHTML=options.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');if(preferred&&options.some(x=>x[0]===preferred))$('purchaseType').value=preferred;updateTier()}
+function updateTier(){const show=$('productKey').value==='chatgpt_plus'&&$('purchaseType').value==='shared';$('tierBox').classList.toggle('hidden',!show);if(!show)$('accountTier').value='standard'}
+$('productKey').onchange=()=>updatePurchaseTypes();$('purchaseType').onchange=updateTier;
+
+function renderMonths(){const q=Number(PersianDigits.value($('monthSearch')).trim()||0);$('monthsGrid').innerHTML=Array.from({length:36},(_,i)=>i+1).filter(m=>!q||String(m).includes(String(q))).map(m=>`<button type="button" class="month-chip ${selectedMonths.has(m)?'selected':''}" data-month="${m}">${PersianDigits.toPersian(m)} ماهه</button>`).join('')||'<div class="portal-empty">ماه موردنظر پیدا نشد.</div>';$('monthsGrid').querySelectorAll('[data-month]').forEach(btn=>btn.onclick=()=>{const m=Number(btn.dataset.month);if(selectedMonths.has(m)){selectedMonths.delete(m)}else{selectedMonths.add(m)}renderMonths();renderPrices()})}
+function renderPrices(){const months=[...selectedMonths].sort((a,b)=>a-b);$('priceGrid').innerHTML=months.length?months.map(m=>`<div class="price-item"><label>${PersianDigits.toPersian(m)} ماهه — مبلغ (ریال)</label><input class="portal-input month-price" type="text" inputmode="numeric" data-persian-input data-price-month="${m}" value="${PersianDigits.toPersian(priceValues.get(m)??'')}"></div>`).join(''):'<div class="portal-empty">ابتدا مدت‌ها را انتخاب کنید.</div>';$('priceGrid').querySelectorAll('[data-price-month]').forEach(inp=>{PersianDigits.enhanceInputs(inp.parentElement);inp.oninput=()=>priceValues.set(Number(inp.dataset.priceMonth),PersianDigits.value(inp))})}
+$('monthSearch').oninput=renderMonths;
+
+function resetStorage(){storageEditing=null;$('storageTitle').textContent='پلن فضای جدید';$('sSave').textContent='ثبت';$('sCancel').hidden=true;$('sName').value='';$('sPrice').value='';$('sSize').value='';$('sUnit').value='GB'}
+function resetService(){serviceEditing=null;selectedMonths.clear();priceValues.clear();$('serviceTitle').textContent='گزینه جدید ChatGPT';$('pSave').textContent='ثبت گزینه';$('pCancel').hidden=true;$('productKey').value='chatgpt_go';updatePurchaseTypes();$('description').value='';$('serviceActive').checked=true;$('monthSearch').value='';renderMonths();renderPrices()}
+window.editStorage=id=>{const p=storageCache.find(x=>x.id===id);if(!p)return;storageEditing=p;$('sName').value=p.name;$('sPrice').value=PersianDigits.toPersian(p.priceIrr);let unit='GB',size=p.storageBytes/(1024**3);if(!Number.isInteger(size)){unit='MB';size=p.storageBytes/(1024**2)}$('sSize').value=PersianDigits.toPersian(size);$('sUnit').value=unit;$('storageTitle').textContent='ویرایش پلن فضای اضافه';$('sSave').textContent='ذخیره';$('sCancel').hidden=false;scrollTo({top:0,behavior:'smooth'})};
+window.editService=id=>{const p=serviceCache.find(x=>x.id===id);if(!p)return;serviceEditing=p;selectedMonths.clear();priceValues.clear();$('productKey').value=p.productKey;updatePurchaseTypes(p.purchaseType);if(p.accountTier)$('accountTier').value=p.accountTier;updateTier();$('description').value=p.description||'';$('serviceActive').checked=!!p.active;(p.prices||[]).forEach(x=>{selectedMonths.add(Number(x.months));priceValues.set(Number(x.months),String(x.priceIrr))});$('serviceTitle').textContent='ویرایش گزینه ChatGPT';$('pSave').textContent='ذخیره تغییرات';$('pCancel').hidden=false;renderMonths();renderPrices();scrollTo({top:0,behavior:'smooth'})};
+window.removeStorage=async id=>{if(!confirm('پلن فضای انتخاب‌شده حذف شود؟'))return;try{await AdminAPI.request('/api/admin/portal/plans/'+id,{method:'DELETE'});await loadStorage()}catch(e){AdminAPI.status('status',e.message,'error')}};
+window.removeService=async id=>{if(!confirm('این گزینه ChatGPT حذف شود؟'))return;try{await AdminAPI.request('/api/admin/portal/service-plans/'+id,{method:'DELETE'});await loadService()}catch(e){AdminAPI.status('status',e.message,'error')}};
+
+async function loadStorage(){const d=await AdminAPI.request('/api/admin/portal/plans');storageCache=d.plans||[];$('storageList').innerHTML=storageCache.length?`<div class="portal-table-wrap"><table class="portal-table"><thead><tr><th>نام</th><th>مبلغ</th><th>حجم</th><th>وضعیت</th><th>عملیات</th></tr></thead><tbody>${storageCache.map(p=>`<tr><td>${AdminAPI.esc(p.name)}</td><td>${AdminAPI.fa(Number(p.priceIrr).toLocaleString('en-US'))} ریال</td><td>${AdminAPI.formatBytes(p.storageBytes)}</td><td>${p.active?'فعال':'غیرفعال'}</td><td><button class="admin-btn" onclick="editStorage(${p.id})">ویرایش</button> <button class="admin-btn danger" onclick="removeStorage(${p.id})">حذف</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="admin-empty">پلنی ثبت نشده است.</div>'}
+async function loadService(){const d=await AdminAPI.request('/api/admin/portal/service-plans');serviceCache=d.plans||[];$('serviceList').innerHTML=serviceCache.length?`<div class="portal-table-wrap"><table class="portal-table"><thead><tr><th>پلن</th><th>طرح خرید</th><th>نوع حساب</th><th>مدت/مبلغ‌ها</th><th>وضعیت</th><th>عملیات</th></tr></thead><tbody>${serviceCache.map(p=>`<tr><td><b>${AdminAPI.esc(p.productLabel||p.name)}</b></td><td>${AdminAPI.esc(p.purchaseTypeLabel||'-')}</td><td>${AdminAPI.esc(p.accountTierLabel||'-')}</td><td>${(p.prices||[]).map(x=>`<span class="type-badge">${AdminAPI.fa(x.months)} ماه: ${AdminAPI.fa(Number(x.priceIrr).toLocaleString('en-US'))} ریال</span>`).join(' ')||'-'}</td><td>${p.active?'فعال':'غیرفعال'}</td><td><button class="admin-btn" onclick="editService(${p.id})">ویرایش</button> <button class="admin-btn danger" onclick="removeService(${p.id})">حذف</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="admin-empty">گزینه‌ای ثبت نشده است.</div>'}
+
+$('sSave').onclick=async()=>{const body={name:$('sName').value.trim(),priceIrr:Number(PersianDigits.value($('sPrice'))),storageBytes:Math.round(Number(PersianDigits.value($('sSize'))||0)*factor($('sUnit').value)),active:storageEditing?storageEditing.active:true};try{if(storageEditing)await AdminAPI.request('/api/admin/portal/plans/'+storageEditing.id,{method:'PATCH',body:JSON.stringify(body)});else await AdminAPI.request('/api/admin/portal/plans',{method:'POST',body:JSON.stringify(body)});AdminAPI.status('status','ذخیره شد.','success');resetStorage();await loadStorage()}catch(e){AdminAPI.status('status',e.message,'error')}};
+$('pSave').onclick=async()=>{const months=[...selectedMonths].sort((a,b)=>a-b);const prices=months.map(m=>({months:m,priceIrr:Number(PersianDigits.toEnglish(priceValues.get(m)??document.querySelector(`[data-price-month="${m}"]`)?.value??''))}));if(!prices.length||prices.some(x=>!Number.isFinite(x.priceIrr)||x.priceIrr<0)){AdminAPI.status('status','حداقل یک مدت را انتخاب و مبلغ همه مدت‌ها را وارد کنید.','error');return}const body={productKey:$('productKey').value,purchaseType:$('purchaseType').value,accountTier:($('productKey').value==='chatgpt_plus'&&$('purchaseType').value==='shared')?$('accountTier').value:null,description:$('description').value.trim(),active:$('serviceActive').checked,prices};try{if(serviceEditing)await AdminAPI.request('/api/admin/portal/service-plans/'+serviceEditing.id,{method:'PATCH',body:JSON.stringify(body)});else await AdminAPI.request('/api/admin/portal/service-plans',{method:'POST',body:JSON.stringify(body)});AdminAPI.status('status','گزینه ChatGPT ذخیره شد.','success');resetService();await loadService()}catch(e){AdminAPI.status('status',e.message,'error')}};
+$('sCancel').onclick=resetStorage;$('pCancel').onclick=resetService;
+(async()=>{try{await AdminAPI.init();resetService();await Promise.all([loadStorage(),loadService()])}catch(e){AdminAPI.status('status',e.message,'error')}})();
+})();
+</script>
+</body>
+</html>

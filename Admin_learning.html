@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>مدیریت مرکز آموزش</title>
+  <link rel="stylesheet" href="/admin.css">
+  <link rel="stylesheet" href="/portal.css">
+  <script src="/admin.js"></script>
+  <style>
+    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .form-grid .full{grid-column:1/-1}
+    .learn-list{display:grid;gap:10px;margin-top:14px}
+    .learn-row{border:1px solid #e5e7eb;border-radius:12px;padding:12px}
+    .learn-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    @media(max-width:700px){.form-grid{grid-template-columns:1fr}}
+  </style>
+<script src="/persian-digits.js"></script></head>
+<body>
+<div class="admin-page">
+  <div class="admin-page-header">
+    <div>
+      <h1 class="admin-page-title">مدیریت مرکز آموزش</h1>
+      <p class="admin-page-subtitle">ثبت و ویرایش آموزش‌ها، اطلاعیه‌های به‌روزرسانی و راهنمای فعال‌سازی.</p>
+    </div>
+    <a class="admin-btn" href="/Admin_panel.html">بازگشت</a>
+  </div>
+
+  <div id="status" class="admin-status"></div>
+
+  <section class="admin-card admin-card-pad">
+    <h2 class="admin-section-title" id="formTitle">محتوای جدید</h2>
+    <div class="form-grid">
+      <label>دسته‌بندی
+        <select id="category" class="admin-select">
+          <option value="learn_more">learn_more - آموزش عمومی</option>
+          <option value="system_update">system_update - به‌روزرسانی سامانه</option>
+          <option value="activation_windows">activation_windows - فعال‌سازی ویندوز</option>
+          <option value="activation_android">activation_android - فعال‌سازی اندروید</option>
+        </select>
+      </label>
+      <label>ترتیب
+        <input id="sortOrder" class="admin-input" type="number" value="0">
+      </label>
+      <label class="full">عنوان
+        <input id="title" class="admin-input" maxlength="180">
+      </label>
+      <label class="full">خلاصه
+        <textarea id="summary" class="admin-textarea" maxlength="600"></textarea>
+      </label>
+      <label class="full">متن
+        <textarea id="body" class="admin-textarea" style="min-height:160px" maxlength="12000"></textarea>
+      </label>
+      <label class="full">لینک ویدئو
+        <input id="videoUrl" class="admin-input" placeholder="https://...">
+      </label>
+      <label class="full">یادداشت ویدئوی AI
+        <textarea id="aiVideoNote" class="admin-textarea" maxlength="4000"></textarea>
+      </label>
+      <label><input id="active" type="checkbox" checked> فعال</label>
+    </div>
+    <div class="learn-actions">
+      <button id="save" class="admin-btn primary">ذخیره</button>
+      <button id="cancel" class="admin-btn" style="display:none">انصراف از ویرایش</button>
+    </div>
+  </section>
+
+  <section class="admin-card admin-card-pad" style="margin-top:14px">
+    <div class="admin-page-header">
+      <h2 class="admin-section-title">محتواهای ثبت‌شده</h2>
+      <button id="refresh" class="admin-btn">به‌روزرسانی</button>
+    </div>
+    <div id="list" class="learn-list"></div>
+  </section>
+</div>
+
+<script>
+let editing=null;
+let items=[];
+
+function esc(v){
+  return String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function resetForm(){
+  editing=null;
+  formTitle.textContent='محتوای جدید';
+  category.value='learn_more';
+  sortOrder.value='0';
+  title.value='';
+  summary.value='';
+  body.value='';
+  videoUrl.value='';
+  aiVideoNote.value='';
+  active.checked=true;
+  cancel.style.display='none';
+}
+function editItem(id){
+  const x=items.find(v=>Number(v.id)===Number(id));
+  if(!x)return;
+  editing=x.id;
+  formTitle.textContent='ویرایش محتوا';
+  category.value=x.category||'learn_more';
+  sortOrder.value=x.sortOrder||0;
+  title.value=x.title||'';
+  summary.value=x.summary||'';
+  body.value=x.body||'';
+  videoUrl.value=x.videoUrl||'';
+  aiVideoNote.value=x.aiVideoNote||'';
+  active.checked=!!x.active;
+  cancel.style.display='';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+async function removeItem(id){
+  if(!AdminAPI.confirm('این محتوا حذف شود؟'))return;
+  try{
+    await AdminAPI.request('/api/admin/portal/learning/'+id,{method:'DELETE'});
+    AdminAPI.status('status','محتوا حذف شد.','success');
+    await load();
+  }catch(e){AdminAPI.status('status',e.message,'error')}
+}
+function render(){
+  list.innerHTML=items.length?items.map(x=>`
+    <div class="learn-row">
+      <strong>${esc(x.title)}</strong>
+      <div><small>${esc(x.category)} | ترتیب: ${esc(x.sortOrder)} | ${x.active?'فعال':'غیرفعال'}</small></div>
+      ${x.summary?`<div style="margin-top:6px">${esc(x.summary)}</div>`:''}
+      <div class="learn-actions">
+        <button class="admin-btn" onclick="editItem(${Number(x.id)})">ویرایش</button>
+        <button class="admin-btn danger" onclick="removeItem(${Number(x.id)})">حذف</button>
+      </div>
+    </div>`).join('')
+    :'<div class="admin-empty">هنوز محتوایی ثبت نشده است.</div>';
+}
+async function load(){
+  try{
+    await AdminAPI.init();
+    const d=await AdminAPI.request('/api/admin/portal/learning');
+    items=d.items||[];
+    render();
+  }catch(e){AdminAPI.status('status',e.message,'error')}
+}
+save.onclick=async()=>{
+  const payload={
+    category:category.value,
+    title:title.value.trim(),
+    summary:summary.value.trim(),
+    body:body.value.trim(),
+    videoUrl:videoUrl.value.trim(),
+    aiVideoNote:aiVideoNote.value.trim(),
+    sortOrder:Number(sortOrder.value||0),
+    active:active.checked
+  };
+  if(!payload.title){AdminAPI.status('status','عنوان را وارد کنید.','error');return}
+  try{
+    await AdminAPI.request(
+      editing?'/api/admin/portal/learning/'+editing:'/api/admin/portal/learning',
+      {method:editing?'PATCH':'POST',body:JSON.stringify(payload)}
+    );
+    AdminAPI.status('status',editing?'محتوا ویرایش شد.':'محتوا ثبت شد.','success');
+    resetForm();
+    await load();
+  }catch(e){AdminAPI.status('status',e.message,'error')}
+};
+cancel.onclick=resetForm;
+refresh.onclick=load;
+load();
+</script>
+</body>
+</html>

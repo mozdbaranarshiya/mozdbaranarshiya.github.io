@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>داشبورد</title><link rel="stylesheet" href="/portal.css"><style>.user-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.user-summary .portal-card{margin:0}.metric{font-size:24px;font-weight:900;margin-top:8px}.quick-actions{display:flex;gap:8px;flex-wrap:wrap}.quick-actions a{display:inline-flex;align-items:center;justify-content:center}.service-mini{display:grid;gap:8px}.service-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px;border:1px solid #e4e8f0;border-radius:11px;background:#fff}.demo-banner{display:none;padding:13px 15px;border-radius:12px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;line-height:1.9;margin-bottom:12px}.demo-banner.show{display:block}@media(max-width:760px){.user-summary{grid-template-columns:1fr}}</style></head>
+<body>
+<div class="portal-page">
+ <div class="portal-head"><div><h1>داشبورد</h1><p>خلاصه فضای ذخیره‌سازی و سرویس‌های حساب.</p></div></div>
+ <div id="status" class="portal-status"></div>
+ <div id="demoBanner" class="demo-banner"><b>شما با حساب آزمایشی وارد شده‌اید.</b><br>این حساب فقط برای مشاهده امکانات سامانه است. فضای آن صفر است و هرگونه ثبت، ویرایش، حذف، خرید، آپلود و ارسال تیکت/پیام غیرفعال است.</div>
+ <div class="user-summary" id="summary"><div class="portal-empty">در حال دریافت...</div></div>
+ <section class="portal-card" style="margin-top:12px"><h2 style="margin-top:0;font-size:16px">دسترسی سریع</h2><div class="quick-actions"><a class="portal-btn primary" href="/User_plans.html">مشاهده پلن‌ها و سرویس‌ها</a><a class="portal-btn" href="/User_orders.html">سفارش‌های من</a><a class="portal-btn" href="/Sabt_PDF.html">ثبت PDF</a><a class="portal-btn" href="/User_tickets.html">پشتیبانی</a></div></section>
+ <section class="portal-card"><h2 style="margin-top:0;font-size:16px">سرویس‌های زمانی</h2><div id="services" class="service-mini"><div class="portal-empty">در حال دریافت...</div></div></section>
+</div>
+<script src="./site-config.js"></script>
+<script src="./api-bridge.js"></script>
+<script src="./portal.js"></script>
+<script>
+(async function(){try{const session=await PortalAPI.init();if(session.isDemo)document.getElementById('demoBanner').classList.add('show');const [trash,svc]=await Promise.all([PortalAPI.request('/api/trash'),PortalAPI.request('/api/portal/services')]);const q=trash.quota||{};document.getElementById('summary').innerHTML=`<section class="portal-card"><div class="portal-muted">فضای کل</div><div class="metric">${PortalAPI.bytes(q.quotaBytes||0)}</div></section><section class="portal-card"><div class="portal-muted">فضای استفاده‌شده</div><div class="metric">${PortalAPI.bytes(q.usedBytes||0)}</div></section><section class="portal-card"><div class="portal-muted">فضای باقی‌مانده</div><div class="metric">${PortalAPI.bytes(q.remainingBytes||0)}</div></section>`;const active=(svc.entitlements||[]).filter(x=>x.status==='active'||x.status==='awaiting_token');document.getElementById('services').innerHTML=active.length?active.map(x=>`<div class="service-row"><div><b>${PortalAPI.esc(x.planName)}</b><div class="portal-muted">${x.status==='active'?'فعال':'در انتظار ثبت توکن'}</div></div><div>${x.expiresAt?PortalAPI.date(x.expiresAt):'-'}</div></div>`).join(''):'<div class="portal-empty">سرویس فعالی ندارید.</div>'}catch(e){PortalAPI.status('status',e.message,'error')}})();
+</script>
+</body></html>

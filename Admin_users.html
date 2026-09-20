@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>مدیریت کاربران</title><link rel="stylesheet" href="/admin.css">    <script src="/persian-digits.js"></script>
+</head>
+<body><div class="admin-page">
+<div class="admin-page-header"><div><h1 id="pageTitle" class="admin-page-title">مدیریت کاربران</h1><p class="admin-page-subtitle">جست‌وجو، وضعیت حساب، نقش، نشست‌ها و سهمیه هر کاربر.</p></div></div>
+<div id="statusBox" class="admin-status"></div>
+<div class="admin-card admin-card-pad">
+    <div class="admin-toolbar">
+        <input id="q" class="admin-input" placeholder="نام، کد ملی یا موبایل..." data-persian-input>
+        <select id="role" class="admin-select"><option value="all">همه نقش‌ها</option><option value="user">کاربر</option><option value="manager">مدیر</option></select>
+        <select id="state" class="admin-select"><option value="all">همه وضعیت‌ها</option><option value="active">فعال</option><option value="inactive">غیرفعال</option></select>
+        <button id="searchBtn" class="admin-btn primary">جست‌وجو</button>
+    </div>
+    <div id="tableArea" class="admin-loading">در حال دریافت کاربران...</div>
+    <div class="admin-pagination"><button id="prev" class="admin-btn">قبلی</button><span id="pageInfo">-</span><button id="next" class="admin-btn">بعدی</button></div>
+</div></div>
+<div id="modalBg" class="admin-modal-backdrop"><div class="admin-modal"><h2 class="admin-modal-title">جزئیات کاربر</h2><div id="detail"></div><div class="admin-modal-actions"><button class="admin-btn" onclick="closeModal()">بستن</button></div></div></div>
+<script src="/admin.js"></script><script>
+let page=1,totalPages=0,managerId=0;
+const presetRole=AdminAPI.qs('role','all');
+if(presetRole==='manager'){document.getElementById('role').value='manager';document.getElementById('pageTitle').textContent='مدیران سیستم';}
+function badgeRole(r){return `<span class="admin-badge ${r==='manager'?'blue':'gray'}">${r==='manager'?'مدیر':'کاربر'}</span>`}
+function badgeActive(v){return `<span class="admin-badge ${v?'green':'red'}">${v?'فعال':'غیرفعال'}</span>`}
+async function load(p=1){page=p;AdminAPI.status('statusBox','','');try{await AdminAPI.init();const me=await AdminAPI.request('/api/admin/me');managerId=Number(me.manager.id);const params=new URLSearchParams({page:String(page),per_page:'25',q:PersianDigits.value(document.getElementById('q')).trim(),role:document.getElementById('role').value,status:document.getElementById('state').value});const d=await AdminAPI.request('/api/admin/users?'+params);totalPages=d.pagination.totalPages||0;document.getElementById('pageInfo').textContent='صفحه '+AdminAPI.fa(page)+' از '+AdminAPI.fa(totalPages||1);document.getElementById('prev').disabled=page<=1;document.getElementById('next').disabled=page>=totalPages;
+const rows=d.users||[];document.getElementById('tableArea').innerHTML=rows.length?`<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>ID</th><th>کاربر</th><th>موبایل</th><th>نقش</th><th>وضعیت</th><th>فضا</th><th>Trash</th><th>آخرین نشست</th><th>عملیات</th></tr></thead><tbody>${rows.map(u=>`<tr><td>${AdminAPI.fa(u.id)}</td><td><strong>${AdminAPI.esc(u.fullName)}</strong><br><small>${AdminAPI.esc(u.personnelCode)}</small></td><td>${AdminAPI.esc(u.phone||'-')}</td><td>${badgeRole(u.role)}</td><td>${badgeActive(u.isActive)}</td><td>${AdminAPI.formatBytes(u.usedBytes)} / ${AdminAPI.formatBytes(u.quotaBytes)}</td><td>${AdminAPI.formatBytes(u.trashBytes)}</td><td>${AdminAPI.formatDate(u.lastSeenAt)}</td><td><button class="admin-btn" onclick="details(${u.id})">جزئیات</button> <button class="admin-btn ${u.isActive?'danger':'success'}" onclick="toggleActive(${u.id},${u.isActive})" ${u.id===managerId?'disabled':''}>${u.isActive?'غیرفعال':'فعال'}</button> <button class="admin-btn warning" onclick="changeRole(${u.id},'${u.role}')" ${u.id===managerId?'disabled':''}>${u.role==='manager'?'کاربر عادی':'مدیر'}</button> <button class="admin-btn" onclick="clearSessions(${u.id})">خروج اجباری</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="admin-empty">کاربری با این فیلتر پیدا نشد.</div>';}catch(e){AdminAPI.status('statusBox',e.message,'error');}}
+async function details(id){try{const d=await AdminAPI.request('/api/admin/users/'+id);const u=d.user,q=u.quota;document.getElementById('detail').innerHTML=`<div class="admin-kv"><div>نام</div><div>${AdminAPI.esc((u.firstName+' '+u.lastName).trim())}</div><div>کد ملی/پرسنلی</div><div>${AdminAPI.esc(u.personnelCode)}</div><div>موبایل</div><div>${AdminAPI.esc(u.phone)}</div><div>نقش</div><div>${AdminAPI.esc(u.role)}</div><div>وضعیت</div><div>${u.isActive?'فعال':'غیرفعال'}</div><div>تعداد فایل</div><div>${AdminAPI.fa(u.fileCount)}</div><div>فضای مصرف‌شده</div><div>${AdminAPI.formatBytes(q.usedBytes)}</div><div>Trash</div><div>${AdminAPI.formatBytes(q.trashBytes)}</div><div>فضای باقی‌مانده</div><div>${AdminAPI.formatBytes(q.remainingBytes)}</div><div>Session فعال</div><div>${AdminAPI.fa(u.activeSessions)}</div></div>`;document.getElementById('modalBg').classList.add('show');}catch(e){AdminAPI.status('statusBox',e.message,'error')}}
+function closeModal(){document.getElementById('modalBg').classList.remove('show')}
+async function toggleActive(id,current){if(!AdminAPI.confirm(current?'حساب این کاربر غیرفعال شود؟':'حساب این کاربر فعال شود؟'))return;try{await AdminAPI.request('/api/admin/users/'+id+'/active',{method:'PATCH',body:JSON.stringify({active:!current})});AdminAPI.status('statusBox','وضعیت حساب تغییر کرد.','success');load(page)}catch(e){AdminAPI.status('statusBox',e.message,'error')}}
+async function changeRole(id,current){const role=current==='manager'?'user':'manager';if(!AdminAPI.confirm('نقش کاربر به '+role+' تغییر کند؟ تمام Sessionهای او بسته می‌شود.'))return;try{await AdminAPI.request('/api/admin/users/'+id+'/role',{method:'PATCH',body:JSON.stringify({role})});AdminAPI.status('statusBox','نقش تغییر کرد.','success');load(page)}catch(e){AdminAPI.status('statusBox',e.message,'error')}}
+async function clearSessions(id){if(!AdminAPI.confirm('تمام نشست‌های فعال این کاربر بسته شود؟'))return;try{await AdminAPI.request('/api/admin/users/'+id+'/sessions',{method:'DELETE'});AdminAPI.status('statusBox','نشست‌های کاربر بسته شدند.','success');load(page)}catch(e){AdminAPI.status('statusBox',e.message,'error')}}
+document.getElementById('searchBtn').onclick=()=>load(1);document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')load(1)});document.getElementById('prev').onclick=()=>{if(page>1)load(page-1)};document.getElementById('next').onclick=()=>{if(page<totalPages)load(page+1)};load();
+</script>
+</body></html>
