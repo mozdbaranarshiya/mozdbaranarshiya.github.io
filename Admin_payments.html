@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>پرداختی‌ها</title><link rel="stylesheet" href="/admin.css"><link rel="stylesheet" href="/portal.css">    <script src="/persian-digits.js"></script>
+  <script src="/site-config.js"></script>
+  <script src="/api-bridge.js"></script>
 </head>
 <body><div class="admin-page"><div class="admin-page-header"><div><h1 class="admin-page-title">پرداختی‌ها</h1><p class="admin-page-subtitle">خریدهای فضای اضافه و سرویس‌های زمانی، کد پیگیری بله و استعلام تراکنش.</p></div><div class="portal-actions"><input id="q" class="portal-input" placeholder="کد سفارش/پیگیری/کاربر" data-persian-input><button id="search" class="admin-btn primary">جست‌وجو</button></div></div><div id="status" class="admin-status"></div><div class="portal-tabs"><button class="portal-tab active" data-tab="storage">فضای اضافه</button><button class="portal-tab" data-tab="service">سرویس</button></div><section class="admin-card admin-card-pad"><div id="list" class="admin-loading">در حال دریافت...</div></section></div><script src="/admin.js"></script><script>
 (function(){"use strict";let current='storage';const labels={pending:'در انتظار پرداخت',paid:'پرداخت‌شده',failed:'ناموفق',cancelled:'لغوشده'},ful={pending_payment:'در انتظار پرداخت',awaiting_token:'در انتظار ثبت توکن',active:'فعال',expired:'منقضی',revoked:'لغوشده'};
