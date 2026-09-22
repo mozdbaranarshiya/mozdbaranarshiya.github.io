@@ -18,7 +18,7 @@
         <section class="admin-card admin-card-pad"><h2 class="admin-section-title">ارائه‌دهندگان Storage</h2><div id="providers" class="admin-loading">در حال دریافت...</div></section>
         <section class="admin-card admin-card-pad"><h2 class="admin-section-title">داده‌های تجاری و پشتیبانی</h2><div id="business" class="admin-loading">در حال دریافت...</div></section>
     </div>
-    <section class="admin-card admin-card-pad" style="margin-top:14px"><h2 class="admin-section-title">وضعیت ربات‌ها و سهمیه ایمیل</h2><div id="integrations" class="admin-loading">در حال دریافت...</div></section>
+    <section class="admin-card admin-card-pad" style="margin-top:14px"><h2 class="admin-section-title">وضعیت پیام‌رسان‌ها</h2><div id="integrations" class="admin-loading">در حال دریافت...</div></section>
 </div>
 <script src="/admin.js"></script>
 <script>
@@ -27,7 +27,7 @@ async function load(){
     AdminAPI.status('status','','');
     try{
         await AdminAPI.init();
-        const [d,botData,emailData]=await Promise.all([AdminAPI.request('/api/admin/dashboard'),AdminAPI.request('/api/admin/bot-status'),AdminAPI.request('/api/admin/email/status')]);
+        const [d,botData]=await Promise.all([AdminAPI.request('/api/admin/dashboard'),AdminAPI.request('/api/admin/bot-status')]);
         document.getElementById('stats').innerHTML=[
             stat('کل کاربران',AdminAPI.fa(d.users.total),'فعال: '+AdminAPI.fa(d.users.active)+' | غیرفعال: '+AdminAPI.fa(d.users.inactive)),
             stat('مدیران فعال/ثبت‌شده',AdminAPI.fa(d.users.managers),'نقش مدیریتی مستقل از سهمیه شخصی است.'),
@@ -45,7 +45,7 @@ async function load(){
         const b=d.business||{};
         document.getElementById('business').innerHTML=`<div class="admin-kv"><div>پلن‌ها</div><div>${AdminAPI.fa(b.plans||0)}</div><div>کدهای تخفیف</div><div>${AdminAPI.fa(b.discounts||0)}</div><div>پرداختی‌ها</div><div>${AdminAPI.fa(b.payments||0)}</div><div>تیکت‌ها</div><div>${AdminAPI.fa(b.tickets||0)}</div><div>اعلانات</div><div>${AdminAPI.fa(b.notifications||0)}</div><div>بسته‌های سرویس</div><div>${AdminAPI.fa(b.servicePlans||0)}</div><div>سفارش‌های سرویس</div><div>${AdminAPI.fa(b.serviceOrders||0)}</div><div>منتظر فعال‌سازی</div><div>${AdminAPI.fa(b.pendingServiceActivations||0)}</div></div>`;
         const bots=(botData.bots||[]);
-        document.getElementById('integrations').innerHTML=`<div class="admin-kv">${bots.map(x=>`<div>${AdminAPI.esc(x.label||x.provider)}</div><div><span class="admin-badge ${x.active?'green':'red'}">${x.active?'متصل':'نیاز به بررسی'}</span></div>`).join('')}<div>Resend</div><div>${emailData.configured?'تنظیم شده':'تنظیم نشده'}</div><div>ارسال امروز / باقی‌مانده</div><div>${AdminAPI.fa(emailData.usedToday||0)} / ${AdminAPI.fa(emailData.remainingToday||0)}</div><div>ارسال ماه / باقی‌مانده</div><div>${AdminAPI.fa(emailData.usedThisMonth||0)} / ${AdminAPI.fa(emailData.remainingThisMonth||0)}</div></div><p><a href="/Admin_integrations.html" target="_self">مدیریت ربات‌ها و سهمیه ایمیل</a></p>`;
+        document.getElementById('integrations').innerHTML='<div class="admin-kv">'+bots.map(x=>'<div>'+AdminAPI.esc(x.label||x.provider)+'</div><div><span class="admin-badge '+(x.active?'green':'red')+'">'+(x.active?'متصل':'نیاز به بررسی')+'</span></div>').join('')+'</div><p><a href="/Admin_integrations.html" target="_self">مدیریت پیام‌رسان‌ها</a></p>';
     }catch(e){AdminAPI.status('status',e.message,'error');}
 }
 document.getElementById('refreshBtn').addEventListener('click',load);load();
