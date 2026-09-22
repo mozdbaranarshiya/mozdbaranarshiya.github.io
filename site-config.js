@@ -4,6 +4,15 @@
  */
 (function () {
   "use strict";
+  // Shared visual design system for every PersonalSpace page.
+  if (typeof document !== "undefined" && !document.getElementById("personalspace-design-system")) {
+    const designLink = document.createElement("link");
+    designLink.id = "personalspace-design-system";
+    designLink.rel = "stylesheet";
+    designLink.href = "/design-system.css?v=20260922-1";
+    document.head.appendChild(designLink);
+  }
+
 
   window.PersonalSpaceConfig = Object.freeze({
     // GitHub Pages talks to the Flask backend through the fixed Serveo tunnel.
