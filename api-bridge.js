@@ -21,11 +21,21 @@
   );
   const healthTimeout = Math.max(
     2000,
-    Number(config.HEALTHCHECK_TIMEOUT_MS || 6000)
+    Number(config.HEALTHCHECK_TIMEOUT_MS || 10000)
+  );
+  const healthFailureThreshold = Math.max(
+    2,
+    Number(config.HEALTHCHECK_FAILURE_THRESHOLD || 3)
+  );
+  const healthRetryInterval = Math.max(
+    1000,
+    Number(config.HEALTHCHECK_RETRY_MS || 2500)
   );
 
   let backendOnline = null;
   let healthTimer = null;
+  let healthCheckPromise = null;
+  let consecutiveHealthFailures = 0;
 
   const stripTrailingSlashes = (value) =>
     String(value || "").replace(/\/+$/, "");
@@ -190,6 +200,33 @@
     );
   }
 
+  function markBackendHealthy() {
+    consecutiveHealthFailures = 0;
+    setBackendState(true);
+  }
+
+  function markHealthCheckFailed() {
+    consecutiveHealthFailures += 1;
+
+    // A single failed request can be caused by a short network hiccup,
+    // a Serveo reconnect, browser wake-up, or a temporary proxy delay.
+    // Only show the offline banner after several consecutive health failures.
+    if (consecutiveHealthFailures >= healthFailureThreshold) {
+      setBackendState(false);
+    }
+  }
+
+  function scheduleHealthCheck(delay) {
+    if (healthTimer !== null) {
+      window.clearTimeout(healthTimer);
+    }
+
+    healthTimer = window.setTimeout(
+      () => checkBackendHealth(false),
+      delay
+    );
+  }
+
   function serveoHeaders(baseHeaders) {
     const headers = new Headers(baseHeaders || undefined);
 
@@ -211,50 +248,67 @@
       healthTimer = null;
     }
 
-    const controller = new AbortController();
-    const timeoutId = window.setTimeout(
-      () => controller.abort(),
-      healthTimeout
-    );
+    // Reuse an in-flight health check instead of starting several concurrent
+    // probes when multiple API requests fail at the same time.
+    if (healthCheckPromise) {
+      return healthCheckPromise;
+    }
+
+    healthCheckPromise = (async function () {
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(
+        () => controller.abort(),
+        healthTimeout
+      );
+
+      try {
+        const url =
+          stripTrailingSlashes(config.API_BASE_URL) + healthPath;
+
+        const response = await nativeFetch(url, {
+          method: "GET",
+          mode: "cors",
+          credentials: "include",
+          cache: "no-store",
+          headers: serveoHeaders(),
+          signal: controller.signal
+        });
+
+        let ok = response.ok;
+
+        if (ok) {
+          try {
+            const data = await response.clone().json();
+            ok = data && data.ok === true;
+          } catch (_) {}
+        }
+
+        if (ok) {
+          markBackendHealthy();
+        } else {
+          markHealthCheckFailed();
+        }
+
+        return ok;
+      } catch (_) {
+        markHealthCheckFailed();
+        return false;
+      } finally {
+        window.clearTimeout(timeoutId);
+      }
+    })();
+
+    let ok = false;
 
     try {
-      const url =
-        stripTrailingSlashes(config.API_BASE_URL) + healthPath;
-
-      const response = await nativeFetch(url, {
-        method: "GET",
-        mode: "cors",
-        credentials: "include",
-        cache: "no-store",
-        headers: serveoHeaders(),
-        signal: controller.signal
-      });
-
-      let ok = response.ok;
-
-      if (ok) {
-        try {
-          const data = await response.clone().json();
-          ok = data && data.ok === true;
-        } catch (_) {}
-      }
-
-      setBackendState(ok);
+      ok = await healthCheckPromise;
       return ok;
-    } catch (_) {
-      setBackendState(false);
-      return false;
     } finally {
-      window.clearTimeout(timeoutId);
+      healthCheckPromise = null;
 
-      if (healthTimer !== null) {
-        window.clearTimeout(healthTimer);
-      }
-
-      healthTimer = window.setTimeout(
-        () => checkBackendHealth(false),
-        healthInterval
-      );
+      // Retry failures quickly so a real outage is confirmed within a few
+      // seconds, while healthy servers continue using the normal interval.
+      scheduleHealthCheck(ok ? healthInterval : healthRetryInterval);
     }
   }
 
@@ -354,7 +408,7 @@
       const response = await nativeFetch(target(url), options);
 
       if (mode === "external") {
-        setBackendState(true);
+        markBackendHealthy();
       }
 
       if (mode === "supabase") {
@@ -381,7 +435,9 @@
       return response;
     } catch (_) {
       if (mode === "external") {
-        setBackendState(false);
+        // Do not mark the whole backend offline because one API request failed.
+        // Confirm the server state through /api/health instead.
+        void checkBackendHealth(true);
         return offlineResponse();
       }
       throw _;
@@ -396,7 +452,15 @@
     clearSessionToken,
     nativeFetch,
     checkBackendHealth,
-    isBackendOnline: () => backendOnline === true
+    isBackendOnline: () => backendOnline === true,
+    getHealthDiagnostics: () => ({
+      backendOnline,
+      consecutiveHealthFailures,
+      failureThreshold: healthFailureThreshold,
+      timeoutMs: healthTimeout,
+      retryIntervalMs: healthRetryInterval,
+      intervalMs: healthInterval
+    })
   });
 
   window.fetch = bridgedFetch;
