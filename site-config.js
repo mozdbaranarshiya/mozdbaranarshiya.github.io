@@ -11,9 +11,10 @@
     API_BASE_URL: "https://personalspace.serveousercontent.com",
 
     // Used by api-bridge.js to show whether the laptop/Flask backend is online.
-    HEALTH_PATH: "/api/health",
     HEALTHCHECK_INTERVAL_MS: 30000,
-    HEALTHCHECK_TIMEOUT_MS: 6000,
+    HEALTHCHECK_TIMEOUT_MS: 10000,
+    HEALTHCHECK_FAILURE_THRESHOLD: 3,
+    HEALTHCHECK_RETRY_MS: 3000,
     SERVEO_SKIP_BROWSER_WARNING: true,
 
     // Keep root paths because the recommended Pages repository is
