@@ -35,7 +35,14 @@
    </div>
    <div id="scopePlanBox" class="hidden"><label>پلن هدف</label><select id="scopePlanId" class="portal-select"></select></div>
    <div id="scopeDurationBox" class="hidden"><label>مدت ChatGPT</label><select id="scopeDurationMonths" class="portal-select"><option value="">همه مدت‌های این گزینه</option></select></div>
-   <div><label>تاریخ انقضا</label><div class="date-row"><input id="expiresAt" class="portal-input" type="text" readonly placeholder="بدون انقضا"><button id="clearExpiry" type="button" class="admin-btn">پاک کردن</button></div></div>
+   <div>
+     <label for="expiresAt">تاریخ انقضا</label>
+     <div class="date-row">
+       <input id="expiresAt" class="portal-input" type="text" readonly inputmode="none" placeholder="انتخاب تاریخ شمسی (اختیاری)">
+       <button id="clearExpiry" type="button" class="admin-btn">پاک کردن</button>
+     </div>
+     <div class="scope-help">تاریخ انقضا را از همان تقویم شمسی صفحه ثبت‌نام انتخاب کنید. اگر خالی بماند، کد بدون انقضا خواهد بود.</div>
+   </div>
    <div><label style="display:flex;gap:8px;align-items:center;margin-top:26px"><input id="active" type="checkbox" checked> فعال باشد</label></div>
   </div>
   <div class="portal-actions" style="margin-top:12px"><button id="save" class="admin-btn primary">ثبت کد</button><button id="cancel" class="admin-btn" hidden>انصراف</button></div>
@@ -73,7 +80,21 @@ function scopeChanged(preferredPlan,preferredDuration){
 $('target').onchange=targetChanged;$('purchaseScope').onchange=()=>scopeChanged();$('scopePlanId').onchange=()=>renderDurations();
 function normalizeUnix(unix){let n=Number(unix);if(!Number.isFinite(n))return null;if(n<1e12)n*=1000;const d=new Date(n);d.setHours(23,59,59,999);return d.toISOString()}
 function jalaliFromIso(value){if(!value)return '';try{const ms=new Date(value).getTime();if(window.persianDate)return new persianDate(ms).format('YYYY/MM/DD')}catch(_){}return ''}
-if(window.jQuery&&jQuery.fn.persianDatepicker){jQuery('#expiresAt').persianDatepicker({format:'YYYY/MM/DD',autoClose:true,initialValue:false,onSelect:function(unix){expiryIsoValue=normalizeUnix(unix)}})}
+function initExpiryCalendar(){
+ if(!window.jQuery||!jQuery.fn.persianDatepicker){
+   AdminAPI.status('status','تقویم شمسی بارگذاری نشد. صفحه را یک‌بار تازه‌سازی کنید.','error');
+   return;
+ }
+ jQuery('#expiresAt').persianDatepicker({
+   format:'YYYY/MM/DD',
+   autoClose:true,
+   initialValue:false,
+   onSelect:function(unix){
+     expiryIsoValue=normalizeUnix(unix);
+   }
+ });
+}
+initExpiryCalendar();
 $('clearExpiry').onclick=()=>{expiryIsoValue=null;$('expiresAt').value=''};
 function reset(){editing=null;expiryIsoValue=null;$('formTitle').textContent='کد تخفیف جدید';$('save').textContent='ثبت کد';$('cancel').hidden=true;$('code').value='';$('percent').value=PersianDigits.toPersian('10');$('target').value='all';$('personnel').value='';$('purchaseScope').value='all';$('expiresAt').value='';$('active').checked=true;targetChanged();scopeChanged()}
 window.editDiscount=id=>{const x=cache.find(v=>v.id===id);if(!x)return;editing=x;$('formTitle').textContent='ویرایش کد تخفیف';$('save').textContent='ذخیره تغییرات';$('cancel').hidden=false;$('code').value=x.code;$('percent').value=PersianDigits.toPersian(x.percent);$('target').value=x.targetType;$('personnel').value=PersianDigits.toPersian(x.targetPersonnelCode||'');$('purchaseScope').value=x.purchaseScope||'all';expiryIsoValue=x.expiresAt||null;$('expiresAt').value=jalaliFromIso(x.expiresAt);$('active').checked=!!x.active;targetChanged();scopeChanged(x.scopePlanId,x.scopeDurationMonths);scrollTo({top:0,behavior:'smooth'})};
