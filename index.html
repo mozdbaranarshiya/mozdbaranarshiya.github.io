@@ -40,6 +40,17 @@
     footer{padding:12px 0 36px;color:#64748b;font-size:11px}.footer-row{display:flex;justify-content:space-between;gap:16px;align-items:center;border-top:1px solid var(--line);padding-top:20px}.footer-links{display:flex;gap:14px;flex-wrap:wrap}.footer-links a{text-decoration:none}
     @media(max-width:980px){.nav-links{display:none}.hero-points,.steps{grid-template-columns:repeat(2,minmax(0,1fr))}.grid,.plans-grid,.soon-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.security{grid-template-columns:1fr}}
     @media(max-width:650px){.container{width:min(100% - 18px,1180px)}.nav{min-height:64px}.actions .btn:not(.primary){display:none}.hero{padding:38px 20px;border-radius:22px}.hero h1{font-size:36px}.hero-points,.grid,.plans-grid,.steps,.soon-grid,.messenger{grid-template-columns:1fr}.section{padding:38px 0}.section-head{align-items:flex-start;flex-direction:column}.roadmap,.plans-shell{padding:18px;border-radius:20px}.cta{align-items:flex-start;flex-direction:column}.cta-actions{width:100%}.cta-actions .btn{flex:1}.footer-row{align-items:flex-start;flex-direction:column}}
+  
+    /* PersonalSpace public polish — 2026 */
+    body{background-image:radial-gradient(circle at 8% 8%,rgba(37,99,235,.08),transparent 25%),radial-gradient(circle at 92% 12%,rgba(6,182,212,.07),transparent 24%),linear-gradient(180deg,#f8fafc,#f1f7ff)}
+    .topbar{box-shadow:0 7px 24px rgba(15,23,42,.045)}
+    .btn{transition:transform .18s ease,box-shadow .18s ease,background-color .18s ease,border-color .18s ease}
+    .btn.primary{background:linear-gradient(135deg,#2563eb,#1d4ed8);box-shadow:0 9px 22px rgba(37,99,235,.18)}
+    .card,.step,.messenger-card,.soon-card,.plan-card,.plans-shell,.cta{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+    .card:hover,.step:hover,.messenger-card:hover,.plan-card:hover{transform:translateY(-2px);border-color:rgba(37,99,235,.20);box-shadow:0 16px 38px rgba(15,23,42,.08)}
+    .plans-shell,.cta,.roadmap{background:rgba(255,255,255,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+
   </style>
   <script src="/site-config.js"></script>
   <script src="/api-bridge.js"></script>
@@ -95,7 +106,7 @@
         <article class="card"><div class="icon">📁</div><h3>فایل و فضای ذخیره‌سازی</h3><p>آپلود PDF، مدیریت فراداده، مشاهده سهمیه، جست‌وجوی فایل، انتقال به سطل زباله، بازیابی و حذف دائمی.</p><a class="link" href="/Login.html">ورود به فایل‌ها</a></article>
         <article class="card"><div class="icon">📝</div><h3>یادداشت‌های شخصی</h3><p>ایجاد و ویرایش یادداشت، جست‌وجو، سنجاق‌کردن، آرشیو و مدیریت یادداشت‌های شخصی.</p><a class="link" href="/Login.html">ورود به پنل</a></article>
         <article class="card"><div class="icon">💬</div><h3>پیام‌رسان و اعلان</h3><p>اتصال حساب به بله یا سروش+ برای تأیید شماره، کدهای امنیتی و پیام‌های مرتبط با حساب و سفارش.</p><a class="link" href="/information.html#messengers">جزئیات پیام‌رسان‌ها</a></article>
-        <article class="card"><div class="icon">🎫</div><h3>تیکت پشتیبانی</h3><p>ثبت درخواست پشتیبانی، مشاهده پاسخ مدیر و پیگیری تیکت‌های مربوط به حساب یا سفارش سرویس.</p><a class="link" href="/Login.html">ورود و ثبت تیکت</a></article>
+        <article class="card"><div class="icon">🎫</div><h3>تیکت پشتیبانی</h3><p>ثبت درخواست پشتیبانی، مشاهده پاسخ مدیر و پیگیری تیکت‌های مربوط به حساب یا سفارش سرویس.</p><a class="link" href="/Support.html">مرکز پشتیبانی</a></article>
         <article class="card"><div class="icon">💳</div><h3>پلن، تخفیف و سفارش</h3><p>مشاهده پلن‌های فضای ذخیره‌سازی و سرویس‌ها، اعمال کد تخفیف، ثبت سفارش و پیگیری وضعیت.</p><a class="link" href="#plans">مشاهده پلن‌ها</a></article>
         <article class="card"><div class="icon">🧰</div><h3>مرکز مدیریت</h3><p>مدیریت کاربران، فایل‌ها، Storage، سرویس‌ها، پرداخت‌ها، تخفیف‌ها، تیکت‌ها، اعلان‌ها، گزارش‌ها و سلامت سامانه.</p><a class="link" href="/information.html#admin">امکانات مدیر</a></article>
       </div>
