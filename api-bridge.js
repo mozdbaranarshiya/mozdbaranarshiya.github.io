@@ -405,10 +405,31 @@
     options.cache = "no-store";
 
     try {
-      const response = await nativeFetch(target(url), options);
+      const requestMethod = String(
+        options.method ||
+        (input instanceof Request ? input.method : "GET") ||
+        "GET"
+      ).toUpperCase();
+
+      let response = await nativeFetch(target(url), options);
+
+      // Serveo can occasionally return a short-lived gateway error even while
+      // the backend itself is healthy. Retry only safe read requests once.
+      if (
+        mode === "external" &&
+        requestMethod === "GET" &&
+        [502, 503, 504].includes(response.status)
+      ) {
+        await new Promise((resolve) => window.setTimeout(resolve, 700));
+        response = await nativeFetch(target(url), options);
+      }
 
       if (mode === "external") {
-        markBackendHealthy();
+        if (response.status < 500) {
+          markBackendHealthy();
+        } else {
+          void checkBackendHealth(true);
+        }
       }
 
       if (mode === "supabase") {
