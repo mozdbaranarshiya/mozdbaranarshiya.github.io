@@ -55,7 +55,6 @@
 
     <div class="safe-note">
       <b>نکته امنیتی:</b>
-      برای تمدید فقط ایمیل حساب در سامانه ثبت می‌شود.
       Session، Cookie، رمز عبور یا اطلاعات ورود ChatGPT را در این سامانه وارد نکنید.
       پس از آماده‌سازی سرویس، توکن توسط مدیر در حساب شما قرار می‌گیرد.
     </div>
@@ -365,11 +364,6 @@ async function buyService(id){
       'service-discount-'+id
     );
 
-  const email=
-    document.getElementById(
-      'service-email-'+id
-    );
-
   const durationMonths=
     Number(
       duration?.value||0
@@ -404,9 +398,7 @@ async function buyService(id){
             planId:id,
             durationMonths,
             discountCode:
-              (discount?.value||'').trim(),
-            email:
-              (email?.value||'').trim()
+              (discount?.value||'').trim()
           }
         }
       );
