@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>مرکز پشتیبانی | فضای شخصی</title>
+  <meta name="description" content="مرکز پشتیبانی فضای شخصی؛ ارتباط سریع از طریق ایتا یا ثبت و پیگیری تیکت در سامانه.">
+  <link rel="icon" type="image/png" href="/personalspace-icon.png">
+  <link rel="stylesheet" href="/portal.css">
+  <style>
+    .support-shell{max-width:980px;margin:0 auto;padding:28px 18px 42px}
+    .support-hero{position:relative;overflow:hidden;padding:30px;border:1px solid rgba(148,163,184,.2);border-radius:26px;background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(239,246,255,.9));box-shadow:0 22px 60px rgba(15,23,42,.1);margin-bottom:18px}
+    .support-hero:before{content:"";position:absolute;width:240px;height:240px;border-radius:50%;left:-70px;top:-100px;background:rgba(37,99,235,.10);filter:blur(4px)}
+    .support-kicker{display:inline-flex;align-items:center;gap:7px;padding:6px 11px;border-radius:999px;background:#dbeafe;color:#1d4ed8;font-size:12px;font-weight:850}
+    .support-hero h1{position:relative;margin:14px 0 8px;font-size:clamp(26px,4vw,38px);color:#0f172a}
+    .support-hero p{position:relative;margin:0;max-width:760px;color:#64748b;line-height:2;font-size:14px}
+    .support-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .support-card{position:relative;overflow:hidden;min-height:250px;padding:22px;border:1px solid rgba(148,163,184,.22);border-radius:22px;background:rgba(255,255,255,.94);box-shadow:0 14px 36px rgba(15,23,42,.07);display:flex;flex-direction:column}
+    .support-icon{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;font-size:23px;background:#eff6ff;color:#1d4ed8;margin-bottom:14px}
+    .support-card.eitaa .support-icon{background:#ecfeff;color:#0e7490}
+    .support-card h2{margin:0 0 8px;font-size:19px;color:#0f172a}
+    .support-card p{margin:0 0 14px;color:#64748b;line-height:1.95;font-size:13px}
+    .support-handle{direction:ltr;text-align:left;display:inline-flex;width:max-content;max-width:100%;padding:8px 12px;border-radius:11px;background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-weight:800;margin-bottom:14px}
+    .support-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+    .support-btn{min-height:43px;padding:0 16px;border-radius:12px;border:1px solid transparent;text-decoration:none;font-weight:800;font-size:13px;display:inline-flex;align-items:center;justify-content:center;transition:.18s ease}
+    .support-btn.primary{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;box-shadow:0 9px 22px rgba(37,99,235,.22)}
+    .support-btn.secondary{background:#fff;color:#1e40af;border-color:#bfdbfe}
+    .support-btn:hover{transform:translateY(-1px)}
+    .support-note{margin-top:16px;padding:16px 18px;border-radius:16px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;line-height:1.95;font-size:12.5px}
+    .support-guide{margin-top:16px;padding:18px;border:1px solid rgba(148,163,184,.2);border-radius:18px;background:rgba(255,255,255,.82)}
+    .support-guide h3{margin:0 0 10px;font-size:15px;color:#0f172a}
+    .support-guide ul{margin:0;padding-right:20px;color:#64748b;line-height:2;font-size:13px}
+    @media(max-width:720px){.support-shell{padding:16px 12px 28px}.support-hero{padding:22px 18px;border-radius:20px}.support-grid{grid-template-columns:1fr}.support-card{min-height:0}}
+  </style>
+  <script src="/site-config.js"></script>
+  <script src="/api-bridge.js"></script>
+</head>
+<body>
+  <main class="support-shell">
+    <section class="support-hero">
+      <span class="support-kicker">مرکز ارتباط و پشتیبانی</span>
+      <h1>برای دریافت راهنمایی، دو مسیر در اختیار شماست</h1>
+      <p>برای پیگیری سریع می‌توانید از طریق ایتا با پشتیبانی در ارتباط باشید. برای درخواست‌هایی که نیاز به سابقه، شماره پیگیری و پاسخ داخل سامانه دارند، ثبت تیکت بهترین گزینه است.</p>
+    </section>
+
+    <section class="support-grid">
+      <article class="support-card eitaa">
+        <div class="support-icon">✦</div>
+        <h2>پشتیبانی از طریق ایتا</h2>
+        <p>برای پرسش‌های کوتاه، راهنمایی سریع یا گزارش یک مشکل عمومی، از طریق حساب پشتیبانی در ایتا پیام ارسال کنید.</p>
+        <div class="support-handle">@ar12766</div>
+        <div class="support-actions">
+          <a class="support-btn primary" href="https://eitaa.com/ar12766" target="_blank" rel="noopener noreferrer">باز کردن ایتا</a>
+          <button class="support-btn secondary" type="button" id="copyEitaa">کپی نام کاربری</button>
+        </div>
+      </article>
+
+      <article class="support-card">
+        <div class="support-icon">🎫</div>
+        <h2>ثبت تیکت در سامانه</h2>
+        <p>اگر موضوع شما به حساب کاربری، سفارش، پرداخت، سرویس یا پیگیری فنی مربوط است، تیکت ثبت کنید تا درخواست با شماره پیگیری در حساب شما ذخیره شود.</p>
+        <div class="support-actions">
+          <a class="support-btn primary" href="/User_tickets.html">ثبت یا پیگیری تیکت</a>
+          <a class="support-btn secondary" href="/panel.html">بازگشت به پنل</a>
+        </div>
+      </article>
+    </section>
+
+    <section class="support-guide">
+      <h3>برای پاسخ‌گویی سریع‌تر چه اطلاعاتی ارسال کنم؟</h3>
+      <ul>
+        <li>موضوع مشکل را کوتاه و روشن توضیح دهید.</li>
+        <li>اگر خطایی مشاهده می‌کنید، متن خطا و زمان تقریبی وقوع آن را بنویسید.</li>
+        <li>برای مسائل مربوط به سفارش یا تیکت، کد پیگیری مربوط را ذکر کنید.</li>
+      </ul>
+    </section>
+
+    <div class="support-note">
+      برای حفظ امنیت حساب، رمز عبور، رمز دوم، کد یک‌بارمصرف، Cookie، Session یا اطلاعات محرمانه حساب را در ایتا یا متن تیکت ارسال نکنید.
+    </div>
+  </main>
+
+  <script>
+  (function(){
+    "use strict";
+    const button=document.getElementById("copyEitaa");
+    if(!button)return;
+    button.addEventListener("click",async function(){
+      try{
+        await navigator.clipboard.writeText("@ar12766");
+        const old=this.textContent;
+        this.textContent="کپی شد";
+        setTimeout(()=>this.textContent=old,1400);
+      }catch(_){
+        this.textContent="@ar12766";
+      }
+    });
+  })();
+  </script>
+</body>
+</html>
