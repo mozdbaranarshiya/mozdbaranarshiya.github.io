@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("/fonts/Vazirmatn-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Shared PersonalSpace Persian calendar theme.
  * Matches the calendar styling used by app.css without importing app-wide layout rules.
  */
