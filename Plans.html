@@ -190,6 +190,16 @@ function card(plan, kind){
   );
 
 
+  const nestedPrices =
+    Array.isArray(plan && plan.prices)
+      ? plan.prices
+      : [];
+
+  const firstPrice =
+    nestedPrices.length
+      ? nestedPrices[0]
+      : {};
+
   const price = first(
     plan,
     [
@@ -199,7 +209,17 @@ function card(plan, kind){
       'amountIrr',
       'amount_irr'
     ],
-    0
+    first(
+      firstPrice,
+      [
+        'priceIrr',
+        'price_irr',
+        'price',
+        'amountIrr',
+        'amount_irr'
+      ],
+      0
+    )
   );
 
 
@@ -221,7 +241,15 @@ function card(plan, kind){
       'duration_months',
       'months'
     ],
-    ''
+    first(
+      firstPrice,
+      [
+        'months',
+        'durationMonths',
+        'duration_months'
+      ],
+      ''
+    )
   );
 
 
