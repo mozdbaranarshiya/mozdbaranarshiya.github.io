@@ -1,5 +1,6 @@
 <!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>اعلانات</title><link rel="stylesheet" href="/portal.css">  <script src="/site-config.js"></script>
   <script src="/api-bridge.js"></script>
+  <link rel="stylesheet" href="/design-system.css?v=20260922-1">
 </head><body><div class="portal-page"><div class="portal-head"><div><h1>اعلانات سامانه</h1><p>پیام‌ها و اطلاعیه‌های منتشرشده توسط مدیریت.</p></div><button id="refresh" class="portal-btn">به‌روزرسانی</button></div><div id="status" class="portal-status"></div><div id="list"></div></div><script src="/portal.js"></script><script>
 async function load(){try{await PortalAPI.init();const d=await PortalAPI.request('/api/portal/notifications');const a=d.notifications||[];list.innerHTML=a.length?a.map(n=>`<article class="portal-card portal-notice"><h3>${PortalAPI.esc(n.title)}</h3><div class="portal-muted">${PortalAPI.date(n.createdAt)}</div><p>${PortalAPI.esc(n.body)}</p></article>`).join(''):'<div class="portal-card portal-empty">اعلانی وجود ندارد.</div>'}catch(e){PortalAPI.status('status',e.message,'error')}}refresh.onclick=load;load();
 </script></body></html>
