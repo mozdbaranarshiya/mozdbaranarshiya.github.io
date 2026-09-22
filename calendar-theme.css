@@ -1,0 +1,171 @@
+/* Shared PersonalSpace Persian calendar theme.
+ * Matches the calendar styling used by app.css without importing app-wide layout rules.
+ */
+:root {
+  --calendar-font: var(--admin-font, "Vazirmatn", Tahoma, Arial, sans-serif);
+  --calendar-width: 310px;
+  --calendar-padding: 12px;
+  --calendar-radius: 18px;
+  --calendar-background: rgba(255, 255, 255, 0.97);
+  --calendar-border: rgba(148, 163, 184, 0.24);
+  --calendar-text: #1e293b;
+  --calendar-shadow: rgba(15, 23, 42, 0.16);
+  --calendar-header-background: #f8fafc;
+  --calendar-header-text: #0f172a;
+  --calendar-header-font-size: 13px;
+  --calendar-header-height: 40px;
+  --calendar-header-radius: 10px;
+  --calendar-weekday-background: transparent;
+  --calendar-weekday-text: #64748b;
+  --calendar-weekday-font-size: 11px;
+  --calendar-day-background: transparent;
+  --calendar-day-text: #1e293b;
+  --calendar-day-font-size: 11px;
+  --calendar-day-size: 34px;
+  --calendar-day-radius: 10px;
+  --calendar-hover-background: #dbeafe;
+  --calendar-hover-text: #1e40af;
+  --calendar-selected-background: #2563eb;
+  --calendar-selected-text: #ffffff;
+  --calendar-selected-radius: 11px;
+  --calendar-today-background: #e0f2fe;
+  --calendar-today-text: #075985;
+  --calendar-today-radius: 10px;
+  --calendar-other-month-text: #cbd5e1;
+  --calendar-disabled-background: #f8fafc;
+  --calendar-disabled-text: #cbd5e1;
+  --calendar-item-background: #ffffff;
+  --calendar-item-text: #1e293b;
+  --calendar-item-font-size: 12px;
+  --calendar-item-radius: 10px;
+  --calendar-button-background: #f1f5f9;
+  --calendar-button-text: #1e293b;
+  --calendar-button-radius: 10px;
+}
+
+.datepicker-plot-area,
+.datepicker-plot-area * {
+  font-family: var(--calendar-font) !important;
+}
+
+.datepicker-plot-area {
+  width: var(--calendar-width) !important;
+  padding: var(--calendar-padding) !important;
+  background: var(--calendar-background) !important;
+  color: var(--calendar-text) !important;
+  border: 1px solid var(--calendar-border) !important;
+  border-radius: var(--calendar-radius) !important;
+  box-shadow: 0 18px 42px var(--calendar-shadow) !important;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+}
+
+.datepicker-plot-area .datepicker-navigator {
+  min-height: var(--calendar-header-height) !important;
+}
+
+.datepicker-plot-area .datepicker-navigator .pwt-btn-next,
+.datepicker-plot-area .datepicker-navigator .pwt-btn-switch,
+.datepicker-plot-area .datepicker-navigator .pwt-btn-prev {
+  min-height: var(--calendar-header-height) !important;
+  background: var(--calendar-header-background) !important;
+  color: var(--calendar-header-text) !important;
+  font-size: var(--calendar-header-font-size) !important;
+  border-radius: var(--calendar-header-radius) !important;
+  transition: background-color 0.18s ease, color 0.18s ease !important;
+}
+
+.datepicker-plot-area .datepicker-navigator .pwt-btn-next:hover,
+.datepicker-plot-area .datepicker-navigator .pwt-btn-switch:hover,
+.datepicker-plot-area .datepicker-navigator .pwt-btn-prev:hover {
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+}
+
+.datepicker-plot-area .datepicker-day-view .month-grid-box .header .header-row-cell {
+  background: var(--calendar-weekday-background) !important;
+  color: var(--calendar-weekday-text) !important;
+  font-size: var(--calendar-weekday-font-size) !important;
+  font-weight: 700 !important;
+}
+
+.datepicker-plot-area .datepicker-day-view .table-days td span {
+  width: var(--calendar-day-size) !important;
+  height: var(--calendar-day-size) !important;
+  line-height: var(--calendar-day-size) !important;
+  background: var(--calendar-day-background) !important;
+  color: var(--calendar-day-text) !important;
+  font-size: var(--calendar-day-font-size) !important;
+  border-radius: var(--calendar-day-radius) !important;
+  transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease !important;
+}
+
+.datepicker-plot-area .datepicker-day-view .table-days td:not(.disabled) span:hover {
+  background: var(--calendar-hover-background) !important;
+  color: var(--calendar-hover-text) !important;
+  transform: scale(1.04);
+}
+
+.datepicker-plot-area .datepicker-day-view .table-days td.selected span,
+.datepicker-plot-area .datepicker-day-view .table-days td.today.selected span {
+  background: var(--calendar-selected-background) !important;
+  color: var(--calendar-selected-text) !important;
+  border-radius: var(--calendar-selected-radius) !important;
+  box-shadow: 0 5px 12px rgba(37, 99, 235, 0.24);
+}
+
+.datepicker-plot-area .datepicker-day-view .table-days td.today span {
+  background: var(--calendar-today-background) !important;
+  color: var(--calendar-today-text) !important;
+  border-radius: var(--calendar-today-radius) !important;
+  font-weight: 800 !important;
+}
+
+.datepicker-plot-area .datepicker-day-view .table-days td span.other-month {
+  color: var(--calendar-other-month-text) !important;
+}
+
+.datepicker-plot-area .datepicker-day-view .table-days td.disabled span {
+  background: var(--calendar-disabled-background) !important;
+  color: var(--calendar-disabled-text) !important;
+}
+
+.datepicker-plot-area .datepicker-month-view .month-item,
+.datepicker-plot-area .datepicker-year-view .year-item {
+  background: var(--calendar-item-background) !important;
+  color: var(--calendar-item-text) !important;
+  font-size: var(--calendar-item-font-size) !important;
+  border-radius: var(--calendar-item-radius) !important;
+  transition: background-color 0.18s ease, color 0.18s ease !important;
+}
+
+.datepicker-plot-area .datepicker-month-view .month-item:hover,
+.datepicker-plot-area .datepicker-year-view .year-item:hover {
+  background: var(--calendar-hover-background) !important;
+  color: var(--calendar-hover-text) !important;
+}
+
+.datepicker-plot-area .datepicker-month-view .month-item.selected,
+.datepicker-plot-area .datepicker-year-view .year-item.selected {
+  background: var(--calendar-selected-background) !important;
+  color: var(--calendar-selected-text) !important;
+  border-radius: var(--calendar-selected-radius) !important;
+}
+
+.datepicker-plot-area .datepicker-year-view .year-item-disable,
+.datepicker-plot-area .datepicker-month-view .month-item-disable {
+  background: var(--calendar-disabled-background) !important;
+  color: var(--calendar-disabled-text) !important;
+}
+
+.datepicker-plot-area .toolbox .pwt-btn-today,
+.datepicker-plot-area .toolbox .pwt-btn-calendar {
+  background: var(--calendar-button-background) !important;
+  color: var(--calendar-button-text) !important;
+  border-radius: var(--calendar-button-radius) !important;
+}
+
+/* Keep the popup above cards and iframe content in the admin UI. */
+.datepicker-container {
+  z-index: 2147483000 !important;
+}
