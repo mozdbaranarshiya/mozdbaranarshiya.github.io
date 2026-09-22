@@ -801,29 +801,7 @@ function renderServicePlans(){
 
           <div class="service-buy">
 
-            ${
-              renewal
-
-              ? `
-
-                <div class="renew-note">
-                  برای تمدید فقط ایمیل حساب را وارد کنید.
-                  Session، Cookie یا رمز عبور را وارد نکنید.
-                </div>
-
-                <input
-                  id="service-email-${plan.id}"
-                  class="portal-input"
-                  type="email"
-                  autocomplete="email"
-                  placeholder="ایمیل حساب برای تمدید"
-                  ${isDemo?'disabled':''}
-                >
-
-              `
-
-              : ''
-            }
+            
 
             <input
               id="service-discount-${plan.id}"
@@ -1123,16 +1101,7 @@ async function loadServices(){
                     }
                     ماه
 
-                    ${
-                      order.customerEmail
-
-                      ? '<br>'+
-                        PortalAPI.esc(
-                          order.customerEmail
-                        )
-
-                      : ''
-                    }
+                    
 
                   </td>
 
